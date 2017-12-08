@@ -1,0 +1,178 @@
+<body><pre>check console</pre></body>
+<script>
+
+"use strict"
+
+/* A
+37 36  35  34  33  32 31
+38 17  16  15  14  13 30
+39 18   5   4   3  12 29
+40 19   6   1   2  11 28
+41 20   7   8   9  10 27
+42 21  22  23  24  25 26
+43 44  45  46  47  48 49 50
+                         81  82
+                            121 122
+*/
+
+//series = 1 -> 3+2+2+1 -> 5+4+4+3 -> 7+6+6+5 -> 9+8+8+7
+//         1 -> 8 -> 16 -> 24 -> 32 -> 40
+//         1 -> 8*n[n > 0]
+
+
+//console.log(
+ //   recursivelyFindEndCornerStep(265149,0,1)); 
+    // --> 257th step is 265225, and there is 2056 numbers on the last square
+    // the shortest distance would be step, and longest step*2
+    // the distance depends on distance from a center of a wall. 
+    // distance from the final num = 265225 - 265149 = 76 
+    // the walls are 2056/4 long -> 514
+console.log("A: finaldistance: "+
+    (257*2-76));
+
+
+/* B 
+x  x    x    x    x    x    x  x   x
+x  x    x    x    x    x    x  x   x     
+x  x  147  142  133  122   59  x   x
+x  x  304    5    4    2   57 2275 x
+x  x  330   10    1    1   54 2105 x
+x  x  351   11   23   25   26 1968 x
+x  x  362  747  806  880  931  957 x   
+x  x    x    x    x    x    x  x   x
+x  x    x    x    x    x    x  x   x  x
+*/
+
+
+const recursivelyFindEndCornerStep = (amount,cornerStepsDone,currentSum) => {   
+    const newSum = currentSum + cornerStepsDone*8
+    if(newSum > amount)
+        return {
+            nextEndCorner:cornerStepsDone,
+            stepAtNextEndCorner:newSum,
+            stepAtLastEndCorner:currentSum,
+            stepsInCurrentRound:newSum-currentSum,
+            takenStepsAfterLastEndCorner:amount-currentSum,
+            lengthOfWall:(newSum-currentSum)/4,
+        };
+    return recursivelyFindEndCornerStep(amount,cornerStepsDone+1,newSum);
+}
+const isTheFirstOneOfNewSquare =(currentStep,infoAboutSquare)=>
+    currentStep - infoAboutSquare.stepAtLastEndCorner === 1;
+
+const isTheSecondOneOfNewSquare = (currentStep,infoAboutSquare) =>
+    currentStep - infoAboutSquare.stepAtLastEndCorner === 2;
+    
+const isTheLastOneOfSquare = (currentStep,infoAboutSquare) =>
+    (currentStep - infoAboutSquare.stepAtLastEndCorner) === 0;
+
+const isTheSecondToLastOneOfSquare = (currentStep,infoAboutSquare) =>
+    currentStep - infoAboutSquare.stepAtNextEndCorner === -1;
+    
+const isOneBeforeAnyCornerStep = (currentStep,infoAboutSquare) =>
+    ((currentStep - infoAboutSquare.stepAtLastEndCorner) % 
+        infoAboutSquare.lengthOfWall) === infoAboutSquare.lengthOfWall - 1;
+
+const isAnyCornerStep = (currentStep,infoAboutSquare) =>
+        ((currentStep - infoAboutSquare.stepAtLastEndCorner) % 
+            infoAboutSquare.lengthOfWall) === 0;
+
+const isOneAfterAnyCornerStep = (currentStep,infoAboutSquare) =>
+        ((currentStep - infoAboutSquare.stepAtLastEndCorner) % 
+            infoAboutSquare.lengthOfWall) === 1;
+
+
+
+const traversedRoute = 
+    [
+        1,1,2,4,5,10,
+         11,
+         23,
+        25,
+        26,
+        54,
+        57,
+    ];
+
+const recursivelyFindStepForB = (amount,stepsDone,currentVal,traversedRoute) =>{
+    if(currentVal > amount)
+        return [amount,stepsDone,currentVal,traversedRoute];
+    
+    const nextStep = stepsDone+1;
+    const infoAboutSquare = recursivelyFindEndCornerStep(nextStep,0,1);
+    
+    const stepsTakenThisRound = infoAboutSquare.takenStepsAfterLastEndCorner;
+    //possible values: 0,1,2,3
+    const wallNumber = Math.floor(4*stepsTakenThisRound/infoAboutSquare.stepsInCurrentRound);
+    const lastSquareStart =
+        recursivelyFindEndCornerStep(
+            infoAboutSquare.stepAtLastEndCorner-1,0,1).stepAtLastEndCorner; 
+    
+    const correspondingNumberInInnerSquare = 
+        stepsTakenThisRound
+        -wallNumber*2
+        +lastSquareStart
+        -1; 
+   
+    //newsum has always at least latest value before it
+    let newSum = currentVal;
+
+
+    if(isTheFirstOneOfNewSquare(nextStep,infoAboutSquare)){
+        newSum += traversedRoute[lastSquareStart];
+    }
+
+    else if(isTheSecondOneOfNewSquare(nextStep,infoAboutSquare)){
+        newSum += traversedRoute.slice(-2)[0];    
+        newSum+=traversedRoute[lastSquareStart];
+        newSum+=traversedRoute[lastSquareStart+1]
+
+    }
+    else if(isTheLastOneOfSquare(nextStep,infoAboutSquare)){ 
+        newSum += traversedRoute[lastSquareStart];
+        newSum += traversedRoute[lastSquareStart-1];
+
+    }   
+    else if(isTheSecondToLastOneOfSquare(nextStep,infoAboutSquare)){
+        newSum += traversedRoute[infoAboutSquare.stepAtLastEndCorner];
+        newSum += traversedRoute[infoAboutSquare.stepAtLastEndCorner-1];
+        newSum += traversedRoute[infoAboutSquare.stepAtLastEndCorner-2];
+        
+    }
+    else if(isAnyCornerStep(nextStep,infoAboutSquare)){
+        newSum += traversedRoute[correspondingNumberInInnerSquare]
+    }   
+    else if(isOneAfterAnyCornerStep(nextStep,infoAboutSquare)){
+        newSum += traversedRoute.slice(-2)[0];
+        newSum += traversedRoute[correspondingNumberInInnerSquare]
+        newSum += traversedRoute[correspondingNumberInInnerSquare-1]
+        
+    }
+    else if(isOneBeforeAnyCornerStep(nextStep,infoAboutSquare)){
+        newSum += traversedRoute[correspondingNumberInInnerSquare-1]
+        newSum += traversedRoute[correspondingNumberInInnerSquare-2]
+
+    } 
+    else{
+        //console.log("is not special");
+        newSum += traversedRoute[correspondingNumberInInnerSquare]
+        newSum += traversedRoute[correspondingNumberInInnerSquare-1]
+        newSum += traversedRoute[correspondingNumberInInnerSquare-2]
+    }
+    return recursivelyFindStepForB(amount,nextStep,newSum,traversedRoute.concat(newSum));
+}
+
+const resultB = 
+    recursivelyFindStepForB(
+        265149,
+        traversedRoute.length,
+        traversedRoute.slice(-1)[0],
+        traversedRoute)
+
+console.log(resultB[2])
+
+
+
+
+
+</script>
