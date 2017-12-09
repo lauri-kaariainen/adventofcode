@@ -11,91 +11,91 @@ const testInput =
 `{<{o"i!a,<{i<a>}`
 
 
-const transformGarbageRecursively =(inputStr,steps,ignoreFlag,garbageFlag,counterB) => () => {	
-	steps = steps || 0;
-	ignoreFlag = ignoreFlag || 0;
-	garbageFlag = garbageFlag || 0;
-	counterB = counterB || 0;
-	if(steps === 0)
-		inputStr = inputStr.split('');
-	if(steps >= inputStr.length) {
-		console.log("B:",counterB)
-		return inputStr.join("");
-	}
+const transformGarbageRecursively =(inputStr,steps,ignoreFlag,garbageFlag,counterB) => () => {  
+    steps = steps || 0;
+    ignoreFlag = ignoreFlag || 0;
+    garbageFlag = garbageFlag || 0;
+    counterB = counterB || 0;
+    if(steps === 0)
+        inputStr = inputStr.split('');
+    if(steps >= inputStr.length) {
+        console.log("B:",counterB)
+        return inputStr.join("");
+    }
 
-	if(!ignoreFlag){
-		switch(inputStr[steps]){
-			case "<":
-				if(!garbageFlag)
-					garbageFlag = true;
-				else
-					counterB++;
-				inputStr[steps] = "_";
-				break;
-			case "!":
-				ignoreFlag = true;
-				inputStr[steps] = "_";
-				break;
-			case ">":
-				if(garbageFlag)
-					garbageFlag = false;
-				inputStr[steps] = "_";
-				break;
-			default:
-				if(garbageFlag){
-					inputStr[steps] = "_";
-					counterB++;
-				}
-		}
-	}
-	else{
-		ignoreFlag = false;
-		inputStr[steps] = "_";
-	}
+    if(!ignoreFlag){
+        switch(inputStr[steps]){
+            case "<":
+                if(!garbageFlag)
+                    garbageFlag = true;
+                else
+                    counterB++;
+                inputStr[steps] = "_";
+                break;
+            case "!":
+                ignoreFlag = true;
+                inputStr[steps] = "_";
+                break;
+            case ">":
+                if(garbageFlag)
+                    garbageFlag = false;
+                inputStr[steps] = "_";
+                break;
+            default:
+                if(garbageFlag){
+                    inputStr[steps] = "_";
+                    counterB++;
+                }
+        }
+    }
+    else{
+        ignoreFlag = false;
+        inputStr[steps] = "_";
+    }
 
 
-	return transformGarbageRecursively(inputStr,steps+1,ignoreFlag,garbageFlag,counterB);
+    return transformGarbageRecursively(inputStr,steps+1,ignoreFlag,garbageFlag,counterB);
 }
 
 const clearTransformedGarbageRecursively = (inputStr,steps,lastStepWasGarbage) => () =>{
-	steps = steps || 0;
-	lastStepWasGarbage = lastStepWasGarbage || false;
-	if(steps===0)
-		inputStr = inputStr.split('');
-	if(steps >= inputStr.length)
-		return inputStr.join("");
-	if(inputStr[steps] === "_"){
-		inputStr.splice(steps,1)
-		lastStepWasGarbage = true;
-		steps--;
-	}
-	else if(inputStr[steps] === "," && lastStepWasGarbage){	
-		inputStr.splice(steps,1)
-		lastStepWasGarbage = false;
-		steps--;
-	}
-	else
-		lastStepWasGarbage = false;
-	return clearTransformedGarbageRecursively(inputStr,steps+1,lastStepWasGarbage)
+    steps = steps || 0;
+    lastStepWasGarbage = lastStepWasGarbage || false;
+    if(steps===0)
+        inputStr = inputStr.split('');
+    if(steps >= inputStr.length)
+        return inputStr.join("");
+    if(inputStr[steps] === "_"){
+        inputStr.splice(steps,1)
+        lastStepWasGarbage = true;
+        steps--;
+    }
+    else if(inputStr[steps] === "," && lastStepWasGarbage){ 
+        inputStr.splice(steps,1)
+        lastStepWasGarbage = false;
+        steps--;
+    }
+    else
+        lastStepWasGarbage = false;
+    return clearTransformedGarbageRecursively(inputStr,steps+1,lastStepWasGarbage)
 }
 
 const assignScores = (array)  =>{
 
-		//total starts at 1 to account for the largest "group"
-		let total = 1;
-		const depth = 2;
-		const assignValuesRecursively = (array,depth) =>
-			array
-				.map(child=>{
-					//console.log(depth);
-					total += depth;
-					return {
-						value:depth,
-						children:assignValuesRecursively(child,depth+1)}})
+    //total starts at 1 to account for the largest "group"
+    let total = 1;
+    const depth = 2;
+    const assignValuesRecursively = (array,depth) =>
+        array
+            .map(child=>{
+                //console.log(depth);
+                total += depth;
+                return {
+                    value:depth,
+                    children:assignValuesRecursively(child,depth+1)}})
 
 
-	    assignValuesRecursively(array,depth)[0]
-	    return total;
+    assignValuesRecursively(array,depth)[0]
+    return total;
 
 }
 
@@ -108,18 +108,18 @@ const trampoline = (fn) => {
 };
 
 const transformed = 
-	trampoline(transformGarbageRecursively(input))
+    trampoline(transformGarbageRecursively(input))
 
 console.log(transformed);
 
 const cleared = 
-	trampoline(clearTransformedGarbageRecursively(transformed))
+    trampoline(clearTransformedGarbageRecursively(transformed))
 
 console.log(cleared);
 
 const cleanStreamAsArrays =
-	eval(
-		cleared.replace(/{/g,"[").replace(/}/g,"]"))
+    eval(
+        cleared.replace(/{/g,"[").replace(/}/g,"]"))
 
 console.log(assignScores(cleanStreamAsArrays))
 
