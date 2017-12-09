@@ -4,6 +4,16 @@
     .bar{
         margin:0;
     }
+    .red {color:#FF0000}
+    .orange-ish-red {color:#E2571E}
+    .orange {color:#FF7F00}
+    .yellow {color:#FFFF00}
+    .green {color:#00FF00}
+    .some-green {color:#96bf33}
+    .blue {color:#0000FF}
+    .indigo {color:#4B0082}
+    .violet {color:#8B00FF}
+    .white {color:#ffffff}
 </style>
 </head>
 <body><pre>check console</pre></body>
@@ -30,20 +40,20 @@ const recursivelySolveAMutatingDangerously = (currState,listOfStates,step) => {
         document.body.innerHTML = 
             "<pre>check console</pre><br/>"+
             "<pre>step: "+step+"</pre>"+
-            "<pre class='bar'>["+currState.map(num=>num > 13 ? "▓▓▓": "   ").join(" ")+"]</pre>"+
-            "<pre class='bar'>["+currState.map(num=>num > 12 ? "▓▓▓": "   ").join(" ")+"]</pre>"+
-            "<pre class='bar'>["+currState.map(num=>num > 11 ? "▓▓▓": "   ").join(" ")+"]</pre>"+
-            "<pre class='bar'>["+currState.map(num=>num > 10 ? "▓▓▓": "   ").join(" ")+"]</pre>"+
-            "<pre class='bar'>["+currState.map(num=>num > 9 ? "▓▓▓": "   ").join(" ")+"]</pre>"+
-            "<pre class='bar'>["+currState.map(num=>num > 8 ? "▓▓▓": "   ").join(" ")+"]</pre>"+
-            "<pre class='bar'>["+currState.map(num=>num > 7 ? "▓▓▓": "   ").join(" ")+"]</pre>"+
-            "<pre class='bar'>["+currState.map(num=>num > 6 ? "▓▓▓": "   ").join(" ")+"]</pre>"+
-            "<pre class='bar'>["+currState.map(num=>num > 5 ? "▓▓▓": "   ").join(" ")+"]</pre>"+
-            "<pre class='bar'>["+currState.map(num=>num > 4 ? "▓▓▓": "   ").join(" ")+"]</pre>"+
-            "<pre class='bar'>["+currState.map(num=>num > 3 ? "▓▓▓": "   ").join(" ")+"]</pre>"+
-            "<pre class='bar'>["+currState.map(num=>num > 2 ? "▓▓▓": "   ").join(" ")+"]</pre>"+
-            "<pre class='bar'>["+currState.map(num=>num > 1 ? "▓▓▓": "   ").join(" ")+"]</pre>"+
-            "<pre class='bar'>["+currState.map(num=>num > 0 ? "▓▓▓": "   ").join(" ")+"]</pre>"+
+            "<pre class='bar red'>["+currState.map(num=>num > 13 ? "▓▓▓": "   ").join(" ")+"]</pre>"+
+            "<pre class='bar orange-ish-red'>["+currState.map(num=>num > 12 ? "▓▓▓": "   ").join(" ")+"]</pre>"+
+            "<pre class='bar yellow'>["+currState.map(num=>num > 11 ? "▓▓▓": "   ").join(" ")+"]</pre>"+
+            "<pre class='bar green'>["+currState.map(num=>num > 10 ? "▓▓▓": "   ").join(" ")+"]</pre>"+
+            "<pre class='bar some-green'>["+currState.map(num=>num > 9 ? "▓▓▓": "   ").join(" ")+"]</pre>"+
+            "<pre class='bar blue'>["+currState.map(num=>num > 8 ? "▓▓▓": "   ").join(" ")+"]</pre>"+
+            "<pre class='bar indigo'>["+currState.map(num=>num > 7 ? "▓▓▓": "   ").join(" ")+"]</pre>"+
+            "<pre class='bar violet'>["+currState.map(num=>num > 6 ? "▓▓▓": "   ").join(" ")+"]</pre>"+
+            "<pre class='bar indigo'>["+currState.map(num=>num > 5 ? "▓▓▓": "   ").join(" ")+"]</pre>"+
+            "<pre class='bar blue'>["+currState.map(num=>num > 4 ? "▓▓▓": "   ").join(" ")+"]</pre>"+
+            "<pre class='bar some-green'>["+currState.map(num=>num > 3 ? "▓▓▓": "   ").join(" ")+"]</pre>"+
+            "<pre class='bar green'>["+currState.map(num=>num > 2 ? "▓▓▓": "   ").join(" ")+"]</pre>"+
+            "<pre class='bar yellow'>["+currState.map(num=>num > 1 ? "▓▓▓": "   ").join(" ")+"]</pre>"+
+            "<pre class='bar orange'>["+currState.map(num=>num > 0 ? "▓▓▓": "   ").join(" ")+"]</pre>"+
             "<pre class='bar'>["+currState.map(num=>("___")).join("_")+"]</pre>"+
             "<pre class='bar'>["+currState.map(num=>("  "+num).slice(-3)).join(",")+"]</pre>",
         step*300);
