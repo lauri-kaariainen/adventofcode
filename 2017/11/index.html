@@ -24,24 +24,110 @@ const travelInfoObj =
         .split(',')
         .reduce((acc,next)=>(acc[next]=(acc[next]+1) || 0,acc),{})
 
-console.log(
-    "n:",
-    travelInfoObj.n - travelInfoObj.s,
-    "nw:",
-    travelInfoObj.nw - travelInfoObj.se,
-    "ne:",
-    travelInfoObj.ne - travelInfoObj.sw,
+
+const transferInputIntoObj = (array) =>
+    array
+        .reduce((acc,next)=>(acc[next]=(acc[next]+1) || 0,acc),{})
+
+
+
+const cleanTravelInfoObj = (elem)=>{
+    let newElem = {};
+    newElem.n = 
+        elem.n - elem.s;
+    newElem.nw = 
+        elem.nw - elem.se;
+    newElem.ne = 
+        elem.ne - elem.sw;
+    newElem.s = -newElem.n;
+    newElem.se = -newElem.nw;
+    newElem.sw = -newElem.ne;
+    for(let i in newElem){
+        if(newElem[i] < 0)
+            delete newElem[i];
+    }
+    return newElem;
+}
+`  
+  \ n  /
+nw +--+ ne
+  /    \
+-+      +-
+  \    /
+sw +--+ se
+  / s  \ `
+
+
+const calcFastestRoute = (elem) =>{
+    
+    //kill me now
+    let newElem = {};
+    if(elem.ne > 0 && elem.nw > 0){
+        elem.ne - elem.nw >= 0 ? (newElem.ne =  elem.ne - elem.nw) && 
+                                    (newElem.n = elem.n +  elem.nw):
+                                 (newElem.nw =  elem.nw - elem.ne) && 
+                                    (newElem.n = elem.n + elem.ne);
+    }
+    else if(elem.ne > 0 && elem.s > 0){
+        elem.ne - elem.s >= 0 ? (newElem.ne =  elem.ne - elem.s) && 
+                                    (newElem.se = elem.se + elem.s):
+                                 (newElem.s =  elem.s - elem.ne) && 
+                                    (newElem.se = elem.se + elem.ne);
+    }
+    else if(elem.n > 0 && elem.sw > 0){
+        elem.n - elem.sw>= 0 ? (newElem.n =  elem.n - elem.sw) && 
+                                    (newElem.nw = elem.nw + elem.sw):
+                                 (newElem.sw=  elem.sw- elem.n) && 
+                                    (newElem.nw = elem.nw + elem.n);
+    }
+    else if(elem.n > 0 && elem.se > 0){
+        elem.n - elem.se>= 0 ? (newElem.n =  elem.n - elem.se) && 
+                                    (newElem.ne = elem.ne + elem.se):
+                                 (newElem.se=  elem.se- elem.n) && 
+                                    (newElem.ne = elem.ne + elem.n);
+    }
+    else if(elem.nw > 0 && elem.s > 0){
+        elem.nw- elem.s>= 0 ? (newElem.nw=  elem.nw- elem.s) && 
+                                    (newElem.sw = elem.sw + elem.s):
+                                 (newElem.s=  elem.s- elem.nw) && 
+                                    (newElem.sw = elem.sw + elem.nw);
+    }
+    else if(elem.sw > 0 && elem.se > 0){
+         elem.sw - elem.se >= 0 ? (newElem.sw =  elem.sw - elem.se) && 
+                                    (newElem.s = elem.s + elem.se):
+                                 (newElem.se =  elem.se - elem.sw) && 
+                                    (newElem.s = elem.s + elem.sw);
+    }
+    //no, seriously
+
+    const result = 
+        Object.values(newElem)
+            .reduce((a,b)=>a+b,0)
+    return result;
+    
+}
+
+    
+console.log("A",
+    calcFastestRoute(
+        cleanTravelInfoObj(
+            travelInfoObj))
 
     )
 
-//{n: -335 nw: -459 ne: 71} -->
-//{s:335,se:459,ne:71} -->
-//{s:335-71,se:459+71} -->
-console.log("travel:",335-71+459+71)
-    
+console.log(
+    "B:",
+    input
+        .split(',')
+        //.map(a=>(console.log(a),a))
+        .map((num,i,arr)=>
+            calcFastestRoute(
+                cleanTravelInfoObj(
+                    transferInputIntoObj(
+                        arr.slice(0,i+1)))))
+        .reduce((acc,next)=>next > acc ? next : acc,0)
 
-
-
+    )
 
 
 
