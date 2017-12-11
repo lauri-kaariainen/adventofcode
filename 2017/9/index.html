@@ -1,4 +1,4 @@
-<body><pre>check console</pre></body>
+<body style="font-family:monospace;"><pre>check console</pre></body>
 <script>
 
 "use strict"
@@ -22,6 +22,12 @@ const transformGarbageRecursively =(inputStr,steps,ignoreFlag,garbageFlag,counte
         console.log("B:",counterB)
         return inputStr.join("");
     }
+
+    const uniqueInput = inputStr.join("");
+    setTimeout(()=>{
+    	console.log("rendering");
+    	document.body.innerText = uniqueInput;},
+    	5*steps);
 
     if(!ignoreFlag){
         switch(inputStr[steps]){
@@ -62,6 +68,7 @@ const clearTransformedGarbageRecursively = (inputStr,steps,lastStepWasGarbage) =
     lastStepWasGarbage = lastStepWasGarbage || false;
     if(steps===0)
         inputStr = inputStr.split('');
+
     if(steps >= inputStr.length)
         return inputStr.join("");
     if(inputStr[steps] === "_"){
