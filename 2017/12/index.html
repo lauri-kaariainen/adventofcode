@@ -2016,7 +2016,11 @@ const testInput =
 3 <-> 2, 4
 4 <-> 2, 3, 6
 5 <-> 6
-6 <-> 4, 5`;
+6 <-> 4, 5
+7 <-> 8
+8 <-> 7, 9, 10
+9 <-> 8, 10
+10 <-> 8, 9`;
 
 
 const mapInputToList = (input)=>
@@ -2032,44 +2036,73 @@ const mapInputToList = (input)=>
         }))
 
 
-const goThroughList = (list) => {
-    let savedList = [];
+const getGroupForNum = (list,keyToFind,listToFillWithIDs) => {
+    let savedList =listToFillWithIDs || [];
+
 
     const getNextKeysrecursively = (list,keyToFind,keyList) =>{
+        keyList = keyList || [];
+    
         const newElem = list.filter(l=>l.id === keyToFind)[0] || {}
         const newKeys = newElem.list;
-        console.log(
-            //keyToFind,
-            //keyList.length,
-            savedList.length,
-            //newKeys.length,
-            )
+        const newList = list.filter(listItem=>!keyList.includes(listItem.id))
+
         const newKeyList = 
             keyList.concat(
                 newKeys
                     .filter(newKey=>!keyList.includes(newKey)));
         
+        const totalUniques =
+            [...new Set(savedList.concat(newKeyList))];
+
         savedList =  
-            //get uniques
-            [...new Set(savedList.concat(newKeyList))]
-                
-        newKeys
+            totalUniques;
+
+        //get uniques
+        totalUniques
+            .forEach(item=>listToFillWithIDs.includes(item) ? false: listToFillWithIDs.push(item))
+
+        return newKeys
             .filter(newKey=>!keyList.includes(newKey))
-            .forEach(key=>getNextKeysrecursively(list,key,newKeyList));
+            .forEach(key=>
+                getNextKeysrecursively(
+                    newList,
+                    key,
+                    newKeyList));
+
+
     }
-    return getNextKeysrecursively(list,0,[]);
+    return getNextKeysrecursively(list,keyToFind,[keyToFind],0);
 
-
-    
-  
 
 }
 
+const findAllGroups = (list) =>{
+    let groupAmount = 0;
+    let resultList = [];
+    let startID = 0;
+    let listLeft = [...list];
+    while(listLeft.length){
+        startID = listLeft[0].id;
+        resultList = [];
+        getGroupForNum(listLeft,startID,resultList);
+        if(startID === 0)
+            console.log("A:",resultList.length)
+        //console.log(resultList)
+        listLeft = 
+            listLeft.filter(item=>!resultList.includes(item.id));
+        groupAmount++;
+    }
+    console.log("B:",groupAmount)
+}
+
+
+
  
+
 console.log(
-    goThroughList(
-       mapInputToList(input)
-    )
+    findAllGroups(
+        mapInputToList(input))
 )
 
 
