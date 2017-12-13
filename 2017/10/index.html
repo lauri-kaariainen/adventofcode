@@ -1,0 +1,95 @@
+<body><pre>check console</pre></body>
+<script>
+
+"use strict"
+
+
+const LENGTHS = 
+`63,144,180,149,1,255,167,84,125,65,188,0,2,254,229,24`.split(",").map(e=>parseInt(e));
+
+const testLengths = `3,4,1,5,0,0,0,1,1`.split(",").map(e=>parseInt(e));
+
+const input = [...new Array(256)].map((e,i)=>i);
+const testInput = [...new Array(5)].map((e,i)=>i);
+
+const recursivelySolveList = (array,lengthList,step,skipSize,currPos) => {
+    step = step || 0;
+    skipSize = skipSize || 0;
+    currPos = currPos || 0;
+    
+    array = [...array];
+    if(step >= lengthList.length) 
+        return array;
+    if(currPos >= array.length)
+        currPos = currPos % array.length;
+    
+    const currLength = lengthList[step];
+    if(currLength === 1 || currLength === 0){
+
+    }
+    else if(array.length - currPos - currLength >= 0){
+
+        array.splice(
+            currPos,
+            0,
+            ...array.slice(currPos,currLength+currPos).reverse());
+
+        array.splice(
+            currPos+currLength,
+            currLength);
+
+    }
+    else{
+        const cutOutSlice =
+            array
+                .slice(currPos)
+                .concat(
+                    array.slice(0,currLength - (array.length-currPos)));
+        
+        const startSliceLength = 
+            currLength - (array.length-currPos);
+
+        const endSliceLength =
+            array.length-currPos;
+        
+        const newStartSlice = 
+            [...cutOutSlice] //NOTE that reverse() mutates!
+                .reverse()
+                .slice(0,currLength - (array.length-currPos))
+        
+        const newEndSlice =
+            [...cutOutSlice] //NOTE thatreverse() mutates!
+                .reverse()
+                .slice(-endSliceLength)
+
+        cutOutSlice.reverse()
+            .forEach((snum,i)=>
+                array[currPos+i] !== undefined ? (array[currPos+i] = snum):
+                                            (array[currPos+i-array.length] = snum)) 
+
+    }
+
+    return recursivelySolveList(
+            array,
+            lengthList,
+            step+1,
+            skipSize+1,
+            parseInt(currPos)+parseInt(currLength)+parseInt(skipSize));
+
+}
+
+
+const trampoline = (fn) => {
+    while (typeof fn === 'function') {
+        fn = fn();
+    }
+    return fn;
+};
+
+const finalList = 
+    recursivelySolveList(input,LENGTHS);
+
+console.log("A:",finalList.slice(0,2).reduce((a,b)=>a*b,1))
+
+
+</script>
