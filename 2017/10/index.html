@@ -5,7 +5,22 @@
 
 
 const LENGTHS = 
-`63,144,180,149,1,255,167,84,125,65,188,0,2,254,229,24`.split(",").map(e=>parseInt(e));
+    `63,144,180,149,1,255,167,84,125,65,188,0,2,254,229,24`
+        .split(",")
+        .map(e=>parseInt(e));
+
+const specialValuesForB = 
+    [17, 31, 73, 47, 23];
+
+const LENGTHSForB =
+    `63,144,180,149,1,255,167,84,125,65,188,0,2,254,229,24`
+    .split("")
+    .map(char=>char.charCodeAt(0))
+    .concat(specialValuesForB);
+
+
+
+console.log(LENGTHSForB);
 
 const testLengths = `3,4,1,5,0,0,0,1,1`.split(",").map(e=>parseInt(e));
 
@@ -19,7 +34,11 @@ const recursivelySolveList = (array,lengthList,step,skipSize,currPos) => {
     
     array = [...array];
     if(step >= lengthList.length) 
-        return array;
+        return {
+            "array":array,
+            "skipSize":skipSize,
+            "currPos":currPos,
+        };
     if(currPos >= array.length)
         currPos = currPos % array.length;
     
@@ -87,9 +106,49 @@ const trampoline = (fn) => {
 };
 
 const finalList = 
-    recursivelySolveList(input,LENGTHS);
+    recursivelySolveList(input,LENGTHS).array;
 
 console.log("A:",finalList.slice(0,2).reduce((a,b)=>a*b,1))
+
+
+const recursivelySolveB = (input,LENGTHSForB,skippedSize,currPosition,runTimes) =>{
+    skippedSize = skippedSize || 0;
+    currPosition = currPosition || 0;
+    runTimes = runTimes || 0;
+    if(runTimes >= 64)
+        return input;
+    const {array,skipSize,currPos} = 
+        recursivelySolveList(
+            input,
+            LENGTHSForB,
+            0,
+            skippedSize,
+            currPosition);
+
+    return recursivelySolveB(array,LENGTHSForB,skipSize,currPos,runTimes+1);
+}
+
+const resultB = 
+    recursivelySolveB(input,LENGTHSForB,0,0,0)
+
+const splitInto16Parts = 
+    resultB
+        .reduce((acc,next,i)=>
+            acc[acc.length-1].length % 16 === 0 ? acc.concat([[next]]) : 
+                                                  (acc[acc.length-1].push(next),acc)  
+            ,[[]])
+        .slice(1) 
+
+
+console.log(
+    "B:",
+    splitInto16Parts
+        .map(lineOfNums=>lineOfNums.reduce((a,b)=>a^b,0))
+        .map(num=>num.toString(16))
+        .map(term=>term.length > 1 ? term : "0"+term.toString())
+        .join("")
+    )
+
 
 
 </script>
