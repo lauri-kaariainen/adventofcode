@@ -1,0 +1,60 @@
+<head>
+	<meta charset="utf-8">
+</head>
+<body><pre>check console</pre></body>
+<script src="../help/help.js"></script>
+<script>
+
+"use strict"
+
+
+
+/*
+Generator A starts with 277
+Generator B starts with 349
+*/
+const inputA = 277;
+const inputB = 349;
+
+const testInputA = 65;
+const testInputB = 8921;
+
+
+
+const generateNextA = prevNum =>
+	(prevNum*16807) % 2147483647;
+
+const generateNextB = prevNum =>
+	(prevNum*48271) % 2147483647;
+
+const getBinary = num=>
+	hex2bin(num2hex(num),32)
+/*
+
+To create its next value, a generator will take the previous value it produced, multiply it by a factor (generator A uses 16807; generator B uses 48271), and then keep the remainder of dividing that resulting product by 2147483647. That final remainder is the value it produces next.
+*/
+const startTime = new Date();
+let prevA = inputA;
+let prevB = inputB;
+let pointCount = 0;
+for(let i = 0 ;i < 40000000;i++){
+	prevA =
+		generateNextA(prevA);
+	prevB =
+		generateNextB(prevB);
+	const binA =	
+		hex2bin(num2hex(prevA),32)
+	const binB =
+		hex2bin(num2hex(prevB),32)
+	if(binA.slice(-16)===binB.slice(-16))
+		pointCount++;
+}
+console.log((new Date()-startTime)/1000+"s");
+console.log(
+	"A:",
+	pointCount)
+
+
+ 
+
+</script>
