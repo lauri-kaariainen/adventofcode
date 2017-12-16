@@ -36,22 +36,46 @@ To create its next value, a generator will take the previous value it produced, 
 const startTime = new Date();
 let prevA = inputA;
 let prevB = inputB;
+let aCounter = 0;
+let bCounter = 0;
 let pointCount = 0;
-for(let i = 0 ;i < 40000000;i++){
+
+let resultsA = [];
+//calculate a:s
+for(let i = 0; aCounter < 5000000;i++){
 	prevA =
 		generateNextA(prevA);
+	if(prevA % 4 === 0){
+		resultsA.push(
+			hex2bin(num2hex(prevA),32));
+		aCounter++;
+	}
+
+}
+
+
+for(let i = 0 ;bCounter < 5000000;i++){
+	
 	prevB =
 		generateNextB(prevB);
-	const binA =	
-		hex2bin(num2hex(prevA),32)
-	const binB =
-		hex2bin(num2hex(prevB),32)
-	if(binA.slice(-16)===binB.slice(-16))
-		pointCount++;
+	if(prevB % 8 === 0){
+		const binB =
+			hex2bin(num2hex(prevB),32);
+		if(resultsA[bCounter].slice(-16)===binB.slice(-16)){
+			pointCount++;
+			console.log(
+				"points:",
+				pointCount,
+				"bCounter:",
+				bCounter);
+		}
+		bCounter++;
+	}
+	
 }
 console.log((new Date()-startTime)/1000+"s");
 console.log(
-	"A:",
+	"B:",
 	pointCount)
 
 
