@@ -24,11 +24,14 @@ const find4 = (x,y,arrayOfArrays,wantedChar) => {
 	return returnable;
 }
 
-const numToLetter =chr => 
+const num2letter =chr => 
 	String.fromCharCode(97 + chr);
 
-const hex2bin = hex =>
-	("0000" + (parseInt(hex, 16)).toString(2)).substr(-4);
+const hex2bin = (hex,nulls) =>{
+	nulls = nulls ||4;
+	return ([...Array(nulls)].map(e=>"0").join("") + (parseInt(hex, 16)).toString(2)).substr(-nulls);
+}
 
-const num2Hex = num =>
+
+const num2hex = num =>
 	num.toString(16);
