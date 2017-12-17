@@ -1,0 +1,42 @@
+<head>
+    <meta charset="utf-8">
+</head>
+<body><pre>check console</pre></body>
+<script src="../help/help.js"></script>
+<script>
+
+"use strict"
+
+
+
+
+const input = 380;
+
+const testInput = 3;
+
+
+
+
+const travelAlgo = (startStep,state,position,step) => {
+    if(step > 2016){
+        return state;
+    }
+    const newPos = 
+            ((position+startStep) % state.length);
+    //console.log("newPos:",newPos)
+    const newStep = step+1;
+    let newState = [...state];
+    newState.splice(newPos+1,0,newStep);
+    //console.log(newState.map((e,i)=>i===newPos+1 ? "("+e+")":e).join("-"))
+
+    return travelAlgo(startStep,newState,newPos+1,newStep)
+
+}
+
+console.log(
+    travelAlgo(input,[0],0,0)
+)
+
+
+
+</script>
