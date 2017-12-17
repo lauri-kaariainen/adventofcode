@@ -1,5 +1,5 @@
 <head>
-	<meta charset="utf-8">
+    <meta charset="utf-8">
 </head>
 <body><pre>check console
 takes maybe 90 secs, so be patient</pre></body>
@@ -23,13 +23,13 @@ const testInputB = 8921;
 
 
 const generateNextA = prevNum =>
-	(prevNum*16807) % 2147483647;
+    (prevNum*16807) % 2147483647;
 
 const generateNextB = prevNum =>
-	(prevNum*48271) % 2147483647;
+    (prevNum*48271) % 2147483647;
 
 const getBinary = num=>
-	hex2bin(num2hex(num),32)
+    hex2bin(num2hex(num),32)
 /*
 
 To create its next value, a generator will take the previous value it produced, multiply it by a factor (generator A uses 16807; generator B uses 48271), and then keep the remainder of dividing that resulting product by 2147483647. That final remainder is the value it produces next.
@@ -44,40 +44,40 @@ let pointCount = 0;
 let resultsA = [];
 //calculate a:s
 for(let i = 0; aCounter < 5000000;i++){
-	prevA =
-		generateNextA(prevA);
-	if(prevA % 4 === 0){
-		resultsA.push(
-			hex2bin(num2hex(prevA),32));
-		aCounter++;
-	}
+    prevA =
+        generateNextA(prevA);
+    if(prevA % 4 === 0){
+        resultsA.push(
+            hex2bin(num2hex(prevA),32));
+        aCounter++;
+    }
 
 }
 
 
 for(let i = 0 ;bCounter < 5000000;i++){
-	
-	prevB =
-		generateNextB(prevB);
-	if(prevB % 8 === 0){
-		const binB =
-			hex2bin(num2hex(prevB),32);
-		if(resultsA[bCounter].slice(-16)===binB.slice(-16)){
-			pointCount++;
-			console.log(
-				"points:",
-				pointCount,
-				"bCounter:",
-				bCounter);
-		}
-		bCounter++;
-	}
-	
+    
+    prevB =
+        generateNextB(prevB);
+    if(prevB % 8 === 0){
+        const binB =
+            hex2bin(num2hex(prevB),32);
+        if(resultsA[bCounter].slice(-16)===binB.slice(-16)){
+            pointCount++;
+            console.log(
+                "points:",
+                pointCount,
+                "bCounter:",
+                bCounter);
+        }
+        bCounter++;
+    }
+    
 }
 console.log((new Date()-startTime)/1000+"s");
 console.log(
-	"B:",
-	pointCount)
+    "B:",
+    pointCount)
 
 
  

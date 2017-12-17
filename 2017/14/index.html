@@ -17,106 +17,106 @@ const testInput =
 
 
 const collectGrid = (inputStr) =>{
-	let total = [];
-	for(let i = 0; i < 128;i++)
-		total.push(knotHash(inputStr+"-"+i.toString()))
-	return total;
+    let total = [];
+    for(let i = 0; i < 128;i++)
+        total.push(knotHash(inputStr+"-"+i.toString())) 
+    return total;
 }
 
 const theGrid = 
-	collectGrid(input)
-		.map(line=>line.split(""));
+    collectGrid(input)
+        .map(line=>line.split(""));
 
 console.log(
-	"A:",
-	theGrid
-		.map(line=>line.reduce((acc,next)=>acc+parseInt(next),0))
-		.reduce((acc,next)=>acc+next,0)
-	)
+    "A:",
+    theGrid
+        .map(line=>line.reduce((acc,next)=>acc+parseInt(next),0))
+        .reduce((acc,next)=>acc+next,0)
+    )
 
 
 const calculateGroups = (grid) =>{
 
-	
-	const flatObjectMap =
-		grid
-			.map((numArray,y)=>numArray.map((num,x)=>(num === "1" ? {x:x,y:y}:false)).filter(e=>e))
-			.reduce((acc,next)=>acc.concat(next),[])
+    
+    const flatObjectMap =
+        grid
+            .map((numArray,y)=>numArray.map((num,x)=>(num === "1" ? {x:x,y:y}:false)).filter(e=>e))
+            .reduce((acc,next)=>acc.concat(next),[])
 
 
-	const handleCompare = (newObj,currObj) =>
-		((newObj.x === currObj.x && (newObj.y === (currObj.y+1) || newObj.y === (currObj.y-1))) ||
-		(newObj.y === currObj.y && (newObj.x === currObj.x+1 || newObj.x === currObj.x-1)))
+    const handleCompare = (newObj,currObj) =>
+        ((newObj.x === currObj.x && (newObj.y === (currObj.y+1) || newObj.y === (currObj.y-1))) ||
+        (newObj.y === currObj.y && (newObj.x === currObj.x+1 || newObj.x === currObj.x-1)))
 
 
-	
-	const recursivelyFindNeighbors = (step,objectList,groupList,currGroup,ignoreGroup) =>() =>{
-		
-		const newIgnoreGroup = 
-			ignoreGroup
-				.concat(currGroup)
-				.filter((obj,i,arr)=>!arr.slice(i+1).some(otherObj=>otherObj.x===obj.x&&otherObj.y===obj.y));
+    
+    const recursivelyFindNeighbors = (step,objectList,groupList,currGroup,ignoreGroup) =>() =>{
+        
+        const newIgnoreGroup = 
+            ignoreGroup
+                .concat(currGroup)
+                .filter((obj,i,arr)=>!arr.slice(i+1).some(otherObj=>otherObj.x===obj.x&&otherObj.y===obj.y));
 
-		if(!objectList.length)
-			return groupList;
-		const otherElems =
-			currGroup
-				.filter(currObj=>!ignoreGroup.some(obj=>obj.x===currObj.x&&obj.y===currObj.y))
-				.map(currObj=>
-					objectList.filter(obj=>handleCompare(obj,currObj)))
-				.reduce((acc,next)=>acc.concat(next),[])
-				.filter(o=>o);
+        if(!objectList.length)
+            return groupList;
+        const otherElems =
+            currGroup
+                .filter(currObj=>!ignoreGroup.some(obj=>obj.x===currObj.x&&obj.y===currObj.y))
+                .map(currObj=>
+                    objectList.filter(obj=>handleCompare(obj,currObj)))
+                .reduce((acc,next)=>acc.concat(next),[])
+                .filter(o=>o);
 
-		if(step % 5 === 0)
-			console.log(
-				"left:",
-				objectList.length,
-				"gathered so far:",
-				groupList.length,
-				"newIgnoreGroup:",
-				newIgnoreGroup.length,
-				"currGroup:",
-				currGroup.length);
+        if(step % 5 === 0)
+            console.log(
+                "left:",
+                objectList.length,
+                "gathered so far:",
+                groupList.length,
+                "newIgnoreGroup:",
+                newIgnoreGroup.length,
+                "currGroup:",
+                currGroup.length);
 
 
-		if(otherElems.length){
+        if(otherElems.length){
 
-			const newObjectList =
-				objectList
-					.filter(curr=>
-							!otherElems
-								.some(otherObj=>(otherObj.x===curr.x && otherObj.y===curr.y)))
+            const newObjectList =
+                objectList
+                    .filter(curr=>
+                            !otherElems
+                                .some(otherObj=>(otherObj.x===curr.x && otherObj.y===curr.y)))
 
-			return recursivelyFindNeighbors(
-				step+1,
-				newObjectList,
-				groupList,
-				currGroup
-					.concat(otherElems)
-					.filter((obj,i,arr)=>
-						!arr.slice(i+1).some(otherObj=>otherObj.x===obj.x&&otherObj.y===obj.y)),
-				newIgnoreGroup)
-		}
-		else {
-			const newGroupList =groupList.concat([currGroup]);
-			return recursivelyFindNeighbors(
-				step+1,
-				objectList.slice(1),
-				newGroupList,
-				[objectList[0]],
-				[])	
-		}
+            return recursivelyFindNeighbors(
+                step+1,
+                newObjectList,
+                groupList,
+                currGroup
+                    .concat(otherElems)
+                    .filter((obj,i,arr)=>
+                        !arr.slice(i+1).some(otherObj=>otherObj.x===obj.x&&otherObj.y===obj.y)),
+                newIgnoreGroup)
+        }
+        else {
+            const newGroupList =groupList.concat([currGroup]);
+            return recursivelyFindNeighbors(
+                step+1,
+                objectList.slice(1),
+                newGroupList,
+                [objectList[0]],
+                []) 
+        }
 
-	}
+    }
 
-	return trampoline(
-		recursivelyFindNeighbors(
-			0,
-			flatObjectMap.slice(1),
-			[],
-			[flatObjectMap[0]],
-			[])
-	)
+    return trampoline(
+        recursivelyFindNeighbors(
+            0,
+            flatObjectMap.slice(1),
+            [],
+            [flatObjectMap[0]],
+            [])
+    )
 
 
 
@@ -130,8 +130,8 @@ const trampoline = (fn) => {
 };
 
 console.log(
-	"B:",
-	calculateGroups(theGrid).length+1
-	)
+    "B:",
+    calculateGroups(theGrid).length+1
+    )
 
 </script>

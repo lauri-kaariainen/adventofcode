@@ -71,44 +71,44 @@ const mapInputToList = (input)=>
 
 
 const solveA = (fireWallArr) =>
-	fireWallArr
-		.map(e=>
-			//(console.log(e.depth,e.range*2-2),
-			((e.depth) % (e.range*2-2) === 0 ? e.depth*e.range:
-											  0))
-		.reduce((a,b)=>a+b,0)
+    fireWallArr
+        .map(e=>
+            //(console.log(e.depth,e.range*2-2),
+            ((e.depth) % (e.range*2-2) === 0 ? e.depth*e.range:
+                                              0))
+        .reduce((a,b)=>a+b,0)
 
 
 
 const solveB = (fireWallArr,depthBonus) =>{
 
-	depthBonus = depthBonus || 0;
-	if(depthBonus % 10000 === 0)
-		console.log("steps done:",depthBonus)
-	return fireWallArr
-		.map(e=>
-			//(console.log(e.depth+depthBonus,e.range*2-2),
-			((e.depth+depthBonus) % (e.range*2-2) === 0 ? e.depth+e.range:
-											  0))
-		.reduce((a,b)=>a+b,0)
+    depthBonus = depthBonus || 0;
+    if(depthBonus % 10000 === 0)
+        console.log("steps done:",depthBonus)
+    return fireWallArr
+        .map(e=>
+            //(console.log(e.depth+depthBonus,e.range*2-2),
+            ((e.depth+depthBonus) % (e.range*2-2) === 0 ? e.depth+e.range:
+                                              0))
+        .reduce((a,b)=>a+b,0)
 
 }
 
 
 console.log(
-	"A:",
-	solveA(
-		mapInputToList(
-			input))
+    "A:",
+    solveA(
+        mapInputToList(
+            input))
 )
 let result = 1;
 let step = 0;
 while(result !== 0){
-	step++;
-	result = 
-		solveB(
-		mapInputToList(
-			input),step)
+    step++;
+    result = 
+        solveB(
+        mapInputToList(
+            input),step)
 }
 console.log("B:",step);
 
