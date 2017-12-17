@@ -15,26 +15,57 @@ const input = 380;
 const testInput = 3;
 
 
-
-
-const travelAlgo = (startStep,state,position,step) => {
-    if(step > 2016){
-        return state;
+let prevSecondVal = 0;
+const travelAlgo = (startStep,state,position,step) =>() => {
+    let startTime = new Date();
+    if(step > 50000000){
+        return [state[0],state[1]];
     }
+
+    if(step === 0)
+        state = [...state];
+
+
+
+    if(prevSecondVal !== state[1]){
+        console.log(
+            "first:",state[0],
+            "second changed from",
+            prevSecondVal,
+            "to",
+            state[1],
+            "diff:",state[1]-prevSecondVal,
+            "step was:",
+            step)
+        prevSecondVal = state[1];
+    }
+
     const newPos = 
             ((position+startStep) % state.length);
-    //console.log("newPos:",newPos)
     const newStep = step+1;
-    let newState = [...state];
-    newState.splice(newPos+1,0,newStep);
-    //console.log(newState.map((e,i)=>i===newPos+1 ? "("+e+")":e).join("-"))
+
+
+    let newState = state;
+    if(newPos === 0){
+
+        newState.splice(newPos+1,0,newStep);
+    }
+    else
+        newState.push(609); //magic num
+    
 
     return travelAlgo(startStep,newState,newPos+1,newStep)
 
 }
 
+
+
+
+
 console.log(
-    travelAlgo(input,[0],0,0)
+    trampoline(
+        travelAlgo(input,[0],0,0))
+
 )
 
 
