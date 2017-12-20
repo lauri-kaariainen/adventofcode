@@ -136,11 +136,11 @@ const parseValue = (valueOrRegister,regList)=>
 const handleInstructions = (instructionArray,registerList,step=0,messageQueue,otherMessageQueue,isTheProgram1,sendCounter = 0)=>() =>{
 
     if(step >= instructionArray.length){
-        throw "step was too far:"+sendCounter;
+        throw "B: step was too far:"+sendCounter;
         
     }
     if(step < 0){
-        throw "step was below zero: "+sendCounter;
+        throw "B: step was below zero: "+sendCounter;
         
     }
 
@@ -149,7 +149,7 @@ const handleInstructions = (instructionArray,registerList,step=0,messageQueue,ot
         instructionArray[step].instruction==="rcv" &&
         !messageQueue.length)
         if(isTheProgram1)
-            throw "DEADLOCK: "+sendCounter;
+            throw "B: DEADLOCK: "+sendCounter;
         else
             return;
 
@@ -242,14 +242,14 @@ trampoline(
         false)); 
 
 setTimeout(()=>
-    console.log(trampoline(
+    trampoline(
         handleInstructions(
             mapInputToArray(input),
             {...parseRegisters(input),p:1},
             0,
             program1MessageQueue,
             program0MessageQueue,
-            true)))
+            true))
     ,0)
 
 
