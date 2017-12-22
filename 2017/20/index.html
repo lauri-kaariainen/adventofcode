@@ -1023,6 +1023,18 @@ const mapInputToArray = input=>
     input
         .split("\n")
         .map(str=>({
+          position:
+            str
+              .split("p=<")[1]
+              .split(">")[0]
+              .split(",")
+              .map(num=>parseInt(num)),
+          velocity:
+            str
+              .split("v=<")[1]
+              .split(">")[0]
+              .split(",")
+              .map(num=>parseInt(num)),
           acceleration:
             str
               .split("a=<")[1]
@@ -1033,18 +1045,107 @@ const mapInputToArray = input=>
 
 
 
-const mapArray = 
+const particleArray = 
     mapInputToArray(input);
 
 
+const calculatePosition =(particle,step) =>{
+    //the math:   pos: pos0 + v0t + t(t+1)*a 
+    //                                 2    
+
+    const accelerationPart =
+        particle
+            .acceleration
+            .map(acc=>
+                acc*step*(step+1)/2)
+    const velocityPart =
+        particle
+            .velocity
+            .map((vel)=>vel*step);
+    return {
+    	position:particle
+	        .position
+	        .map((pos,i)=>pos+accelerationPart[i]+velocityPart[i]),
+        velocity:particle.velocity,
+        acceleration:particle.acceleration
+    }
+
+}
+
+const nonUniqueParticle = (particle,i,arr)=>{
+    const stringifiedPosition =
+        JSON.stringify(particle.position);
+    //debugger;
+    return arr
+            .slice(i+1)
+            .some(otherParticle=>
+                JSON.stringify(otherParticle.position) === 
+                stringifiedPosition)
+}
+ 
+
 //which one has the lowest 'manhattan distance' acceleration
 console.log(
-  mapArray
-    .map(particle=>
-      particle.acceleration
-        .reduce((acc,b)=>acc+Math.abs(b),0))
-    .reduce((acc,b,i)=>b < acc.val ? {val:b,index:i} : acc,{index:-1,val:1000})
+    "A:",
+    particleArray
+        .map(particle=>
+          particle.acceleration
+            .reduce((acc,b)=>acc+Math.abs(b),0))
+        .reduce((acc,b,i)=>
+            b < acc.val ? {val:b,index:i} : acc,{index:-1,val:1000})
 )
 
+//let particles = [...particleArray];
+const filterCollisions = (particles)=>{
+	
+
+	const emptyStepsLimit = 40;
+	let nonCrashedParticleIndexes = 
+		particles
+			.map((el,i)=>i);
+	let newState;
+	let lastCollisionStep = 0;
+	for(let step = 0;step < 6600;step++){
+	    newState =
+	        particles
+	        	.filter((particle,i)=>
+	        		nonCrashedParticleIndexes.includes(i))
+	            .map(particle=>
+	                calculatePosition(particle,step))
+	    const nonUniques =
+	        newState
+	            .filter(nonUniqueParticle)
+	    nonCrashedParticleIndexes = 
+	        newState
+	        	.filter(particle=>
+		            !nonUniques.some(nonUniq=>
+		                JSON.stringify(nonUniq.position)===JSON.stringify(particle.position)))
+	        	.map((el,i)=>i);
+
+	    if(nonUniques.length){
+	    	lastCollisionStep = step;
+	    	console.log(
+    			"step:",step+",",
+	    		"particles left after collisions:",
+	    			particles
+		        		.filter((particle,i)=>
+		        			nonCrashedParticleIndexes.includes(i))
+		        		.length)
+	    }
+	    else if(step % 10 === 0){
+	    	console.log("step:",step)
+	    }
+	    if(step-lastCollisionStep > emptyStepsLimit){
+	    	console.log(
+	    		"no hits after",
+	    		emptyStepsLimit,
+	    		"non-collision steps, stopping.")
+	    	break;
+	    }
+	}
+	console.log("B:",newState.length)
+}
+
+filterCollisions(particleArray)
 
 </script>
