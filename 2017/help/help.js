@@ -56,3 +56,12 @@ const trampoline = (fn) => {
     }
     return fn; 
 };
+
+const uniqueShallow = (item,i,arr)=>
+	!arr.slice(i+1).includes(item);
+
+const uniqueDeep = (item,i,arr)=>
+	!arr
+		.slice(i+1)
+		.some(other=>
+			JSON.stringify(other)===JSON.stringify(item));	
