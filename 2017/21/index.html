@@ -1,0 +1,399 @@
+<head>
+    <meta charset="utf-8">
+</head>
+<body><pre>check console</pre></body>
+<script src="../help/help.js"></script>
+<script>
+
+"use strict"
+
+
+
+
+const input = 
+`../.. => #../##./...
+#./.. => ..#/.#./..#
+##/.. => ##./.#./##.
+.#/#. => ..#/.##/...
+##/#. => #.#/.../..#
+##/## => .#./###/...
+.../.../... => ##../#.../..../..#.
+#../.../... => ...#/.##./##.#/...#
+.#./.../... => ..##/###./..#./.#..
+##./.../... => ####/###./#..#/#...
+#.#/.../... => #.#./###./..##/##..
+###/.../... => ..##/####/.##./..##
+.#./#../... => .###/#.#./####/#..#
+##./#../... => #.#./##../###./#..#
+..#/#../... => #..#/##../..#./##.#
+#.#/#../... => .##./.##./.###/..#.
+.##/#../... => ##.#/.###/..../.##.
+###/#../... => #.##/..../#..#/###.
+.../.#./... => #.##/##.#/.#../##..
+#../.#./... => ##../..#./.#.#/.###
+.#./.#./... => ###./#.../.#../#..#
+##./.#./... => .##./.###/..../.#.#
+#.#/.#./... => .###/.###/#.##/.#..
+###/.#./... => #.../..../##.#/##.#
+.#./##./... => #..#/...#/#.#./#..#
+##./##./... => #.../.#../.#.#/#...
+..#/##./... => ..##/..##/.#../#..#
+#.#/##./... => ###./#.../#.../.#.#
+.##/##./... => ##.#/.###/####/..##
+###/##./... => ...#/###./.#../..#.
+.../#.#/... => #.../#..#/.###/.#.#
+#../#.#/... => #.../..../##.#/#...
+.#./#.#/... => .##./.##./.#.#/##.#
+##./#.#/... => #.##/###./##../#.#.
+#.#/#.#/... => ..../####/#.##/..#.
+###/#.#/... => #.../##.#/..../.#.#
+.../###/... => ..##/..../###./#..#
+#../###/... => ..#./..../..../..##
+.#./###/... => .##./..../####/..#.
+##./###/... => ####/.#.#/..#./#.##
+#.#/###/... => .#.#/.###/###./.#.#
+###/###/... => .#.#/.#../#.#./..#.
+..#/.../#.. => .#../...#/##../#.##
+#.#/.../#.. => .#../##../.#../.###
+.##/.../#.. => ###./.##./.###/.#.#
+###/.../#.. => ...#/.##./.###/##..
+.##/#../#.. => .#../.###/#.../..##
+###/#../#.. => #.#./#..#/#.#./..##
+..#/.#./#.. => .#../#.../.##./#..#
+#.#/.#./#.. => ...#/#.../...#/#...
+.##/.#./#.. => #.##/..#./##.#/##.#
+###/.#./#.. => ..../..#./.###/.##.
+.##/##./#.. => ..#./#.#./.#.#/....
+###/##./#.. => ####/###./...#/..#.
+#../..#/#.. => ####/.#../#..#/.###
+.#./..#/#.. => ##../##.#/..#./....
+##./..#/#.. => #.#./#..#/.#.#/####
+#.#/..#/#.. => ##.#/..##/.#../####
+.##/..#/#.. => ..../..#./#.#./#.##
+###/..#/#.. => ..##/###./#..#/.##.
+#../#.#/#.. => .#.#/##../#.../...#
+.#./#.#/#.. => #.../###./..#./.#.#
+##./#.#/#.. => #.##/#.#./..#./..##
+..#/#.#/#.. => ...#/.#.#/##.#/#...
+#.#/#.#/#.. => .#.#/...#/#.##/##.#
+.##/#.#/#.. => .#../##.#/#.#./.#..
+###/#.#/#.. => .#../###./.###/###.
+#../.##/#.. => .###/.###/##../....
+.#./.##/#.. => ..../#.##/#.##/###.
+##./.##/#.. => .#../..#./.#.#/.#..
+#.#/.##/#.. => .#../#..#/##.#/....
+.##/.##/#.. => #.../#..#/###./#.#.
+###/.##/#.. => #.../..##/..##/...#
+#../###/#.. => #.#./###./...#/#..#
+.#./###/#.. => .###/#..#/.#../...#
+##./###/#.. => ..../#.../#.#./###.
+..#/###/#.. => .#.#/#.##/#.#./....
+#.#/###/#.. => ..../###./##../..##
+.##/###/#.. => ..##/#.##/..../....
+###/###/#.. => ..##/##../#.#./#.##
+.#./#.#/.#. => #.#./.#.#/####/.##.
+##./#.#/.#. => #.../..../#..#/#..#
+#.#/#.#/.#. => ##../##../.##./#..#
+###/#.#/.#. => ##.#/###./.#../#.#.
+.#./###/.#. => #..#/#.../.#../####
+##./###/.#. => #.#./..##/####/###.
+#.#/###/.#. => #.#./###./...#/#.##
+###/###/.#. => ..##/..##/####/####
+#.#/..#/##. => .#.#/...#/##../..##
+###/..#/##. => .##./###./#.##/###.
+.##/#.#/##. => #.##/.#../##.#/..##
+###/#.#/##. => ...#/####/.###/#.#.
+#.#/.##/##. => #.#./####/.#.#/....
+###/.##/##. => ###./.#../.#../....
+.##/###/##. => #.../.#../####/....
+###/###/##. => .#.#/.#../.#.#/#.##
+#.#/.../#.# => ...#/#.##/#.##/####
+###/.../#.# => #.#./#..#/..../..#.
+###/#../#.# => #..#/#.#./##.#/..#.
+#.#/.#./#.# => ..#./##.#/..../....
+###/.#./#.# => #.##/.#../.#.#/###.
+###/##./#.# => .###/..../##.#/...#
+#.#/#.#/#.# => #.../.#../#.../##.#
+###/#.#/#.# => ..##/##.#/#..#/.#.#
+#.#/###/#.# => ..##/##../..##/....
+###/###/#.# => #..#/#.#./#.##/#..#
+###/#.#/### => ..#./###./.#../#...
+###/###/### => ..../..../####/###.`;
+
+const testInput = 
+`../.# => ##./#../...
+.#./..#/### => #..#/..../..../#..#`;
+
+const startPattern = 
+`.#./..#/###` 
+
+const printRule = rule=>
+    console.log(
+        rule
+        .split("/")
+        .join("\n"))
+
+const mapInputToArray = str =>
+    str
+        .split("\n")
+        .map(line=>({
+            rules:
+                createCombinationsForRules(
+                    line.split(" => ")[0]),
+            result:
+                line.split(" => ")[1]
+        }))
+
+/*
+* rule should be in form:
+* '../.#/..'
+*
+*/
+const createCombinationsForRules = rule =>{
+
+    /*
+    .#./..#/###
+    .#./#../###
+
+    .#.  .#.
+    ..#  #..
+    ###  ### 
+    ->flipleftright
+
+    #../#.#/##.
+    ##./#.#/#..
+
+    #..  ##.
+    #.#  #.#
+    ##.  #..
+
+    ->rotate -> flipupdown
+
+    ###/..#/.#.
+    ###/#../.#.
+
+    ###  ###
+    ..#  #..
+    .#.  .#.
+
+    flipUpDown->flipleftright
+
+    .##/#.#/..#   
+    ..#/#.#/.##                 
+                                
+    .##  ..#
+    #.#  #.#
+    ..#  .##
+
+    rotate->flipleftright->fliptopdown
+
+    */
+        
+
+    
+    /*
+    .#./..#/###
+    .#./#../###
+
+    .#.  .#.
+    ..#  #..
+    ###  ### 
+    */
+
+    const flipLeftRight = rule =>
+        rule
+            .split('/')
+            .map(line=>line.split("").reverse().join(""))
+            .join("/") 
+
+    /*
+    .#./..#/###
+    ###/..#/.#.
+
+    .#.  ###
+    ..#  ..#
+    ###  .#. 
+    */
+
+    const flipUpDown = rule =>
+        rule
+            .split('/')
+            .reverse()
+            .join("/")
+
+    /*
+    
+    .#./..#/###
+    #../#.#/##.
+
+    .#.  #..
+    ..#  #.#
+    ###  ##. 
+    
+    */
+
+    const rotate = rule=>
+        rule
+            .split("/")
+            .map((line,i,arr)=>
+                line
+                    .split("")
+                    .map((char,j)=>
+                        arr[arr.length-j-1][i])
+                    .join(""))
+            .join("/")
+    
+   
+    let rulesCombs = [rule];
+    rulesCombs.push(
+        flipLeftRight(rule));
+
+    rulesCombs.push(
+        rotate(rule));
+    rulesCombs.push(
+        flipUpDown(rotate(rule)));
+
+    rulesCombs.push(
+        flipUpDown(rule));
+    rulesCombs.push(
+        flipLeftRight(flipUpDown(rule)));
+
+    rulesCombs.push(
+        flipLeftRight(rotate(rule)));
+    rulesCombs.push(
+    flipUpDown(flipLeftRight(rotate(rule))));
+
+    return rulesCombs
+        .filter(uniqueShallow);
+} 
+
+
+const getSubPatterns = (pattern,divider) =>{
+    "#..#/..../..../#..#"
+    const subPatternAmount =
+        pattern.split("/").length/divider; 
+    const patternAsArray = 
+        pattern.split("/");
+    let newPatterns = [];
+    for(let i = 0; i < subPatternAmount*subPatternAmount;i++){
+        newPatterns.push(
+            patternAsArray[Math.floor(i/subPatternAmount)*divider]
+                .substr((i*divider)%patternAsArray.length,divider)
+                .concat(
+                    "/"+
+                    patternAsArray[Math.floor(i/subPatternAmount)*divider+1]
+                    .substr((divider*i)%patternAsArray.length,divider))
+                .concat(divider !== 3 ? []:
+                    "/"+
+                    patternAsArray[Math.floor(i/subPatternAmount)*divider+2]
+                    .substr((divider*i)%patternAsArray.length,divider))
+                );
+    }
+
+    return newPatterns;
+}
+
+const joinSubPatterns = (patterns) =>{
+    const patternParts = patterns[0].length;
+    const subPatternsPerLine = Math.sqrt(patterns.length)
+    
+    return patterns
+        .reduce((acc,item,i,arr)=>
+            i%subPatternsPerLine === 0 ? acc.concat([[item]]):
+                        (acc[acc.length-1].push(item),acc),[])
+        .filter(e=>e)
+        .map((subArray,i,arr)=>
+            [...new Array(patternParts).keys()]
+                .map(lineNum=>
+                    subArray.map(strs=>
+                        strs[lineNum])))
+        .reduce((acc,b,i,arr)=>
+            acc.concat(b),[])
+        .map(s=>
+            s.join(""))
+        .join("/")
+           
+}
+
+
+const takeStep = (pattern,rules,stepsLeft) =>{
+    console.log("steps left:",stepsLeft)
+
+    if(stepsLeft === 0)
+        return pattern;
+    let newPattern = pattern;
+    if(pattern.split("/").length % 2 === 0){
+        try{
+
+        newPattern =    
+            joinSubPatterns(
+                getSubPatterns(pattern,2)
+                    .map((patt,i,arr)=>
+                        rules
+                            .filter(ruleObj=>ruleObj.rules.includes(patt))
+                            [0]
+                            .result
+                            .split("/")),
+                2)
+        }
+        catch(e){
+            debugger;
+        }
+               
+
+    }
+    else if(pattern.split("/").length % 3 === 0){
+        if(pattern.split("/").length === 3){
+            newPattern = 
+                rules
+                    .filter(ruleObj=>ruleObj.rules.includes(pattern))[0]
+                    .result
+                  
+        }
+        else
+            newPattern =
+                joinSubPatterns(
+                    getSubPatterns(pattern,3)
+                        .map((patt,i,arr)=>
+                            rules
+                                .filter(ruleObj=>ruleObj.rules.includes(patt))
+                                [0]
+                                .result
+                                .split("/")),
+                    3)
+            
+    }
+    
+    return takeStep(newPattern,rules,stepsLeft-1)
+}
+
+const countSharps = grid =>
+    grid
+        .split("/")
+        .reduce((acc,next)=>acc.concat(next),"")
+        .split("")
+        .reduce((acc,next)=>next === "#" ? acc+1:acc,0)
+
+const rulesArray =
+    mapInputToArray(input);
+
+const howManySteps = 5;
+
+
+const patternOfFiveSteps = 
+    takeStep(startPattern,rulesArray,5);
+printRule(
+    patternOfFiveSteps)
+console.log(
+    "A:",
+    countSharps(
+        patternOfFiveSteps))
+
+//printing the pattern/steps would overload devconsole, it's quite big
+console.log(
+    "B:",
+    countSharps(
+        takeStep(startPattern,rulesArray,18)))
+        
+
+</script>
