@@ -45,8 +45,8 @@
 #..
 ...`;
 
-    //only squares!
-    const hardCodedSideLength = 5;
+    //use uneven number!!!
+    const hardCodedSideLength = 451;
     /*
     . . . . . 
     . . . . . 
@@ -98,12 +98,14 @@
 
     const takeAStep = (currMatrix, targetSteps, stepNum, direction, positionX, positionY, infectedAmount) => {
         if (stepNum >= targetSteps) {
-            console.log(currMatrix.map(line => line.join(" ")).join("\n"));
+            //console.log(currMatrix.map(line => line.join(" ")).join("\n"));
             return infectedAmount;
         }
         const newMatrix = currMatrix.map(e => e);
         const currNode = currMatrix[positionY][positionX];
 
+        // console.log(currMatrix.map(line => line.join(" ")).join("\n"));
+        // console.log("position:", positionX, positionY, "value:", currNode)
         /*
         . . 0 . .
         . 3 . 1 .
@@ -111,9 +113,8 @@
         */
         const newDirection = getNewDirection(currNode, direction);
 
-        const nextX = getNewPosition(positionX, positionY, direction).x;
-        const nextY = getNewPosition(positionX, positionY, direction).y;
-
+        const nextX = getNewPosition(positionX, positionY, newDirection).x;
+        const nextY = getNewPosition(positionX, positionY, newDirection).y;
 
 
         if (currNode === "#") {
@@ -124,7 +125,7 @@
         }
         else console.error("! currnode was something wrong:", currNode);
 
-        return takeAStep(
+        return () => takeAStep(
             newMatrix,
             targetSteps,
             stepNum + 1,
@@ -136,17 +137,17 @@
     }
 
     console.log(
-        takeAStep(
+        trampoline(takeAStep(
             combineMatrices(
                 createEmptyMatrix(hardCodedSideLength),
-                mapInputToMatrix(testInput)
+                mapInputToMatrix(input)
             ),
-            1, //step target
+            10000, //step target
             0, //stepnum
             0, //direction code
             Math.floor(hardCodedSideLength / 2), // x
             Math.floor(hardCodedSideLength / 2), // y
             0 //infected
-        )
+        ))
     )
 </script>
