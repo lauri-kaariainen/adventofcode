@@ -1,0 +1,27 @@
+<!doctype html>
+
+<head>
+    <meta charset="utf-8">
+</head>
+
+<body>
+    <pre>check console</pre>
+</body>
+<script src="../help/help.js"></script>
+<script>
+    "use strict";
+    const start = 81 * 100 + 100000;
+    const end = start + 17000;
+    const nums = [...new Array((end - start) / 17 + 1)].map(
+        (e, i) => start + i * 17
+    );
+
+    function isPrime(num) {
+        for (let i = 2; i < num; i++) if (num % i === 0) return false;
+        return num !== 1 && num !== 0;
+    }
+
+    const nonPrimes = nums.filter(num => !isPrime(num));
+    console.log("B:", nonPrimes.length);
+
+</script>
