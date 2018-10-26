@@ -133,13 +133,29 @@
     const calculateScore = (arr, usedIndices) =>
         usedIndices.map(index => arr[index]).map(item => item.first + item.second).reduce((acc, curr) => acc + curr, 0)
 
-    const array = mapInputToArray(testInput);
+    const array = mapInputToArray(input);
     const resultsList = [];
     const tooDeepArray =
         possibleFirstOnes(
             array)
             .map(pin => findNextPins(array, [getPinIndex(array, pin)], getFreePinValue(pin, 0)))
-    findCombinationsFromTooDeepArray(tooDeepArray, combinationArr => resultsList.push(calculateScore(array, combinationArr)))
-    console.log(resultsList.sort((a, b) => b - a)[0])
-
+    // A
+    //findCombinationsFromTooDeepArray(tooDeepArray, combinationArr => resultsList.push(calculateScore(array, combinationArr)))
+    //console.log("A:",resultsList.sort((a, b) => b - a)[0])
+    //B
+    findCombinationsFromTooDeepArray(tooDeepArray, combinationArr => resultsList.push(combinationArr))
+    console.log(
+        "B:",
+        resultsList
+            .sort((a, b) =>
+                b.length - a.length)
+            .filter((combination, i, arr) => {
+                if (combination.length < arr[0].length)
+                    return false;
+                else
+                    return true;
+            })
+            .map(combo => calculateScore(array, combo))
+            .sort((a, b) => b - a)[0]
+    )
 </script>
