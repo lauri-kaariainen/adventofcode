@@ -127,29 +127,58 @@ In state B:
             j === 0 ?
               { ...acc, stateName: line.split(":")[0].split(" ").slice(-1)[0] } :
               j === 2 ?
-                { ...acc, ifValueIsZeroWrite: line.split(".")[0].split(" ").slice(-1)[0] } :
+                { ...acc, ifValueIsZeroWrite: parseInt(line.split(".")[0].split(" ").slice(-1)[0]) } :
                 j === 3 ?
-                  { ...acc, ifValueIsZeroMove: line.split(".")[0].split(" ").slice(-1)[0] } :
+                  { ...acc, ifValueIsZeroMove: line.split(".")[0].split(" ").slice(-1)[0] === "left" ? -1 : 1 } :
                   j === 4 ?
                     { ...acc, ifValueIsZeroNextState: line.split(".")[0].split(" ").slice(-1)[0] } :
                     j === 6 ?
-                      { ...acc, ifValueIsOneWrite: line.split(".")[0].split(" ").slice(-1)[0] } :
+                      { ...acc, ifValueIsOneWrite: parseInt(line.split(".")[0].split(" ").slice(-1)[0]) } :
                       j === 7 ?
-                        { ...acc, ifValueIsOneMove: line.split(".")[0].split(" ").slice(-1)[0] } :
+                        { ...acc, ifValueIsOneMove: line.split(".")[0].split(" ").slice(-1)[0] === "left" ? -1 : 1 } :
                         j === 8 ?
                           { ...acc, ifValueIsOneNextState: line.split(".")[0].split(" ").slice(-1)[0] } :
                           acc
             , {}));
+  const takeSteps = (directionsArr, currState, stepsLeft, positionOnTape, tape, firstRun = true) => {
+    if (stepsLeft === 0) {
+      console.log(
+        tape.filter(e => e).reduce((acc, next) => acc + next, 0),
+        tape);
+      return;
+    }
+    if (firstRun)
+      tape = tape.map(e => e);
 
-  // .map(str => str.split(" ")[1])
-  // .filter((item, i, arr) => !arr.slice(i + 1).includes(item)) //unique
-  // .filter(item => isNaN(parseInt(item))) //remove non-letters
-  // .reduce((acc, next) => (acc[next] = 0, acc), {})
+
+    const tapeValue = tape[positionOnTape],
+      currDirObject = directionsArr.filter(dir => dir.stateName === currState)[0],
+      nextState = tapeValue === 0 ?
+        currDirObject.ifValueIsZeroNextState :
+        currDirObject.ifValueIsOneNextState,
+      nextSteps = stepsLeft - 1,
+      nextTapePosition = positionOnTape + (tapeValue === 0 ?
+        currDirObject.ifValueIsZeroMove :
+        currDirObject.ifValueIsOneMove);
+
+    tape[positionOnTape] = tapeValue === 0 ?
+      currDirObject.ifValueIsZeroWrite :
+      currDirObject.ifValueIsOneWrite;
+
+    return () => takeSteps(directionsArr, nextState, nextSteps, nextTapePosition, tape, false);
+  }
 
 
-
+  const tape = [...new Array(100000)].map(e => 0)
+  const parsedBlueprints = parseBlueprints(input);
 
   console.log(
-    parseBlueprints(testInput)
-  )
+    trampoline(takeSteps(
+      parsedBlueprints,
+      parsedBlueprints[0].beginState,
+      parsedBlueprints[0].checksumSteps,
+      Math.floor(tape.length / 2),
+      tape,
+    )
+    ))
 </script>
