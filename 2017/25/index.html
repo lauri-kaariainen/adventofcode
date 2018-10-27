@@ -1,0 +1,155 @@
+<head>
+  <meta charset="utf-8">
+</head>
+
+<body>
+  <pre>check console</pre>
+</body>
+<script src="../help/help.js"></script>
+<script>
+
+  "use strict"
+
+
+
+
+  const input =
+    `Begin in state A.
+Perform a diagnostic checksum after 12523873 steps.
+
+In state A:
+  If the current value is 0:
+    - Write the value 1.
+    - Move one slot to the right.
+    - Continue with state B.
+  If the current value is 1:
+    - Write the value 1.
+    - Move one slot to the left.
+    - Continue with state E.
+
+In state B:
+  If the current value is 0:
+    - Write the value 1.
+    - Move one slot to the right.
+    - Continue with state C.
+  If the current value is 1:
+    - Write the value 1.
+    - Move one slot to the right.
+    - Continue with state F.
+
+In state C:
+  If the current value is 0:
+    - Write the value 1.
+    - Move one slot to the left.
+    - Continue with state D.
+  If the current value is 1:
+    - Write the value 0.
+    - Move one slot to the right.
+    - Continue with state B.
+
+In state D:
+  If the current value is 0:
+    - Write the value 1.
+    - Move one slot to the right.
+    - Continue with state E.
+  If the current value is 1:
+    - Write the value 0.
+    - Move one slot to the left.
+    - Continue with state C.
+
+In state E:
+  If the current value is 0:
+    - Write the value 1.
+    - Move one slot to the left.
+    - Continue with state A.
+  If the current value is 1:
+    - Write the value 0.
+    - Move one slot to the right.
+    - Continue with state D.
+
+In state F:
+  If the current value is 0:
+    - Write the value 1.
+    - Move one slot to the right.
+    - Continue with state A.
+  If the current value is 1:
+    - Write the value 1.
+    - Move one slot to the right.
+    - Continue with state C.`;
+
+
+
+  const testInput =
+    `Begin in state A.
+Perform a diagnostic checksum after 6 steps.
+
+In state A:
+  If the current value is 0:
+    - Write the value 1.
+    - Move one slot to the right.
+    - Continue with state B.
+  If the current value is 1:
+    - Write the value 0.
+    - Move one slot to the left.
+    - Continue with state B.
+
+In state B:
+  If the current value is 0:
+    - Write the value 1.
+    - Move one slot to the left.
+    - Continue with state A.
+  If the current value is 1:
+    - Write the value 1.
+    - Move one slot to the right.
+    - Continue with state A.`;
+
+
+  const parseBlueprints = input =>
+    input
+      .split("\n")
+      //put into subarrays separated by the empty line
+      .reduce((acc, currLine, i, arr) =>
+        currLine.length === 0 ?
+          acc.concat([[]]) :
+          (acc[acc.length - 1].push(currLine), acc), [[]])
+      //parse the first subarray, i.e. the beginstate and steps
+      .map((subArr, i, arr) =>
+        i !== 0 ? subArr :
+          subArr.reduce((acc, line, j) =>
+            j === 0 ?
+              { ...acc, beginState: line.split(" ").slice(-1)[0].replace(".", "") } :
+              { ...acc, checksumSteps: parseInt(line.split(" ").slice(-2, -1)[0]) }, {}))
+      //parse the rest
+      .map((subArr, i, arr) =>
+        i === 0 ?
+          subArr :
+          subArr.reduce((acc, line, j) =>
+            j === 0 ?
+              { ...acc, stateName: line.split(":")[0].split(" ").slice(-1)[0] } :
+              j === 2 ?
+                { ...acc, ifValueIsZeroWrite: line.split(".")[0].split(" ").slice(-1)[0] } :
+                j === 3 ?
+                  { ...acc, ifValueIsZeroMove: line.split(".")[0].split(" ").slice(-1)[0] } :
+                  j === 4 ?
+                    { ...acc, ifValueIsZeroNextState: line.split(".")[0].split(" ").slice(-1)[0] } :
+                    j === 6 ?
+                      { ...acc, ifValueIsOneWrite: line.split(".")[0].split(" ").slice(-1)[0] } :
+                      j === 7 ?
+                        { ...acc, ifValueIsOneMove: line.split(".")[0].split(" ").slice(-1)[0] } :
+                        j === 8 ?
+                          { ...acc, ifValueIsOneNextState: line.split(".")[0].split(" ").slice(-1)[0] } :
+                          acc
+            , {}));
+
+  // .map(str => str.split(" ")[1])
+  // .filter((item, i, arr) => !arr.slice(i + 1).includes(item)) //unique
+  // .filter(item => isNaN(parseInt(item))) //remove non-letters
+  // .reduce((acc, next) => (acc[next] = 0, acc), {})
+
+
+
+
+  console.log(
+    parseBlueprints(testInput)
+  )
+</script>
