@@ -986,24 +986,25 @@
 
   const calculateFreq = (freqArray, start) =>
     freqArray.reduce(
-      (acc, change, i, arr) => (
+      (acc, change, i, arr) =>
+        //eval is really slow
         eval(acc + change)
-      ),
+      ,
       start
     );
-
   //returns -1 or the value
   const checkIfValuePresentBefore = value => {
     checkIfValuePresentBefore.memoized =
-      checkIfValuePresentBefore.memoized || [];
+      checkIfValuePresentBefore.memoized || {};
 
     const returnValue =
-      checkIfValuePresentBefore.memoized.indexOf(value) === -1 ? -1 : value;
-    checkIfValuePresentBefore.memoized.push(value);
+      checkIfValuePresentBefore.memoized[value] !== true ? -1 : value;
+    checkIfValuePresentBefore.memoized[value] = true;
     return returnValue;
   };
 
   const solveUntilDuplicateIsFound = (freqArray, start, runCount = 0) => {
+
     const lastFreq =
       freqArray.reduce(
         (acc, change, i, arr) => {
@@ -1012,11 +1013,11 @@
             return NaN;
           }
 
-          else return eval(acc + change)
+          else return acc + parseInt(change)
         }, start
       );
     if (!isNaN(lastFreq))
-      return solveUntilDuplicateIsFound(freqArray, lastFreq, runCount + 1)
+      return () => solveUntilDuplicateIsFound(freqArray, lastFreq, runCount + 1)
 
   }
 
@@ -1024,7 +1025,7 @@
   console.log("A:", calculateFreq(inputArray, STARTFREQ));
 
   const startTime = new Date();
-  solveUntilDuplicateIsFound(inputArray, STARTFREQ);
+  trampoline(solveUntilDuplicateIsFound(inputArray, STARTFREQ));
   console.log("time", new Date() - startTime, "ms")
 </script>
 </head>
