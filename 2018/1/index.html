@@ -984,48 +984,54 @@
 
   const inputIntoArray = str => str.split("\n").map(e => e.trim());
 
-  const calculateFreq = (freqArray, start) =>
-    freqArray.reduce(
-      (acc, change, i, arr) =>
-        //eval is really slow
-        eval(acc + change)
+  const calculateFreqArray = (freqArray, start) => {
+    const retArr = [];
+    freqArray.forEach(
+      (next, i, arr) =>
+        i === 0 ?
+          retArr.push(start + parseInt(next)) :
+          retArr.push(retArr[retArr.length - 1] + parseInt(next))
       ,
-      start
-    );
-  //returns -1 or the value
-  const checkIfValuePresentBefore = value => {
-    checkIfValuePresentBefore.memoized =
-      checkIfValuePresentBefore.memoized || {};
+      []
+    )
+    return retArr;
+  }
 
-    const returnValue =
-      checkIfValuePresentBefore.memoized[value] !== true ? -1 : value;
-    checkIfValuePresentBefore.memoized[value] = true;
-    return returnValue;
-  };
 
   const solveUntilDuplicateIsFound = (freqArray, start, runCount = 0) => {
+    solveUntilDuplicateIsFound.memoized =
+      solveUntilDuplicateIsFound.memoized || {};
 
-    const lastFreq =
-      freqArray.reduce(
-        (acc, change, i, arr) => {
-          if (checkIfValuePresentBefore(acc) !== -1) {
-            console.log("B:", acc, " list looped", runCount, "times");
-            return NaN;
-          }
+    const lastFreqArray =
+      calculateFreqArray(freqArray, start);
 
-          else return acc + parseInt(change)
-        }, start
-      );
-    if (!isNaN(lastFreq))
-      return () => solveUntilDuplicateIsFound(freqArray, lastFreq, runCount + 1)
+    const mappedFreqs =
+      lastFreqArray
+        .map(freq =>
+          solveUntilDuplicateIsFound.memoized[freq] === undefined ?
+            (solveUntilDuplicateIsFound.memoized[freq] = true, false) :
+            freq);
+
+    const isFound =
+      !!mappedFreqs
+        .filter(bool => bool !== false)
+        .length;
+
+
+    if (isFound === false)
+      //return func because of trampoline
+      return () => solveUntilDuplicateIsFound(freqArray, lastFreqArray[lastFreqArray.length - 1], runCount + 1)
+    else
+      return mappedFreqs.filter(freq => freq !== false)[0];
 
   }
 
   const inputArray = inputIntoArray(input);
-  console.log("A:", calculateFreq(inputArray, STARTFREQ));
+  console.log("A:", calculateFreqArray(inputArray, STARTFREQ).slice(-1)[0]);
 
   const startTime = new Date();
-  trampoline(solveUntilDuplicateIsFound(inputArray, STARTFREQ));
+  console.log("B:",
+    trampoline(solveUntilDuplicateIsFound(inputArray, STARTFREQ)));
   console.log("time", new Date() - startTime, "ms")
 </script>
 </head>
