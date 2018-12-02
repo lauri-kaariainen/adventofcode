@@ -268,6 +268,14 @@ aabcdd
 abcdee
 ababab`;
 
+  const testInputB = `abcde
+fghij
+klmno
+pqrst
+fguij
+axcye
+wvxyz`;
+
   const inputIntoArray = str => str.split("\n").map(e => e.trim());
 
   const hasAmountOfLetters = (str, num) =>
@@ -278,17 +286,46 @@ ababab`;
       .filter(amount => amount === num)
       .length
 
+
+  const longestLetterMatchBesidesSelf = (strToMatch, i, arr) =>
+    arr
+      .map(string =>
+        strToMatch
+          .split("")
+          .filter((letter, i) => string[i] === letter))
+      .sort((a, b) => b.length - a.length)[1]
+
   const hasDoubles = str =>
     hasAmountOfLetters(str, 2)
 
   const hasTriples = str =>
     hasAmountOfLetters(str, 3)
 
+
   const inputArray = inputIntoArray(input)
 
+  console.log()
+
+  let startTime = new Date();
   console.log(
+    "A:",
     inputArray.filter(hasTriples).length *
-    inputArray.filter(hasDoubles).length
+    inputArray.filter(hasDoubles).length,
+    "time:",
+    new Date() - startTime,
+    "ms"
   )
+  startTime = new Date();
+  console.log(
+    "B:",
+    inputArray
+      .map(longestLetterMatchBesidesSelf)
+      .sort((a, b) => b.length - a.length)[0]
+      .join(""),
+    "time:",
+    new Date() - startTime,
+    "ms"
+  )
+
 </script>
 </head>
