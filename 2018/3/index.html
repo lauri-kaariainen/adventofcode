@@ -2,6 +2,12 @@
 
 <head>
   <script src="../../help.js"></script>
+  <style>
+    pre {
+      font-size: 2px;
+    }
+  </style>
+</head>
 
 <body>
   <pre>check console</pre>
@@ -1381,6 +1387,9 @@
         }
         else
           fabric[i][j] = "#";
+        if (claim.id === 420 || claim.id === 188)
+          fabric[i][j] = "O";
+
 
       }
   }
@@ -1430,6 +1439,12 @@
     new Date() - startTime,
     "ms"
   )
+  document.body.innerHTML =
+    "<pre>" +
+    firstPaint.fabric
+      .map(e => e.join(" "))
+      .join("<br/>") +
+    "</pre>";
 
 </script>
 </head>
