@@ -1187,11 +1187,12 @@
     concatGuardSleepTimes(guardArray)
       .map(guard => getTotalSleep(guard))
       .sort((a, b) => b.total - a.total)[0]
+
+
   let startTime = new Date();
   console.log(
     "A:",
-    guardSleepingMost.id,
-    "*",
+    guardSleepingMost.id *
     minuteArray
       .map((minute, i) => ({
         i: i,
@@ -1208,10 +1209,17 @@
   startTime = new Date();
   console.log(
     "B:",
-    minuteArray
-      .map(minute =>
-        guardArray.map(guard =>
-          isAsleepDuringMinute(minute, guard))),
+    minuteArray.map(minute =>
+      concatGuardSleepTimes(guardArray)
+        .map(guard => ({
+          id: guard.Guard,
+          minute: minute,
+          totalSleep: totalSleepDuringMinute(minute, guard)
+        })
+        )
+        .sort((a, b) => b.totalSleep - a.totalSleep)[0])
+      .sort((a, b) => b.totalSleep - a.totalSleep)[0],
+
     "time:",
     new Date() - startTime,
     "ms"
