@@ -14,9 +14,8 @@
   const testInput = `dabAcCaCBAcCcaDA`;
 
 
-  const removeReagents = str =>
-    str
-      .split("")
+  const removeReagentsArr = array =>
+    array
       .reduce((acc, letter, i, arr) => {
         if (acc.length) {
           if (acc[acc.length - 1] === "removeNext") {
@@ -31,15 +30,22 @@
           acc.push(letter);
         return acc;
 
-      }, [])
-      .join("");
+      }, []);
 
 
   const getCollapsedPolymer = (str) => {
+    const polymerArr = str.split("");
     console.log("collapsing...")
-    let result = "";
-    for (result = removeReagents(str); result !== removeReagents(result); result = removeReagents(result));
-    return result;
+    let result = removeReagentsArr(polymerArr);
+    for (; ;) {
+      const newResult = removeReagentsArr(result);
+      if (result.length === newResult.length) {
+        result = newResult;
+        break;
+      }
+      result = newResult;
+    }
+    return result.join("");
   }
 
 
