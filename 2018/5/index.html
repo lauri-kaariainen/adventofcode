@@ -35,17 +35,22 @@
       .join("");
 
 
-  //A:
+  const getCollapsedPolymer = (str) => {
+    console.log("collapsing...")
+    let result = "";
+    for (result = removeReagents(str); result !== removeReagents(result); result = removeReagents(result));
+    return result;
+  }
+
+
+  const uniqueTypes =
+    input.split("").map(letter => letter.toLowerCase()).filter(uniqueShallow).sort();
+  console.log(uniqueTypes)
+
   let startTime = new Date();
-  let result = "";
-  for (result = removeReagents(input); result !== removeReagents(result); result = removeReagents(result));
-
-
-
-
   console.log(
     "A:",
-    result,
+    getCollapsedPolymer(input).length,
     "time:",
     new Date() - startTime,
     "ms"
@@ -53,11 +58,13 @@
   startTime = new Date();
   console.log(
     "B:",
-    minuteArray.map(minute =>
-      concatGuardSleepTimes(guardArray)
-        .map(guard =>
-          totalSleepDuringMinute(minute, guard) > 15 ? totalSleepDuringMinute(minute, guard) : ".")
-    ),
+    uniqueTypes
+      .map(unique =>
+        getCollapsedPolymer(
+          input
+            .replace(new RegExp(unique.toLowerCase(), "g"), "")
+            .replace(new RegExp(unique.toUpperCase(), "g"), "")))
+      .map(e => e.length).sort((a, b) => a - b)[0],
 
     "time:",
     new Date() - startTime,
