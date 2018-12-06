@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+
+<head>
+  <script src="../../help.js"></script>
+</head>
+
+<body style="background:#333;color:aliceblue;">
+  <pre>check console</pre>
+</body>
+<script>
+  "use strict";
+
+  const input = `249, 60
+150, 332
+174, 83
+287, 329
+102, 338
+111, 201
+259, 96
+277, 161
+143, 288
+202, 311
+335, 55
+239, 148
+137, 224
+48, 214
+186, 87
+282, 334
+147, 157
+246, 191
+241, 181
+286, 129
+270, 287
+79, 119
+189, 263
+324, 280
+316, 279
+221, 236
+327, 174
+141, 82
+238, 317
+64, 264
+226, 151
+110, 110
+336, 194
+235, 333
+237, 55
+230, 137
+267, 44
+258, 134
+223, 42
+202, 76
+159, 135
+229, 238
+197, 83
+173, 286
+123, 90
+314, 165
+140, 338
+347, 60
+108, 76
+268, 329`;
+
+  const testInput = `1, 1
+1, 6
+8, 3
+3, 4
+5, 5
+8, 9`;
+
+
+  const getManhattanDistance = (coords1, coords2) =>
+    Math.abs(coords2.y - coords1.y) + Math.abs(coords2.x - coords1.x);
+
+  const getArea = inputArr => {
+    const maxX =
+      Math.max(...inputArr.map(input => input.x))
+    const maxY =
+      Math.max(...inputArr.map(input => input.y))
+    console.log(maxX, maxY);
+    return [...new Array(maxY + 2)].map(line => [...new Array(maxX + 2)]);
+  }
+
+
+  const fillArea = (area, inputArray) =>
+    area
+      .map((row, y) =>
+        row.map((col, x) => {
+
+          const distanceList = inputArray
+            .map(coords => ({
+              letter: coords.letter,
+              distance: getManhattanDistance({ x, y }, coords)
+            }))
+            .sort((a, b) => a.distance - b.distance);
+          return distanceList[0].distance === distanceList[1].distance ? "." :
+            distanceList[0].distance === 0 ?
+              distanceList[0].letter.toUpperCase() :
+              distanceList[0].letter.toLowerCase();
+        })
+      )
+
+  const getLettersTouchingSide = area => {
+    const letters = [];
+    for (let y = 0; y < area.length; y++) {
+      letters.push(area[y][0]);
+      letters.push(area[y][area[y].length - 1])
+    }
+    for (let x = 0; x < area[0].length; x++) {
+      letters.push(area[0][x]);
+      letters.push(area[area.length - 1][x]);
+    }
+    return letters.filter(uniqueShallow).filter(char => char !== ".")
+  }
+
+  const inputIntoArray = str =>
+    str
+      .split("\n")
+      .map(str => str.trim())
+      .map((str, i) => ({
+        x: parseInt(str.split(", ")[0]),
+        y: parseInt(str.split(", ")[1]),
+        letter: String.fromCharCode(97 + i)
+      }))
+
+
+
+  const inputArray = inputIntoArray(input);
+
+
+  let startTime = new Date();
+  const filledArea =
+    fillArea(
+      getArea(inputArray),
+      inputArray)
+
+  const infiniteLetters = getLettersTouchingSide(filledArea)
+
+  const lettersNotInfinite =
+    inputArray
+      .map(input => input.letter)
+      .filter(letter => !infiniteLetters.includes(letter))
+
+
+
+  console.log(
+    "A:\n",
+    lettersNotInfinite
+      .map(nonInf => ({
+        letter: nonInf,
+        amount:
+          filledArea
+            .reduce((acc, row) =>
+              acc + row.filter(letter => letter.toLowerCase() === nonInf).length, 0)
+      })
+      )
+      .sort((a, b) => b.amount - a.amount),
+    "time:",
+    new Date() - startTime,
+    "ms"
+  )
+  startTime = new Date();
+  console.log(
+    "B:",
+
+    "time:",
+    new Date() - startTime,
+    "ms"
+  )
+
+</script>
+</head>
