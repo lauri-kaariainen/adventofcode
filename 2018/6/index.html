@@ -4,8 +4,13 @@
   <script src="../../help.js"></script>
   <style>
     pre {
-      font-size: 2px;
+      font-size: 4px;
 
+    }
+
+    .highlight {
+      background: greenyellow;
+      color: black;
     }
   </style>
 </head>
@@ -101,7 +106,7 @@
             .sort((a, b) => a.distance - b.distance);
           return distanceList[0].distance === distanceList[1].distance ? "." :
             distanceList[0].distance === 0 ?
-              distanceList[0].letter.toUpperCase() :
+              "<span class='highlight'>" + distanceList[0].letter.toUpperCase() + "</span>" :
               distanceList[0].letter.toLowerCase();
         })
       )
@@ -118,7 +123,7 @@
             }))
             .sort((a, b) => a.distance - b.distance);
           return distanceList.reduce((acc, next) => acc + next.distance, 0) < 10000 ? "#" :
-            distanceList[0].distance === 0 ? distanceList[0].letter.toUpperCase() :
+            distanceList[0].distance === 0 ? "<span class='highlight'>" + distanceList[0].letter.toUpperCase() + "</span>" :
               ".";
         })
       )
@@ -144,7 +149,7 @@
       .map((str, i) => ({
         x: parseInt(str.split(", ")[0]),
         y: parseInt(str.split(", ")[1]),
-        letter: String.fromCharCode(97 + i)
+        letter: String.fromCharCode(97 - 24 + i)
       }))
 
 
@@ -190,6 +195,20 @@
     "ms"
   )
   startTime = new Date();
+  document.body.innerHTML =
+    "A:<pre>" +
+    filledArea
+      .map(row =>
+        row.join(" "))
+      .join("<br/>") +
+    "</pre>";
+  document.body.innerHTML +=
+    "<br/>B:<pre>" +
+    filledAreaB
+      .map(row =>
+        row.join(" "))
+      .join("<br/>") +
+    "</pre>";
   console.log(
     "B:",
     filledAreaB.reduce((acc, row) =>
