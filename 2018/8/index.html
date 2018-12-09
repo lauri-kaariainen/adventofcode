@@ -25,7 +25,9 @@
 
   const testInput = `2 3 0 3 10 11 12 1 1 0 1 99 2 1 1 2`;
 
+  const testInput2 = `2 3 0 3 10 11 12 2 1 0 1 99 1 1 0 1 55 44 2 1 1 2`;
 
+  const testInput3 = `2 3 2 1 0 1 99 1 1 0 1 55 44 2 0 3 10 11 12 1 1 2`;
 
   const inputIntoArray = str =>
     str
@@ -34,50 +36,51 @@
       .map(n => parseInt(n))
 
 
-  const flattenMetadataToParent = (nodeArr, parentsArray) => {
-    const metadata = nodeArr.slice(2, nodeArr[1] + 2);
-    parentsArray[parentsArray.length - 1][0]--;
-    parentsArray[parentsArray.length - 1][1] += metadata.length;
-    parentsArray[parentsArray.length - 1].push(...metadata);
-    parentsArray[parentsArray.length - 1].splice(2, metadata.length + 2)
-    return parentsArray[parentsArray.length - 1];
-  }
-
-  const findAndFlattenChild = (nodeArr, parentsArray, firstRun = true) => {
+  const findAndFlattenChild = (nodeArr, parentsArray, metasArray = []) => {
     const numOfChildren = nodeArr[0];
     if (!parentsArray[parentsArray.length - 1][0]) {
       console.error(nodeArr, parentsArray);
       return;
     }
+    if (!parentsArray[parentsArray.length - 1][1]) {
+      console.error(nodeArr, parentsArray);
+      return;
+    }
 
     if (numOfChildren !== 0) {
-      console.log("A")
+      //console.log("A")
       parentsArray.push(parentsArray[parentsArray.length - 1].splice(2))
       return () => findAndFlattenChild(
         nodeArr.slice(2),
         parentsArray,
-        false
+        metasArray
       )
     }
     else {  //numofchildren === 0s
       console.log("B", parentsArray.length, nodeArr.length)
-      flattenMetadataToParent(nodeArr, parentsArray);
+      metasArray.push(nodeArr.slice(2, 2 + nodeArr[1]))
+      parentsArray[parentsArray.length - 1].splice(2, 2 + nodeArr[1])
+      parentsArray[parentsArray.length - 1][0] -= 1;
+      //flattenMetadataToParent(nodeArr, parentsArray);
       if (parentsArray.length > 1) {
         parentsArray[parentsArray.length - 2] =
           parentsArray[parentsArray.length - 2].concat(
             parentsArray[parentsArray.length - 1])
         parentsArray.pop();
       }
-      console.log("C")
+      //console.log("C")
       if (parentsArray.length > 1)
         parentsArray = [parentsArray.reduce((acc, next) => acc.concat(next), [])];
       if (parentsArray[0][0] === 0) {
-        return parentsArray[0];
+        metasArray.push(parentsArray[0].slice(2))
+        //console.log("metasArray:", metasArray)
+        return metasArray;
       }
-      console.log("D")
+      //console.log("D")
       return () => findAndFlattenChild(
         parentsArray[0].slice(2),
-        parentsArray, false
+        parentsArray,
+        metasArray
       )
     }
 
@@ -90,17 +93,18 @@
     let metadatas = [];
     metadatas = trampoline(findAndFlattenChild(parentArr[parentArr.length - 1].slice(2), parentArr))
     console.log("metadatas:", metadatas)
-    return metadatas.slice(2);
+    return metadatas;
   }
 
-  const inputArray = inputIntoArray(testInput);
+  const inputArray = inputIntoArray(input);
 
   let startTime = new Date()
   console.log(
     "A:\n",
-    mapChildren(inputArray).reduce((acc, next) => acc + next, 0)
+    mapChildren(inputArray)
+      .reduce((a, b) => a.concat(b), [])
+      .reduce((a, b) => a + b, 0)
     ,
-    mapChildren(inputArray),
     "time:",
     new Date() - startTime,
     "ms"
