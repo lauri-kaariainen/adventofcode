@@ -32,7 +32,6 @@
 
   const placeMarbles = (
     currentNode,
-    linkedList,
     pointsArr,
     marbleLimit,
     marbleToBePlaced = 1) => {
@@ -69,7 +68,6 @@
 
       return () => placeMarbles(
         currentNode,
-        linkedList,
         pointsArr,
         marbleLimit,
         marbleToBePlaced + 1,
@@ -91,7 +89,6 @@
 
     return () => placeMarbles(
       targetNode,
-      linkedList,
       pointsArr,
       marbleLimit,
       marbleToBePlaced + 1,
@@ -99,11 +96,14 @@
 
   }
 
-  const linkedList = new LinkedList()
-  linkedList.addToHead(0);
-  //link the list
-  linkedList.tail.next = linkedList.head;
-  linkedList.head.prev = linkedList.tail;
+  const createLinkedList = () => {
+    const linkedList = new LinkedList()
+    linkedList.addToHead(0);
+    //link the list
+    linkedList.tail.next = linkedList.head;
+    linkedList.head.prev = linkedList.tail;
+    return linkedList;
+  }
 
   const createPlayersArray = playerAmount =>
     [...new Array(playerAmount)]
@@ -114,8 +114,7 @@
     "A:\n",
     trampoline(
       placeMarbles(
-        linkedList.head,
-        linkedList,
+        createLinkedList().head,
         createPlayersArray(playerAmount),
         lastMarble,
       )
@@ -130,8 +129,7 @@
     "B:",
     trampoline(
       placeMarbles(
-        linkedList.head,
-        linkedList,
+        createLinkedList().head,
         createPlayersArray(playerAmount),
         lastMarble * 100,
       )
