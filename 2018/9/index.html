@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+
+<head>
+  <script src="../../help.js"></script>
+  <style>
+    pre {
+      /* font-size: 4px; */
+
+    }
+
+    .highlight {
+      background: greenyellow;
+      color: black;
+    }
+  </style>
+</head>
+
+<body style="background:#333;color:aliceblue;">
+  <pre>check console</pre>
+</body>
+<script>
+  "use strict";
+
+  const input = `416 players; last marble is worth 71617 points`;
+
+  const testInput = `10 players; last marble is worth 1618 points`;
+
+  const playerAmount = 416;
+  const lastMarble = 71617;
+
+
+  const placeMarbles = (
+    marbleArr = [0],
+    pointsArr,
+    marbleLimit,
+    currPlayerId = 1,
+    marbleToBePlaced = 1,
+    currentMarbleIndex = 0) => {
+
+    const nextPlayerId =
+      pointsArr.find(plr => plr.id === currPlayerId + 1) ?
+        currPlayerId + 1 :
+        1;
+
+
+    if (marbleToBePlaced > marbleLimit) {
+      console.log("finished", pointsArr, marbleArr);
+      return pointsArr;
+    }
+
+    const currPlayerPointsArrayIndex =
+      pointsArr.findIndex(plr => plr.id === currPlayerId)
+
+
+    if (marbleToBePlaced % 23 === 0) {
+      pointsArr[currPlayerPointsArrayIndex].points +=
+        marbleToBePlaced;
+
+      if (currentMarbleIndex > 6) {
+        pointsArr[currPlayerPointsArrayIndex].points +=
+          marbleArr[currentMarbleIndex - 7];
+        marbleArr.splice(currentMarbleIndex - 7, 1);
+      }
+      else {
+
+        pointsArr[currPlayerPointsArrayIndex].points +=
+          marbleArr[marbleArr.length + currentMarbleIndex - 7];
+        marbleArr.splice(marbleArr.length + currentMarbleIndex - 7, 1);
+      }
+
+      if (isNaN(pointsArr[currPlayerPointsArrayIndex].points)) {
+
+        console.error(marbleToBePlaced, marbleArr, marbleToBePlaced, currentMarbleIndex)
+      }
+
+      // console.log(
+      //   `[${pointsArr.find(plr => plr.id === currPlayerId).id}] ` +
+      //   marbleArr
+      //     .map(num => num === marbleToBePlaced ? "(" + num + ")" : num).join(" "))
+
+      return () => placeMarbles(
+        marbleArr,
+        pointsArr,
+        marbleLimit,
+        nextPlayerId,
+        marbleToBePlaced + 1,
+        currentMarbleIndex > 6 ?
+          currentMarbleIndex - 7 :
+          currentMarbleIndex + marbleArr.length - 7 + 1
+      )
+    }
+
+    const tempMarbleIndex =
+      marbleToBePlaced <= 2 ? 1 :
+        ((currentMarbleIndex + 2) % (marbleArr.length));
+    const newMarbleIndex =
+      tempMarbleIndex === 0 ? marbleArr.length : tempMarbleIndex
+
+
+
+    const newMarbleArr =
+      insert(
+        marbleArr,
+        newMarbleIndex,
+        marbleToBePlaced)
+
+    // console.log(
+    //   `[${pointsArr.find(plr => plr.id === currPlayerId).id}] ` +
+    //   newMarbleArr
+    //     .map(num => num === marbleToBePlaced ? "(" + num + ")" : num).join(" "))
+
+
+    return () => placeMarbles(
+      newMarbleArr,
+      pointsArr,
+      marbleLimit,
+      nextPlayerId,
+      marbleToBePlaced + 1,
+      newMarbleIndex
+    )
+
+  }
+
+  const createPlayersArray = playerAmount =>
+    [...new Array(playerAmount)]
+      .map((p, i) => ({ id: i + 1, points: 0 }));
+
+  let startTime = new Date()
+  console.log(
+    "A:\n",
+    trampoline(
+      placeMarbles(
+        [0],
+        createPlayersArray(playerAmount),
+        lastMarble,
+      )
+    ).map(plr => plr.points).sort((a, b) => b - a),
+    "time:",
+    new Date() - startTime,
+    "ms"
+  )
+  startTime = new Date();
+
+  console.log(
+    "B:",
+
+    "time:",
+    new Date() - startTime,
+    "ms"
+  )
+
+</script>
+</head>
