@@ -100,3 +100,7 @@ const flatten = arr =>
       flat.concat(Array.isArray(toFlatten) ? flatten(toFlatten) : toFlatten),
     []
   );
+
+const insert = function (array, i, ...rest) {
+  return array.slice(0, i).concat(rest, array.slice(i));
+}
