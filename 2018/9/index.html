@@ -2,6 +2,7 @@
 
 <head>
   <script src="../../help.js"></script>
+  <script src="linkedlist.js"></script>
   <style>
     pre {
       /* font-size: 4px; */
@@ -30,96 +31,79 @@
 
 
   const placeMarbles = (
-    marbleArr = [0],
+    currentNode,
+    linkedList,
     pointsArr,
     marbleLimit,
-    currPlayerId = 1,
-    marbleToBePlaced = 1,
-    currentMarbleIndex = 0) => {
+    marbleToBePlaced = 1) => {
 
-    const nextPlayerId =
-      pointsArr.find(plr => plr.id === currPlayerId + 1) ?
-        currPlayerId + 1 :
-        1;
+    const handleMarbleScore = () => {
 
 
-    if (marbleToBePlaced > marbleLimit) {
-      console.log("finished", pointsArr, marbleArr);
-      return pointsArr;
-    }
-
-    const currPlayerPointsArrayIndex =
-      pointsArr.findIndex(plr => plr.id === currPlayerId)
+      const currPlayerPointsArrayIndex =
+        pointsArr.findIndex(plr => plr.id === (marbleToBePlaced % pointsArr.length) + 1)
 
 
-    if (marbleToBePlaced % 23 === 0) {
       pointsArr[currPlayerPointsArrayIndex].points +=
         marbleToBePlaced;
 
-      if (currentMarbleIndex > 6) {
-        pointsArr[currPlayerPointsArrayIndex].points +=
-          marbleArr[currentMarbleIndex - 7];
-        marbleArr.splice(currentMarbleIndex - 7, 1);
-      }
-      else {
+      const removableNode =
+        currentNode
+          .prev
+          .prev
+          .prev
+          .prev
+          .prev
+          .prev
 
-        pointsArr[currPlayerPointsArrayIndex].points +=
-          marbleArr[marbleArr.length + currentMarbleIndex - 7];
-        marbleArr.splice(marbleArr.length + currentMarbleIndex - 7, 1);
-      }
+
+      pointsArr[currPlayerPointsArrayIndex].points += removableNode.value;
+      currentNode = removableNode.prev;
+      removableNode.remove();
+
 
       if (isNaN(pointsArr[currPlayerPointsArrayIndex].points)) {
 
-        console.error(marbleToBePlaced, marbleArr, marbleToBePlaced, currentMarbleIndex)
+        console.error(marbleToBePlaced, marbleToBePlaced)
       }
 
-      // console.log(
-      //   `[${pointsArr.find(plr => plr.id === currPlayerId).id}] ` +
-      //   marbleArr
-      //     .map(num => num === marbleToBePlaced ? "(" + num + ")" : num).join(" "))
-
       return () => placeMarbles(
-        marbleArr,
+        currentNode,
+        linkedList,
         pointsArr,
         marbleLimit,
-        nextPlayerId,
         marbleToBePlaced + 1,
-        currentMarbleIndex > 6 ?
-          currentMarbleIndex - 7 :
-          currentMarbleIndex + marbleArr.length - 7 + 1
+
       )
     }
 
-    const tempMarbleIndex =
-      marbleToBePlaced <= 2 ? 1 :
-        ((currentMarbleIndex + 2) % (marbleArr.length));
-    const newMarbleIndex =
-      tempMarbleIndex === 0 ? marbleArr.length : tempMarbleIndex
+    if (marbleToBePlaced > marbleLimit) {
+      return pointsArr;
+    }
 
+    if (marbleToBePlaced % 23 === 0) {
+      return handleMarbleScore();
+    }
 
+    const targetNode = currentNode.next.next;
 
-    const newMarbleArr =
-      insert(
-        marbleArr,
-        newMarbleIndex,
-        marbleToBePlaced)
-
-    // console.log(
-    //   `[${pointsArr.find(plr => plr.id === currPlayerId).id}] ` +
-    //   newMarbleArr
-    //     .map(num => num === marbleToBePlaced ? "(" + num + ")" : num).join(" "))
-
+    targetNode.appendNext(marbleToBePlaced);
 
     return () => placeMarbles(
-      newMarbleArr,
+      targetNode,
+      linkedList,
       pointsArr,
       marbleLimit,
-      nextPlayerId,
       marbleToBePlaced + 1,
-      newMarbleIndex
     )
 
   }
+
+  const linkedList = new LinkedList()
+  linkedList.addToHead(0);
+  //link the list
+  linkedList.tail.next = linkedList.head;
+  linkedList.head.prev = linkedList.tail;
 
   const createPlayersArray = playerAmount =>
     [...new Array(playerAmount)]
@@ -130,11 +114,12 @@
     "A:\n",
     trampoline(
       placeMarbles(
-        [0],
+        linkedList.head,
+        linkedList,
         createPlayersArray(playerAmount),
         lastMarble,
       )
-    ).map(plr => plr.points).sort((a, b) => b - a),
+    ).map(plr => plr.points).sort((a, b) => b - a)[0],
     "time:",
     new Date() - startTime,
     "ms"
@@ -143,7 +128,14 @@
 
   console.log(
     "B:",
-
+    trampoline(
+      placeMarbles(
+        linkedList.head,
+        linkedList,
+        createPlayersArray(playerAmount),
+        lastMarble * 100,
+      )
+    ).map(plr => plr.points).sort((a, b) => b - a)[0],
     "time:",
     new Date() - startTime,
     "ms"
