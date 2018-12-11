@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+
+<head>
+  <script src="../../help.js"></script>
+  <style>
+    pre {
+      font-size: 7px;
+
+    }
+
+    .highlight {
+      background: greenyellow;
+      color: black;
+    }
+  </style>
+</head>
+
+<body style="background:#333;color:aliceblue;">
+  <pre>check console</pre>
+</body>
+<script>
+  "use strict";
+
+  const input = 5535;
+
+  const testInput = 18;
+
+  const getGrid = () =>
+    [... new Array(300)]
+      .map(row => [...new Array(300)].map(l => "."))
+
+
+  const getPowerLevel = (x, y, serialNum) =>
+    parseInt(("0" +
+      ((((x + 10)
+        * y)
+        + serialNum)
+        * (x + 10))
+    ).slice(-3, -2)) - 5
+
+  const mapPowerLevels = (grid, serialNum) =>
+    grid.map((row, y) =>
+      row.map((cell, x) =>
+        getPowerLevel(x, y, serialNum)))
+
+  const calculateTotalPowers = (powerMatrix) =>
+    powerMatrix
+      .map((row, y) =>
+        row.map((cell, x) => {
+          if (powerMatrix[y + 1] === undefined || powerMatrix[y + 1][x + 1] === undefined)
+            return 0;
+          const valueArr =
+            get8(x + 1, y + 1, powerMatrix)
+              .concat(powerMatrix[y + 1][x + 1]);
+
+          if (valueArr.length === 9)
+            return valueArr.reduce(reduceSum, 0);
+          else
+            return 0;
+        }
+        ))
+
+  document.body.innerHTML =
+    "<pre>" +
+    calculateTotalPowers(mapPowerLevels(
+      getGrid(),
+      input
+    )).map((row, i) =>
+      i + (i < 10 ? "  : " : i < 100 ? " : " : ": ") +
+      row.map(letter =>
+        letter >= 0 ?
+          letter >= 10 ?
+            letter >= 25 ? "<span class='highlight'>" + letter + "</span>" :
+              letter :
+            " " + letter :
+          "  ").join(" ")).join("<br/>") +
+    "</pre>"
+
+  let startTime = new Date()
+  console.log(
+    "A:\n",
+    calculateTotalPowers(
+      mapPowerLevels(
+        getGrid(),
+        input)
+    ),
+
+
+    "time:",
+    new Date() - startTime,
+    "ms"
+  )
+  startTime = new Date();
+
+
+
+  console.log(
+    "B:\n",
+
+    "time:",
+    new Date() - startTime,
+    "ms"
+  )
+  startTime = new Date();
+
+
+</script>
+</head>
