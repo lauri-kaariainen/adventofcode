@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+
+<head>
+  <script src="../../help.js"></script>
+  <style>
+    pre {
+      /* font-size: 4px; */
+
+    }
+
+    .highlight {
+      background: greenyellow;
+      color: black;
+    }
+  </style>
+</head>
+
+<body style="background:#333;color:aliceblue;">
+  <pre>check console</pre>
+</body>
+<script>
+  "use strict";
+
+  const input = `initial state: ###..#...####.#..###.....####.######.....##.#####.##.##..###....#....##...##...##.#..###..#.#...#..#
+
+.###. => .
+..#.. => .
+.#### => .
+.##.. => #
+#.#.# => .
+..#.# => #
+#.##. => #
+#...# => #
+..... => .
+##..# => #
+.#.#. => .
+..##. => #
+##.#. => .
+###.. => .
+.#... => #
+..### => .
+#..## => .
+...#. => .
+###.# => #
+.##.# => .
+.#.## => .
+....# => .
+##### => .
+#.#.. => #
+...## => #
+#.... => .
+#.### => #
+##... => #
+.#..# => .
+####. => .
+#..#. => #
+##.## => #`;
+
+  const testInput = `initial state: #..#.#..##......###...###
+
+...## => #
+..#.. => #
+.#... => #
+.#.#. => #
+.#.## => #
+.##.. => #
+.#### => #
+#.#.# => #
+#.### => #
+##.#. => #
+##.## => #
+###.. => #
+###.# => #
+####. => #`;
+
+  const inputToArray = str =>
+    str
+      .split("\n\n")[1]
+      .split("\n")
+      .map(line => ({
+        result: line.split("=> ")[1],
+        input: line.split(" =>")[0]
+      }))
+
+
+  const iterateGeneration = (stateArr, inputArray) =>
+    [".", ".", ".", "."].concat(stateArr).concat([".", ".", ".", "."])
+      .map((letter, i, arr) => {
+        if (i > arr.length - 2 || i < 2)
+          return ".";
+        const currArr = (arr.slice(i - 2, i - 2 + 5));
+        const matchingResult = inputArray
+          .find(inp =>
+            inp.input === currArr.join(""))
+        return matchingResult ?
+          matchingResult.result : ".";
+      })
+
+  const inputArray = inputToArray(input)
+
+  const testState =
+    "#..#.#..##......###...###";
+
+  const inputState =
+    "###..#...####.#..###.....####.######.....##.#####.##.##..###....#....##...##...##.#..###..#.#...#..#"
+
+
+  let result = inputState.split("");
+  const generations = 20;
+  for (let i = 0; i < generations; i++) {
+    result = iterateGeneration(result, inputArray)
+    document.body.innerHTML += "<pre>" +
+      (i > 9 ? i : " " + i) + ":" +
+      result
+        .join("")
+        .replace(/^\.+/, "")
+        .replace(/\.+$/, "")
+        .split(" ");
+
+    + "</pre>"
+    console.log(i > 9 ? i : " " + i, ":", result.join(" "))
+
+  }
+
+  const zeroPosition = generations * 4 + 0;
+  const positionsOfPlants =
+    result.reduce((acc, next, i) =>
+      next === "#" ? acc.concat(i - zeroPosition) : acc, [])
+
+  //console.log(result)
+  let startTime = new Date()
+  console.log(
+    "A:\n",
+    positionsOfPlants.reduce(reduceSum),
+    "time:",
+    new Date() - startTime,
+    "ms"
+  )
+  startTime = new Date();
+
+  console.log(
+    "B:",
+
+    //,
+    "time:",
+    new Date() - startTime,
+    "ms"
+  )
+
+</script>
