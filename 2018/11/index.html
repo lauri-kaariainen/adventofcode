@@ -60,30 +60,123 @@
         }
         ))
 
-  document.body.innerHTML =
-    "<pre>" +
-    calculateTotalPowers(mapPowerLevels(
-      getGrid(),
-      input
-    )).map((row, i) =>
-      i + (i < 10 ? "  : " : i < 100 ? " : " : ": ") +
-      row.map(letter =>
-        letter >= 0 ?
-          letter >= 10 ?
-            letter >= 25 ? "<span class='highlight'>" + letter + "</span>" :
-              letter :
-            " " + letter :
-          "  ").join(" ")).join("<br/>") +
-    "</pre>"
+  /*B:*/
+  /*
+  2    3  [4]  5  6 
+  3    2  [1]  2  3
+  [4] [2] [1]  2  3
+  0    2   5   6  6
+  1    2   4   5  6
+  */
+  const getValuesFromSides = (startX, startY, matrix, sideLength) => {
+    const returnable = [];
+    if (sideLength === 0)
+      return [];
+    for (let y = 0; y < sideLength; y++) {
+      returnable.push(matrix[startY + y][startX + sideLength - 1])
+    }
+    for (let x = 0; x < sideLength - 1; x++) {
+      returnable.push(matrix[startY + sideLength - 1][startX + x])
+    }
+    return returnable;
+  }
+
+  const calculateTotalPowersForB = (powerMatrix) =>
+    powerMatrix
+      .map((row, y) =>
+        row.map((cell, x) => {
+          const squareSideLimit =
+            x >= y ? 300 - x : 300 - y;
+          let highestVal = -99999999999999;
+          //const maxVal =
+          [...new Array(squareSideLimit)]
+            .map((e, i) => i + 1)
+            .map((num, i, arr) =>
+              getValuesFromSides(x, y, powerMatrix, num)
+                .reduce((acc, next, i, arr) =>
+                  reduceSum(acc, next, i, arr), 0)
+            )
+            .reduce((acc, next, i, arr) => {
+              const newVal = next + (acc.length ? acc[acc.length - 1] : 0);
+              acc.push(newVal);
+              if (newVal > highestVal) {
+                highestVal = newVal;
+                //console.log(highestVal, i)
+              }
+              return acc
+            }, []);
+          if (!(y % 10) && x === 0)
+            console.log(highestVal)
+          return highestVal;
+
+        }
+        ))
+  // <!-- 
+  //   document.body.innerHTML =
+  //     "<pre>" +
+  //     calculateTotalPowersForB(mapPowerLevels(
+  //       getGrid(),
+  //       input
+  //     )).map((row, i) =>
+  //       i + (i < 10 ? "  : " : i < 100 ? " : " : ": ") +
+  //       row.map(letter =>
+  //         letter > -10 ?
+  //           letter >= 0 ?
+  //             letter >= 10 ?
+  //               letter >= 250 ? " <span class='highlight'>" + letter + "</span>" :
+  //                 " " + letter :
+  //               "  " + letter :
+  //             " " + letter :
+  //           "" + letter).join(" ")).join("<br/>") +
+  //     "</pre>" -->
 
   let startTime = new Date()
+
+  const powerLevelsGrid =
+    mapPowerLevels(getGrid(),
+      input)
+
+  console.log("powerlevels", new Date() - startTime, "ms")
+
+  const gridB =
+    calculateTotalPowersForB(
+      powerLevelsGrid
+    )
+  console.log("powerlevelsB:", new Date() - startTime, "ms")
+
+  const findBiggestCellCombo = (totalArray) => {
+    const maxValueObj = totalArray
+      .map((row, y) => ({
+        line: y,
+        value: Math.max(...row)
+      }))
+      .sort((a, b) => b.value - a.value)[0];
+
+    return totalArray[maxValueObj.line]
+      .reduce((acc, num, i) =>
+        num === maxValueObj.value ? { x: i, y: maxValueObj.line, value: maxValueObj.value } : acc, {});
+
+  }
+
+  const Bcombo = findBiggestCellCombo(gridB);
+
+  const Bstep =
+    [...new Array(300 - Math.max(Bcombo.x, Bcombo.y))]
+      .map((e, i) => i)
+      .map(num => getValuesFromSides(Bcombo.x, Bcombo.y, powerLevelsGrid, num)
+        .reduce(reduceSum, 0))
+      .reduce((acc, next, i, arr) =>
+        acc[i - 1] !== undefined ? acc.concat(acc[i - 1] + next) : acc.concat(next), [])
+
+  console.log(Bstep)
+
   console.log(
-    "A:\n",
-    calculateTotalPowers(
-      mapPowerLevels(
-        getGrid(),
-        input)
-    ),
+    // "A:\n",
+    // calculateTotalPowers(
+    //   mapPowerLevels(
+    //     getGrid(),
+    //     input)
+    // ),
 
 
     "time:",
@@ -96,7 +189,13 @@
 
   console.log(
     "B:\n",
-
+    findBiggestCellCombo(gridB),
+    // [...new Array(300 - 269)]
+    //     .map((e, i) => i)
+    //   .map(num => getValuesFromSides(90, 269, powerArray, num)
+    //     .reduce(reduceSum, 0))
+    //   .reduce((acc, next, i, arr) =>
+    //     acc[i - 1] !== undefined ? acc.concat(acc[i - 1] + next) : acc.concat(next), []),
     "time:",
     new Date() - startTime,
     "ms"
