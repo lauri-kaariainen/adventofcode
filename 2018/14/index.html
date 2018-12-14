@@ -24,7 +24,7 @@
 
   const input = 157901
 
-  const testInput = 2018;
+  const testInput = 92510;
 
 
   const getInitializedLinkedList = () => {
@@ -39,13 +39,17 @@
   }
 
   const makeRecipe = (linkedList, currentNode1, currentNode2, limit, lengthOfList = 2) => {
-    if (lengthOfList > limit) {
-
-      linkedList.removeTail();
-      return linkedList;
+    if (!(lengthOfList % 50000))
+      console.log(lengthOfList)
+    if (typeof limit === "number") {
+      if (lengthOfList > limit) {
+        linkedList.removeTail();
+        return linkedList;
+      }
+      if (lengthOfList === limit)
+        return linkedList;
     }
-    if (lengthOfList === limit)
-      return linkedList;
+
     const newValStr = "" + (currentNode1.value + currentNode2.value);
     newValStr.length === 1 ?
       linkedList.addToTail(parseInt(newValStr)) :
@@ -60,19 +64,33 @@
     for (let i = 0; i < currentNode2.value + 1; i++)
       newNode2 = newNode2.next;
 
-    const values = [];
-    let node = linkedList.head;
-    // do {
-    //   //console.log(node.value);
-    //   values.push(
-    //     node === newNode1 ? "(" + node.value + ")" :
-    //       node === newNode2 ? "[" + node.value + "]" :
-    //         node.value);
-    //   node = node.next;
-    // } while (node !== linkedList.head)
+    let values = [];
+    let node = linkedList.tail;
+    for (let i = 0; i < limit.length + 1; i++) {
+
+      //console.log(node.value);
+      values =
+        [node.value].concat(values);
+
+      node = node.prev;
+    }
+
+    if (typeof limit === "string")
+      if (values.join("").includes(limit)) {
+        if (values.slice(-limit.length).join("") === limit)
+          return lengthOfList - limit.length + newValStr.length;
+        else
+          return lengthOfList - limit.length + newValStr.length - 1;
+      }
     // console.log(values.join(" "));
 
-    return () => makeRecipe(linkedList, newNode1, newNode2, limit, lengthOfList + newValStr.length)
+    return () =>
+      makeRecipe(
+        linkedList,
+        newNode1,
+        newNode2,
+        limit,
+        lengthOfList + newValStr.length)
   }
 
 
@@ -100,15 +118,18 @@
     new Date() - startTime,
     "ms"
   )
-
   startTime = new Date()
+
+  const initializedLinkedListForB = getInitializedLinkedList();
+  const Blist = trampoline(makeRecipe(
+    initializedLinkedListForB,
+    initializedLinkedListForB.head,
+    initializedLinkedListForB.tail,
+    "" + input));
+
   console.log(
     "B:",
-    tickForwardB(
-      getMap(input),
-      getCarts(input),
-      650000
-    ),
+    Blist,
     //,
     "time:",
     new Date() - startTime,
