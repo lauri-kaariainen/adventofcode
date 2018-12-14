@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+
+<head>
+  <script src="../../help.js"></script>
+  <script src="../../linkedlist.js"></script>
+  <style>
+    pre {
+      /* font-size: 4px; */
+
+    }
+
+    .highlight {
+      background: greenyellow;
+      color: black;
+    }
+  </style>
+</head>
+
+<body style="background:#333;color:aliceblue;">
+  <pre>check console</pre>
+</body>
+<script>
+  "use strict";
+
+  const input = 157901
+
+  const testInput = 2018;
+
+
+  const getInitializedLinkedList = () => {
+    const initializedLinkedList = new LinkedList();
+    initializedLinkedList.addToHead(3);
+    initializedLinkedList.addToTail(7);
+
+    //circular list
+    initializedLinkedList.head.prev = initializedLinkedList.tail;
+    initializedLinkedList.tail.next = initializedLinkedList.head;
+    return initializedLinkedList;
+  }
+
+  const makeRecipe = (linkedList, currentNode1, currentNode2, limit, lengthOfList = 2) => {
+    if (lengthOfList > limit) {
+
+      linkedList.removeTail();
+      return linkedList;
+    }
+    if (lengthOfList === limit)
+      return linkedList;
+    const newValStr = "" + (currentNode1.value + currentNode2.value);
+    newValStr.length === 1 ?
+      linkedList.addToTail(parseInt(newValStr)) :
+      (linkedList.addToTail(parseInt(newValStr[0])) &&
+        linkedList.addToTail(parseInt(newValStr[1])));
+
+    let newNode1 = currentNode1;
+    for (let i = 0; i < currentNode1.value + 1; i++)
+      newNode1 = newNode1.next;
+
+    let newNode2 = currentNode2;
+    for (let i = 0; i < currentNode2.value + 1; i++)
+      newNode2 = newNode2.next;
+
+    const values = [];
+    let node = linkedList.head;
+    // do {
+    //   //console.log(node.value);
+    //   values.push(
+    //     node === newNode1 ? "(" + node.value + ")" :
+    //       node === newNode2 ? "[" + node.value + "]" :
+    //         node.value);
+    //   node = node.next;
+    // } while (node !== linkedList.head)
+    // console.log(values.join(" "));
+
+    return () => makeRecipe(linkedList, newNode1, newNode2, limit, lengthOfList + newValStr.length)
+  }
+
+
+
+  let startTime = new Date()
+  const initializedLinkedListForA = getInitializedLinkedList();
+  const Alist = trampoline(makeRecipe(
+    initializedLinkedListForA,
+    initializedLinkedListForA.head,
+    initializedLinkedListForA.tail,
+    input + 10));
+
+  const Aresult = [];
+  let node = Alist.tail;
+  for (let i = 0; i < 10; i++) {
+    Aresult.push(node.value)
+    node = node.prev;
+  }
+  Aresult.reverse();
+  console.log(
+    "A:",
+    Aresult.join(""),
+    //,
+    "time:",
+    new Date() - startTime,
+    "ms"
+  )
+
+  startTime = new Date()
+  console.log(
+    "B:",
+    tickForwardB(
+      getMap(input),
+      getCarts(input),
+      650000
+    ),
+    //,
+    "time:",
+    new Date() - startTime,
+    "ms"
+  )
+
+
+</script>
