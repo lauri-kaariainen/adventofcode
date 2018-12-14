@@ -329,9 +329,9 @@ v
       .map(cart => "x" + cart.x + "y" + cart.y)
       .filter((str, i, arr) => !uniqueShallow(str, i, arr));
 
-  const tickForward = (matrix, carts) => {
-    for (let i = 0; i < 200; i++) {
-      console.log("i:", i)
+  const tickForward = (matrix, carts, limit) => {
+    for (let i = 0; i < limit; i++) {
+      //console.log("i:", i)
       carts = carts
         .sort((cartA, cartB) => {
           if (cartA.y - cartB.y !== 0)
@@ -348,8 +348,47 @@ v
           return cart;
 
         })
-      // if (i > 125)
-      //   printMap(matrix, carts)
+
+
+    }
+    return carts;
+  }
+
+
+  const tickForwardB = (matrix, carts, limit) => {
+    for (let tick = 0; tick < limit; tick++) {
+      if (!(tick % 100))
+        console.log("tick:", tick)
+      const cartsToBeRemoved = [];
+      carts = carts
+        .sort((cartA, cartB) => {
+          if (cartA.y - cartB.y !== 0)
+            return cartA.y - cartB.y;
+          else
+            return cartA.x - cartB.x;
+        })
+        .map((cart, i, arr) => {
+
+          handleMovementAndReturnCart(cart, matrix)
+
+          const collisions = getCollisions(carts);
+          if (collisions.length) {
+
+            console.log("tick:", tick, collisions, carts.length)
+
+            collisions.forEach(coll =>
+              carts.forEach(cart => "x" + cart.x + "y" + cart.y !== coll ? null : cart.markForDeletion = true))
+          }
+          return cart;
+
+        })
+      carts = carts.filter(cart => !cart.markForDeletion)
+      if (carts.length === 1) {
+
+        console.log("final:", carts[0])
+        debugger;
+      }
+
 
     }
     return carts;
@@ -363,12 +402,28 @@ v
     "A:",
     tickForward(
       getMap(input),
-      getCarts(input)
+      getCarts(input),
+      150
     ),
     //,
     "time:",
     new Date() - startTime,
     "ms"
   )
+
+  startTime = new Date()
+  console.log(
+    "B:",
+    tickForwardB(
+      getMap(input),
+      getCarts(input),
+      650000
+    ),
+    //,
+    "time:",
+    new Date() - startTime,
+    "ms"
+  )
+
 
 </script>
