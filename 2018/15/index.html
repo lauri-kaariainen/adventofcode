@@ -97,17 +97,44 @@
 
   }
 
-  const getAdjacentEnemy = (arr, pos1, actorType) => {
-    const adjacentEnemies = find4(pos1.x, pos1.y, arr, actorType === "E" ? "G" : "E")
-    if (adjacentEnemies.length) {
-      return adjacentEnemies
-        .sort(readOrderSort)[0];
-    }
-    else
-      return null;
+  const getAdjacentEnemy = (subjects, pos1, actorType) => {
+    const adjacentEnemies =
+      subjects
+        .filter(otherSub =>
+          otherSub.char !== actorType &&
+          otherSub.y >= pos1.y - 1 &&
+          otherSub.y <= pos1.y + 1)
+        .filter(otherSub =>
+          otherSub.x >= pos1.x - 1 &&
+          otherSub.x <= pos1.x + 1)
+        .filter(otherSub =>
+          otherSub.x === pos1.x ?
+            (otherSub.y === pos1.y - 1 || otherSub.y === pos1.y + 1) :
+            (otherSub.y === pos1.y))
+
+    return adjacentEnemies.length ?
+      adjacentEnemies.sort(readOrderSort)[0] : null;
+
+    // const adjacentEnemies = find4(pos1.x, pos1.y, arr, actorType === "E" ? "G" : "E")
+    // if (adjacentEnemies.length) {
+    //   return adjacentEnemies
+    //     .sort(readOrderSort)[0];
+    // }
+    // else
+    //   return null;
   };
 
-  const getShortestPathBetween = (arr, pos1, pos2) => {
+  const getShortestPathBetween = (map, subjects, pos1, pos2) => {
+    const arr =
+      map.map((line, y) =>
+        line.map((char, x) => {
+          const currentSub =
+            subjects.find(sub => sub.x === x && sub.y === y);
+          if (currentSub)
+            return currentSub.char;
+          else
+            return char;
+        }))
     const graph =
       getAstarGraphBetweenPositions(arr, pos1, pos2);
     return astar.search(
@@ -115,6 +142,14 @@
       graph.grid[pos1.y][pos1.x],
       graph.grid[pos2.y][pos2.x])
   }
+
+  const parseMap = arr =>
+    arr
+      .split("\n")
+      .map(line => line.split(""))
+      .map((line, y) =>
+        line
+          .map(char => char === "." || char === "#" ? char : "."));
 
   const parseSubjects = arr => {
     const subjects = [];
@@ -125,27 +160,65 @@
     return subjects;
   }
 
-  const advanceTick = (arr, subjects, firstRun = true) => {
+  const advanceTick = (arr, subjects, map, firstRun = true, step) => {
     if (firstRun)
       arr = [...arr.map(line => line)];
+    if (step > 20)
+      return subjects;
     subjects = subjects.sort(readOrderSort);
-    subjects.forEach(subject => {
-      console.log(
-        subject.char,
-        subjects
+    subjects.forEach((subject, i) => {
+      if (getAdjacentEnemy(subjects, subject, subject.char)) {
+
+      }
+      else {
+
+        const nextStep = subjects
           //get enemies
           .filter(sub =>
             sub.char !== subject.char)
           //get distances
           .map(enemy =>
-            getShortestPathBetween(arr, subject, enemy))
+            getShortestPathBetween(map, subjects, subject, enemy))
           //astar gives paths in GridNodes, which have x instead of y and vice versa
           .map(path =>
             ({ x: path[0].y, y: path[0].x }))
           //sort first steps
-          .sort(readOrderSort)[0]
-      )
+          .sort(readOrderSort)[0];
+
+        if (nextStep) {
+          subject.x = nextStep.x;
+          subject.y = nextStep.y;
+        }
+
+      }
+      const mapClone = map.map(line => line.map(char => char))
+      subjects.forEach(subject =>
+        mapClone[subject.y][subject.x] = subject.char);
+      console.log(mapClone.map(line => line.join("")).join("\n"))
+
+
+      // console.log(
+      //   subject.char,
+      //   subjects
+      //     //get enemies
+      //     .filter(sub =>
+      //       sub.char !== subject.char)
+      //     //get distances
+      //     .map(enemy =>
+      //       getShortestPathBetween(arr, subject, enemy))
+      //     //astar gives paths in GridNodes, which have x instead of y and vice versa
+      //     .map(path =>
+      //       ({ x: path[0].y, y: path[0].x }))
+      //     //sort first steps
+      //     .sort(readOrderSort)[0]
+      // )
     })
+    return advanceTick(
+      arr,
+      subjects,
+      map,
+      false,
+      step + 1)
   }
 
 
@@ -155,11 +228,14 @@
   */
 
   let startTime = new Date()
+  const arrayForA = inputToArray(testInput);
   console.log(
     "A:",
     advanceTick(
-      inputToArray(testInput),
-      parseSubjects(inputToArray(testInput))
+      arrayForA,
+      parseSubjects(arrayForA),
+      parseMap(arrayForA.map(line => line.join("")).join("\n")),
+
     ),
     //,
     "time:",
