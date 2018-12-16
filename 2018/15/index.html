@@ -97,7 +97,7 @@
 
   }
 
-  const getAdjacentEnemy = (subjects, pos1, actorType) => {
+  const getAdjacentEnemyIndex = (subjects, pos1, actorType) => {
     const adjacentEnemies =
       subjects
         .filter(otherSub =>
@@ -111,9 +111,22 @@
           otherSub.x === pos1.x ?
             (otherSub.y === pos1.y - 1 || otherSub.y === pos1.y + 1) :
             (otherSub.y === pos1.y))
+        //sort by hp
+        .sort((a, b) =>
+          a.hp - b.hp)
+        .filter((sub, i, arr) =>
+          sub.hp <= arr[0].hp)
 
-    return adjacentEnemies.length ?
-      adjacentEnemies.sort(readOrderSort)[0] : null;
+    const sortedNearestEnemy =
+      adjacentEnemies.length ?
+        adjacentEnemies.sort(readOrderSort)[0] :
+        null;
+
+    return sortedNearestEnemy ?
+      subjects.reduce((acc, next, i, arr) =>
+        (next.x === sortedNearestEnemy.x && next.y === sortedNearestEnemy.y) ?
+          i : acc, 0) :
+      null;
 
     // const adjacentEnemies = find4(pos1.x, pos1.y, arr, actorType === "E" ? "G" : "E")
     // if (adjacentEnemies.length) {
@@ -156,19 +169,27 @@
     arr.forEach((line, y) =>
       line.forEach((char, x) =>
         (char === "." || char === "#") ? null :
-          subjects.push({ x: x, y: y, char: char, hp: 200 })))
+          subjects.push({
+            x: x,
+            y: y,
+            char: char,
+            hp: 200,
+            attackPower: 3
+          })))
     return subjects;
   }
 
-  const advanceTick = (arr, subjects, map, firstRun = true, step) => {
+  const advanceTick = (arr, subjects, map, firstRun = true, step = 0) => {
     if (firstRun)
       arr = [...arr.map(line => line)];
     if (step > 20)
       return subjects;
     subjects = subjects.sort(readOrderSort);
     subjects.forEach((subject, i) => {
-      if (getAdjacentEnemy(subjects, subject, subject.char)) {
-
+      const adjacentEnemyIndex =
+        getAdjacentEnemyIndex(subjects, subject, subject.char);
+      if (adjacentEnemyIndex !== null) {
+        subjects[adjacentEnemyIndex].hp -= subject.attackPower;
       }
       else {
 
@@ -179,6 +200,7 @@
           //get distances
           .map(enemy =>
             getShortestPathBetween(map, subjects, subject, enemy))
+          .filter(path => path.length > 1)
           //astar gives paths in GridNodes, which have x instead of y and vice versa
           .map(path =>
             ({ x: path[0].y, y: path[0].x }))
@@ -189,6 +211,13 @@
           subject.x = nextStep.x;
           subject.y = nextStep.y;
         }
+
+        const adjacentEnemyIndexAfterMove =
+          getAdjacentEnemyIndex(subjects, { x: subject.x, y: subject.y }, subject.char);
+        if (adjacentEnemyIndexAfterMove !== null) {
+          subjects[adjacentEnemyIndexAfterMove].hp -= subject.attackPower;
+        }
+
 
       }
       const mapClone = map.map(line => line.map(char => char))
@@ -213,6 +242,7 @@
       //     .sort(readOrderSort)[0]
       // )
     })
+    console.log(subjects.map(sub => (sub.char + ": " + sub.hp)))
     return advanceTick(
       arr,
       subjects,
