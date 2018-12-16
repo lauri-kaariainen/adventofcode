@@ -36,6 +36,28 @@ const find4 = (x, y, matrix, wantedChar) => {
   return returnable;
 };
 
+const get8 = (x, y, matrix) => {
+  const positions = [
+    { y: y - 1, x: x - 1 },
+    { y: y - 1, x: x },
+    { y: y - 1, x: x + 1 },
+    { y: y, x: x + 1 },
+    { y: y + 1, x: x + 1 },
+    { y: y + 1, x: x },
+    { y: y + 1, x: x - 1 },
+    { y: y, x: x - 1 },
+  ]
+  const returnable = [];
+  positions.forEach(pos =>
+    matrix[pos.y] === undefined ? "" :
+      matrix[pos.y][pos.x] === undefined ? "" :
+        returnable
+          .push(matrix[pos.y][pos.x]));
+  return returnable;
+}
+
+
+
 const num2letter = chr => String.fromCharCode(97 + chr);
 
 const hex2bin = (hex, nulls) => {
@@ -104,3 +126,12 @@ const flatten = arr =>
 const insert = function (array, i, ...rest) {
   return array.slice(0, i).concat(rest, array.slice(i));
 }
+
+const reduceSum = (acc, next) =>
+  acc + next;
+
+const reduceMultiply = (acc, next) =>
+  acc * next;
+
+const reduceFlatten = (acc, next) =>
+  acc.concat(next);
