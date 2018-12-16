@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+
+<head>
+  <script src="../../help.js"></script>
+  <!-- <script src='graph.js'></script> -->
+  <script src='astar.js'></script>
+  <style>
+    pre {
+      /* font-size: 4px; */
+
+    }
+
+    .highlight {
+      background: greenyellow;
+      color: black;
+    }
+  </style>
+</head>
+
+<body style="background:#333;color:aliceblue;">
+  <pre>check console</pre>
+</body>
+<script>
+  "use strict";
+
+  const input =
+    `################################
+######......###...##..##########
+######....#G###G..##.G##########
+#####...G##.##.........#########
+##....##..#.##...........#######
+#....#G.......##.........G.#####
+##..##GG....G.................##
+##.......G............#.......##
+###.....G.....G#......E.......##
+##......##....................##
+#.....####......G.....#...######
+#.#########.G....G....#E.#######
+###########...#####......#######
+###########..#######..E.......##
+###########.#########......#.###
+########..#.#########.........##
+#######G....#########........###
+##.##.#.....#########...EE#..#.#
+#...GG......#########.#...##..E#
+##...#.......#######..#...#....#
+###.##........#####......##...##
+###.........................#..#
+####.............##........###.#
+####............##.........#####
+####..##....###.#...#.....######
+########....###..............###
+########..G...##.###...E...E.###
+#########...G.##.###.E....E.####
+#########...#.#######.......####
+#############..########...######
+##############.########.########
+################################`
+
+  const testInput =
+    `#########
+#G..G..G#
+#.......#
+#.......#
+#G..E..G#
+#.......#
+#.......#
+#G..G..G#
+#########`   ;
+
+
+  const inputToArray = str =>
+    str
+      .split('\n')
+      .map(line => line.trim())
+      .map(line => line.split(""));
+
+
+  /*
+  looks like:
+  3 3 3 3 3 3
+  2 2 2 2 2 2
+  1 1 1 1 1 1
+  2 2 2 2 2 2
+  3 3 3 3 3 3
+  4 4 4 4 4 4
+  */
+  const getAstarGraphBetweenPositions = (arr, pos1, pos2) => {
+    const lowerY = pos1.y < pos2.y ? pos1.y : pos2.y;
+    return new Graph(arr.map((line, y) =>
+      line.map((char, x) =>
+        char === "." ? (Math.abs(lowerY - y) + 1) :
+          (x === pos2.x && y === pos2.y) ? 1 :
+            0)));
+
+  }
+
+  const getAdjacentEnemy = (arr, pos1, actorType) => {
+    const adjacentEnemies = find4(pos1.x, pos1.y, arr, actorType === "E" ? "G" : "E")
+    if (adjacentEnemies.length) {
+      return adjacentEnemies
+        .sort((a, b) =>
+          a.y - b.y !== 0 ?
+            a.y - b.y : a.x - b.x)[0];
+    }
+    else
+      return null;
+  };
+
+  const getShortestPathBetween = (arr, pos1, pos2) => {
+    const graph =
+      getAstarGraphBetweenPositions(arr, pos1, pos2);
+    return astar.search(
+      graph,
+      graph.grid[pos1.y][pos1.x],
+      graph.grid[pos2.y][pos2.x])
+  }
+
+  const parseSubjects = arr => {
+    const subjects = [];
+    arr.forEach((line, y) =>
+      line.forEach((char, x) =>
+        (char === "." || char === "#") ? null :
+          subjects.push({ x: x, y: y, char: char, hp: 200 })))
+    return subjects;
+  }
+
+  const advanceTick = (arr, subjects, firstRun = true) => {
+    if (firstRun)
+      arr = [...arr.map(line => line)];
+    subjects = subjects.sort((a, b) =>
+      a.y - b.y !== 0 ? a.y - b.y : a.x - b.x);
+    subjects.forEach(subject => {
+      console.log(subject.char, subjects
+        //get enemies
+        .filter(sub => sub.char !== subject.char)
+        //get distances
+        .map(enemy => getShortestPathBetween(arr, subject, enemy))
+      [0]
+      )
+    })
+  }
+
+
+  /*
+  NOTICE:
+  astar gives paths in GridNodes, which have x instead of y and vice versa
+  */
+
+  let startTime = new Date()
+  console.log(
+    "A:",
+    advanceTick(
+      inputToArray(testInput),
+      parseSubjects(inputToArray(testInput))
+    ),
+    //,
+    "time:",
+    new Date() - startTime,
+    "ms"
+  )
+  startTime = new Date()
+
+
+  console.log(
+    "B:",
+    Blist,
+    //,
+    "time:",
+    new Date() - startTime,
+    "ms"
+  )
+
+
+</script>
