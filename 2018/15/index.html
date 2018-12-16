@@ -68,7 +68,25 @@
 #G..G..G#
 #########`   ;
 
+  const testInput2 =
+    `#######
+#.G...#
+#...EG#
+#.#.#G#
+#..G#E#
+#.....#
+#######`
 
+  const testInput3 =
+    `#########
+#G......#
+#.E.#...#
+#..##..G#
+#...##..#
+#...#...#
+#.G...G.#
+#.....G.#
+#########`
   const inputToArray = str =>
     str
       .split('\n')
@@ -92,7 +110,7 @@
     return new Graph(arr.map((line, y) =>
       line.map((char, x) =>
         char === "." ? (Math.abs(lowerY - y) + 1) :
-          (x === pos2.x && y === pos2.y) ? 1 :
+          (x === pos2.x && y === pos2.y && !pos2.markedForDeath) ? 1 :
             0)));
 
   }
@@ -114,6 +132,8 @@
         //sort by hp
         .sort((a, b) =>
           a.hp - b.hp)
+        //remove dead
+        .filter(sub => sub.hp > 0)
         .filter((sub, i, arr) =>
           sub.hp <= arr[0].hp)
 
@@ -142,7 +162,7 @@
       map.map((line, y) =>
         line.map((char, x) => {
           const currentSub =
-            subjects.find(sub => sub.x === x && sub.y === y);
+            subjects.find(sub => sub.x === x && sub.y === y && !sub.markedForDeath);
           if (currentSub)
             return currentSub.char;
           else
@@ -182,14 +202,20 @@
   const advanceTick = (arr, subjects, map, firstRun = true, step = 0) => {
     if (firstRun)
       arr = [...arr.map(line => line)];
-    if (step > 20)
+    if (step > 2000)
       return subjects;
     subjects = subjects.sort(readOrderSort);
+    // for (let i = 0; i < subjects.length; i++) {
+    //   const subject = subjects[i];
     subjects.forEach((subject, i) => {
+      if (subject.markedForDeath)
+        return;
       const adjacentEnemyIndex =
         getAdjacentEnemyIndex(subjects, subject, subject.char);
       if (adjacentEnemyIndex !== null) {
         subjects[adjacentEnemyIndex].hp -= subject.attackPower;
+        if (subjects[adjacentEnemyIndex].hp <= 0)
+          subjects[adjacentEnemyIndex].markedForDeath = true;
       }
       else {
 
@@ -201,6 +227,9 @@
           .map(enemy =>
             getShortestPathBetween(map, subjects, subject, enemy))
           .filter(path => path.length > 1)
+          .sort((a, b) => a.length - b.length)
+          .filter((path, i, arr) =>
+            path.length === arr[0].length)
           //astar gives paths in GridNodes, which have x instead of y and vice versa
           .map(path =>
             ({ x: path[0].y, y: path[0].x }))
@@ -216,32 +245,32 @@
           getAdjacentEnemyIndex(subjects, { x: subject.x, y: subject.y }, subject.char);
         if (adjacentEnemyIndexAfterMove !== null) {
           subjects[adjacentEnemyIndexAfterMove].hp -= subject.attackPower;
+          if (subjects[adjacentEnemyIndexAfterMove] <= 0) {
+            subjects[adjacentEnemyIndexAfterMove].markedForDeath = true;
+          }
         }
 
 
       }
+
       const mapClone = map.map(line => line.map(char => char))
       subjects.forEach(subject =>
         mapClone[subject.y][subject.x] = subject.char);
       console.log(mapClone.map(line => line.join("")).join("\n"))
 
 
-      // console.log(
-      //   subject.char,
-      //   subjects
-      //     //get enemies
-      //     .filter(sub =>
-      //       sub.char !== subject.char)
-      //     //get distances
-      //     .map(enemy =>
-      //       getShortestPathBetween(arr, subject, enemy))
-      //     //astar gives paths in GridNodes, which have x instead of y and vice versa
-      //     .map(path =>
-      //       ({ x: path[0].y, y: path[0].x }))
-      //     //sort first steps
-      //     .sort(readOrderSort)[0]
-      // )
+
     })
+    //remove dead subjects
+    console.log("removing:", subjects.filter(sub => sub.markedForDeath))
+    subjects = subjects.filter(sub => !sub.markedForDeath)
+
+
+    if (!subjects.filter(sub => sub.char === "G").length ||
+      !subjects.filter(sub => sub.char === "E").length) {
+      console.log("FINISHED!")
+      return { subjects: subjects, steps: step };
+    }
     console.log(subjects.map(sub => (sub.char + ": " + sub.hp)))
     return advanceTick(
       arr,
@@ -258,15 +287,21 @@
   */
 
   let startTime = new Date()
-  const arrayForA = inputToArray(testInput);
+  const arrayForA = inputToArray(testInput3);
+  const resultForA = advanceTick(
+    arrayForA,
+    parseSubjects(arrayForA),
+    parseMap(arrayForA.map(line => line.join("")).join("\n")),
+
+  )
+
   console.log(
     "A:",
-    advanceTick(
-      arrayForA,
-      parseSubjects(arrayForA),
-      parseMap(arrayForA.map(line => line.join("")).join("\n")),
-
-    ),
+    resultForA.subjects,
+    resultForA.subjects
+      .map(sub => sub.hp)
+      .reduce(reduceSum) *
+    resultForA.steps,
     //,
     "time:",
     new Date() - startTime,
