@@ -75,6 +75,8 @@
       .map(line => line.trim())
       .map(line => line.split(""));
 
+  const readOrderSort = (a, b) =>
+    a.y - b.y !== 0 ? a.y - b.y : a.x - b.x;
 
   /*
   looks like:
@@ -99,9 +101,7 @@
     const adjacentEnemies = find4(pos1.x, pos1.y, arr, actorType === "E" ? "G" : "E")
     if (adjacentEnemies.length) {
       return adjacentEnemies
-        .sort((a, b) =>
-          a.y - b.y !== 0 ?
-            a.y - b.y : a.x - b.x)[0];
+        .sort(readOrderSort)[0];
     }
     else
       return null;
@@ -128,15 +128,22 @@
   const advanceTick = (arr, subjects, firstRun = true) => {
     if (firstRun)
       arr = [...arr.map(line => line)];
-    subjects = subjects.sort((a, b) =>
-      a.y - b.y !== 0 ? a.y - b.y : a.x - b.x);
+    subjects = subjects.sort(readOrderSort);
     subjects.forEach(subject => {
-      console.log(subject.char, subjects
-        //get enemies
-        .filter(sub => sub.char !== subject.char)
-        //get distances
-        .map(enemy => getShortestPathBetween(arr, subject, enemy))
-      [0]
+      console.log(
+        subject.char,
+        subjects
+          //get enemies
+          .filter(sub =>
+            sub.char !== subject.char)
+          //get distances
+          .map(enemy =>
+            getShortestPathBetween(arr, subject, enemy))
+          //astar gives paths in GridNodes, which have x instead of y and vice versa
+          .map(path =>
+            ({ x: path[0].y, y: path[0].x }))
+          //sort first steps
+          .sort(readOrderSort)[0]
       )
     })
   }
