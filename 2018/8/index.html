@@ -35,6 +35,13 @@
       .map(str => str.trim())
       .map(n => parseInt(n))
 
+  const calcValuesA = () => {
+
+  }
+
+  const calcValuesB = () => {
+
+  }
 
   const findAndFlattenChild = (nodeArr, parentsArray, metasArray = []) => {
     const numOfChildren = nodeArr[0];
@@ -48,7 +55,7 @@
     }
 
     if (numOfChildren !== 0) {
-      //console.log("A")
+
       parentsArray.push(parentsArray[parentsArray.length - 1].splice(2))
       return () => findAndFlattenChild(
         nodeArr.slice(2),
@@ -56,27 +63,35 @@
         metasArray
       )
     }
-    else {  //numofchildren === 0s
-      console.log("B", parentsArray.length, nodeArr.length)
-      metasArray.push(nodeArr.slice(2, 2 + nodeArr[1]))
+    else {
+      metasArray.push({
+        depth: parentsArray.length,
+        values: nodeArr
+          .slice(2, 2 + nodeArr[1])
+      }
+      )
+
       parentsArray[parentsArray.length - 1].splice(2, 2 + nodeArr[1])
       parentsArray[parentsArray.length - 1][0] -= 1;
-      //flattenMetadataToParent(nodeArr, parentsArray);
+
       if (parentsArray.length > 1) {
         parentsArray[parentsArray.length - 2] =
           parentsArray[parentsArray.length - 2].concat(
             parentsArray[parentsArray.length - 1])
         parentsArray.pop();
       }
-      //console.log("C")
+
       if (parentsArray.length > 1)
         parentsArray = [parentsArray.reduce((acc, next) => acc.concat(next), [])];
+
       if (parentsArray[0][0] === 0) {
-        metasArray.push(parentsArray[0].slice(2))
-        //console.log("metasArray:", metasArray)
+        metasArray.push({
+          depth: 0,
+          values:
+            parentsArray[0].slice(2)
+        })
         return metasArray;
       }
-      //console.log("D")
       return () => findAndFlattenChild(
         parentsArray[0].slice(2),
         parentsArray,
@@ -96,14 +111,55 @@
     return metadatas;
   }
 
+  const calculateBvalues = (mappedLevels, totalValue = 0) => {
+    for (let i = 0; i < mappedLevels.length - 1; i++) {
+
+      if (i === mappedLevels.length - 1 || mappedLevels[i].depth > mappedLevels[i + 1].depth) {
+        let adjacentIndexesWithSameValue = [];
+        for (let j = i; j >= 0; j--) {
+          if (mappedLevels[j].depth === mappedLevels[i].depth)
+            adjacentIndexesWithSameValue.splice(0, 0, j)
+          else
+            break;
+        }
+
+        const resValue =
+          mappedLevels[i + 1].values
+            .map((val, j, arr) => {
+              const res = mappedLevels[adjacentIndexesWithSameValue[val - 1]] ?
+                mappedLevels[adjacentIndexesWithSameValue[val - 1]].values : 0
+
+              mappedLevels[i + 1].values[j] = res.reduce ? res.reduce(reduceSum) : 0;
+              return res;
+            }
+            )
+            .filter((maybeVal, i, arr) =>
+              maybeVal)
+            .reduce((acc, next) =>
+              acc + next.reduce(reduceSum, 0), 0);
+
+
+        mappedLevels.splice(
+          adjacentIndexesWithSameValue[0],
+          adjacentIndexesWithSameValue.length)
+
+
+        return calculateBvalues(mappedLevels, totalValue + resValue)
+
+      }
+
+    }
+    return mappedLevels
+
+  }
+
   const inputArray = inputIntoArray(input);
 
   let startTime = new Date()
   console.log(
     "A:\n",
-    mapChildren(inputArray)
-      .reduce((a, b) => a.concat(b), [])
-      .reduce((a, b) => a + b, 0)
+    flatten(mapChildren(inputArray).map(e => e.values))
+      .reduce(reduceSum, 0)
     ,
     "time:",
     new Date() - startTime,
@@ -113,7 +169,12 @@
 
   console.log(
     "B:",
-
+    calculateBvalues(
+      mapChildren(
+        inputIntoArray(input)))[0]
+      .values
+      .reduce(reduceSum)
+    ,
     "time:",
     new Date() - startTime,
     "ms"
