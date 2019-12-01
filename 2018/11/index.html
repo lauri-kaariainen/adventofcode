@@ -111,24 +111,6 @@
 
         }
         ))
-  // <!-- 
-  //   document.body.innerHTML =
-  //     "<pre>" +
-  //     calculateTotalPowersForB(mapPowerLevels(
-  //       getGrid(),
-  //       input
-  //     )).map((row, i) =>
-  //       i + (i < 10 ? "  : " : i < 100 ? " : " : ": ") +
-  //       row.map(letter =>
-  //         letter > -10 ?
-  //           letter >= 0 ?
-  //             letter >= 10 ?
-  //               letter >= 250 ? " <span class='highlight'>" + letter + "</span>" :
-  //                 " " + letter :
-  //               "  " + letter :
-  //             " " + letter :
-  //           "" + letter).join(" ")).join("<br/>") +
-  //     "</pre>" -->
 
   let startTime = new Date()
 
@@ -159,6 +141,22 @@
   }
 
   const Bcombo = findBiggestCellCombo(gridB);
+
+
+  document.body.innerHTML =
+    "<pre>" +
+    gridB.map((row, i) =>
+      i + (i < 10 ? "  : " : i < 100 ? " : " : ": ") +
+      row.map(letter =>
+        letter > -10 ?
+          letter >= 0 ?
+            letter >= 10 ?
+              letter >= 250 ? " <span class='highlight'>" + letter + "</span>" :
+                " " + letter :
+              "  " + letter :
+            " " + letter :
+          "" + letter).join(" ")).join("<br/>") +
+    "</pre>"
 
   const Bstep =
     [...new Array(300 - Math.max(Bcombo.x, Bcombo.y))]
