@@ -8,6 +8,11 @@
 </body>
 <script>
   "use strict";
+  const log = (...rest) => {
+    document.body.innerHTML += "<br/>" + rest.join(" ") + "<br/>";
+    console.log(rest);
+  }
+
 
   const input = `66016
 85415
@@ -110,22 +115,33 @@
 134887
 63969`;
 
-  const testInput = `12
-14
-1969
-100756`;
 
   const inputIntoArray = str => str.split("\n").map(e => parseInt(e.trim()));
 
   const calculateFuel = massInt =>
     Math.floor(massInt / 3) - 2
 
+  const calculateFuelCompleteNeed = (fuelLoaded, newFuelNeeded) => {
+    const neededFuel = calculateFuel(newFuelNeeded);
+    if (neededFuel < 1) {
+      return fuelLoaded + newFuelNeeded;
+    }
+    else {
+      return calculateFuelCompleteNeed(fuelLoaded + newFuelNeeded, neededFuel);
+    }
+  }
+
+
   const inputArray = inputIntoArray(input);
-  console.log("A:",
+  log("A:",
     inputArray
       .map(calculateFuel)
       .reduce((acc, next) => acc + next, 0));
 
+  log("B:",
+    inputArray
+      .map(fuel => calculateFuelCompleteNeed(0, calculateFuel(fuel)))
+      .reduce((acc, next) => acc + next, 0));
 
 </script>
 </head>
