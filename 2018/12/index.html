@@ -106,8 +106,10 @@
 
 
   let result = inputState.split("");
-  const generations = 20;
-  for (let i = 0; i < generations; i++) {
+  const generationsA = 20;
+
+  let startTime = new Date()
+  for (let i = 0; i < generationsA; i++) {
     result = iterateGeneration(result, inputArray)
     document.body.innerHTML += "<pre>" +
       (i > 9 ? i : " " + i) + ":" +
@@ -122,13 +124,13 @@
 
   }
 
-  const zeroPosition = generations * 4 + 0;
+
+  const zeroPosition = generationsA * 4 + 0;
   const positionsOfPlants =
     result.reduce((acc, next, i) =>
       next === "#" ? acc.concat(i - zeroPosition) : acc, [])
 
   //console.log(result)
-  let startTime = new Date()
   console.log(
     "A:\n",
     positionsOfPlants.reduce(reduceSum),
@@ -136,11 +138,115 @@
     new Date() - startTime,
     "ms"
   )
+
+
+
+
   startTime = new Date();
+
+  const iterateGenerationB = (stateArr, inputArray) =>
+    stateArr
+      .map((letter, i, arr) => {
+        if (i > arr.length - 2 || i < 2)
+          return ".";
+        const currArr = (arr.slice(i - 2, i - 2 + 5));
+        const matchingResult = inputArray
+          .find(inp =>
+            inp.input === currArr.join(""))
+        return matchingResult ?
+          matchingResult.result : ".";
+      })
+
+
+
+  const generationsB = 50000000000;
+  let indexCounter = 1;
+  result =
+    [".", ".", ".", "."]
+      .concat(inputState.split(""))
+      .concat([".", ".", ".", "."]);
+  let oldResult = { i: 0, result: [] };
+  let startSkipping = false;
+  for (let i = 0; i < generationsB;) {
+
+    if (!(i % 1000))
+      console.log(i, JSON.stringify(result), indexCounter)
+
+    if (startSkipping) {
+      //console.log(startSkipping, i)
+      indexCounter -= 2500000;
+      i += 10000000;
+      if (i >= generationsB) {
+        console.log("over by:", i - generationsB)
+        indexCounter -= (i - generationsB) / 4
+      }
+      console.log(startSkipping, i)
+      continue;
+    }
+    result = iterateGenerationB(result, inputArray)
+
+    //    console.log(result.join(""))
+
+    if (oldResult.i === i - 1000 && oldResult.result.join("") === result.join("")) {
+      //not changing anymore
+      //indexcounter decreases by 25 each 100 iterations, so we can start skipping
+      startSkipping = true;
+      indexCounter -= 9990000 / 4
+      i += 9990000;
+      console.log("started skipping at:", i)
+      continue;
+    }
+
+    if (i === 9000) {
+      oldResult.i = i;
+      oldResult.result = result;
+      oldResult.indexCounter = indexCounter;
+
+    }
+
+    if (
+      !(result[0] === result[1] &&
+        result[1] === result[2] &&
+        result[2] === result[3] &&
+        result[3] === ".")) {
+      indexCounter++;
+      result =
+        [".", ".", ".", "."].concat(result)
+    } else {
+      if ((result[4] === result[5] &&
+        result[5] === result[6] &&
+        result[6] === result[7] &&
+        result[7] === ".")) {
+        indexCounter--;
+        result = result.slice(4);
+      }
+    }
+    if (
+      !(result[result.length - 1] === result[result.length - 2] &&
+        result[result.length - 2] === result[result.length - 3] &&
+        result[result.length - 3] === result[result.length - 4] &&
+        result[result.length - 4] === ".")) {
+      result = result.concat([".", ".", ".", "."])
+    }
+
+    i++;
+  }
+
+  console.log("indexCounter was:", indexCounter)
+  //indexCounter = -12499999985;
+  //indexCounter += 2500000
+  //indexCounter = -12500025486
+
+  const zeroPositionB = indexCounter * 4 + 0;
+  const positionsOfPlantsB =
+    result.reduce((acc, next, i) =>
+      next === "#" ? acc.concat(i - zeroPositionB) : acc, [])
+
 
   console.log(
     "B:",
-
+    positionsOfPlantsB,
+    positionsOfPlantsB.reduce(reduceSum),
     //,
     "time:",
     new Date() - startTime,
