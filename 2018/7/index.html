@@ -133,39 +133,39 @@ Step F must be finished before step E can begin.`;
 
 
 
-  const inputIntoArray = str =>
-    str
-      .split("\n")
-      .map(str => str.trim())
-      .map((str, i) => ({
-        name: str.split("ep ")[1].split(" ")[0],
-        blocking: str.split("step ")[1].split(" ")[0],
-      }))
+  const inputIntoArray = str => {
+    const pureArray =
+      str
+        .split("\n")
+        .map(str => str.trim())
+        .map((str, i) => ({
+          name: str.split("ep ")[1].split(" ")[0],
+          blocking: str.split("step ")[1].split(" ")[0],
+        }))
+    return pureArray
+      .concat({ name: pureArray.slice(-1)[0].blocking, blocking: "" })
+  }
 
 
-
-  const inputArray = inputIntoArray(input);
 
 
   const getAllLetters = stepArray =>
     stepArray.map(step => step.name).filter(uniqueShallow);
 
-  const getBlockingLetters = stepArray =>
-    stepArray.map(step => step.blocking).filter(uniqueShallow);
 
-  const getNextStepLetter = stepArray =>
+  const getNextSteps = stepArray =>
     getAllLetters(stepArray)
       .filter(letter =>
         !stepArray.map(step => step.blocking)
           .includes(letter))
-      .sort()[0];
+      .sort();
 
   const goThroughSteps = (stepArray, path = "", firstRun = true) => {
     if (firstRun)
       var stepArray = [...stepArray]
     if (!stepArray.length)
       return path;
-    const nextLetter = getNextStepLetter(stepArray);
+    const nextLetter = getNextSteps(stepArray)[0];
     const newStepArray =
       stepArray
         .filter(step => step.name !== nextLetter);
@@ -176,6 +176,183 @@ Step F must be finished before step E can begin.`;
   }
 
 
+
+  //B-stuff:
+
+
+  const calculateTimeToSolve = (letter) =>
+    letter.toLowerCase().charCodeAt(0) - 96 + 60;
+
+
+  // const goThroughSeconds = (stepArray, path = "", workerPool, currSecond = 0, firstRun = true) => {
+  //   // if (currSecond > 18)
+  //   //   return;
+  //   if (firstRun)
+  //     var stepArray =
+  //       [...stepArray]
+  //         .map(step => ({
+  //           ...step,
+  //           workLeft: calculateTimeToSolve(step.name)
+  //         }))
+
+  //   //should this be sorted?? ambiguous
+  //   const jobsDoneString =
+  //     stepArray
+  //       .filter(step => step.workLeft === 0)
+  //       .map(step => step.name)
+  //       .join("");
+
+
+  //   const newStepArray =
+  //     stepArray
+  //       .filter(step => !jobsDoneString.includes(step.name));
+
+
+  //   const nextSteps =
+  //     getNextSteps(newStepArray)
+  //       .sort()
+  //       .map(letter =>
+  //         newStepArray.find(step => step.name === letter))
+
+  //   if (jobsDoneString)
+  //     console.log(nextSteps.map(step => step.name + ":" + step.workLeft).join(" "))
+
+  //   nextSteps.forEach((step, i) => {
+  //     if (workerPool[i]) {
+  //       workerPool[i].job = step.name;
+  //     }
+  //   })
+
+  //   console.log(currSecond, workerPool.map(wrkr => wrkr.job + " ").join(" - "), path);
+
+
+  //   if (!newStepArray.filter(step => step.workLeft !== 0).length) {
+  //     console.log(newStepArray, currSecond)
+  //     return path + jobsDoneString;
+  //   }
+
+  //   workerPool.forEach(worker => {
+  //     newStepArray.forEach(step =>
+  //       step.name === worker.job ?
+  //         step.workLeft -= 1 :
+  //         "");
+  //     worker.job = ".";
+  //   }
+  //   )
+
+  //   return goThroughSeconds(
+  //     newStepArray,
+  //     newStepArray.length ? path + jobsDoneString : path + jobsDoneString + stepArray[0].blocking,
+  //     workerPool,
+  //     currSecond + 1,
+  //     false)
+  // }
+
+  const goThroughSeconds = (stepArray, path = "", workerPool, currSecond = 0, firstRun = true) => {
+    if (firstRun)
+      var stepArray =
+        [...stepArray]
+          .map(step => ({
+            ...step,
+            workLeft: calculateTimeToSolve(step.name)
+          }))
+
+
+    const workersDone =
+      workerPool.filter(worker =>
+        worker.currentTimeLeft === 0 && worker.job !== ".")
+
+    //should this be sorted?? ambiguous
+    const jobsDoneString =
+      workersDone
+        .map(worker => worker.job)
+        .sort()
+        .join("");
+
+    //fix!
+    const newStepArray =
+      stepArray
+        .filter(step => !jobsDoneString.includes(step.name));
+
+    workerPool.forEach(worker => {
+      if (worker.currentTimeLeft === 0)
+        worker.job = ".";
+    });
+
+    const jobsUnderWay =
+      workerPool
+        .filter(worker =>
+          worker.currentTimeLeft > 0)
+        .map(worker => worker.job)
+
+
+    //console.log(getNextSteps(newStepArray))
+
+    const nextSteps =
+      getNextSteps(newStepArray)
+        .sort()
+        .map(letter =>
+          newStepArray.find(step => step.name === letter))
+        .filter(step => !jobsUnderWay.includes(step.name) && !jobsDoneString.includes(step.name))
+
+
+    let assignedJobs = [];
+    nextSteps.forEach(step => {
+
+      const freeWorkerI = workerPool.findIndex(worker => worker.currentTimeLeft === 0);
+      if (freeWorkerI !== -1) {
+        workerPool[freeWorkerI].job = step.name;
+        workerPool[freeWorkerI].currentTimeLeft = calculateTimeToSolve(step.name);
+        assignedJobs.push(step.name);
+      }
+
+    })
+
+    if (jobsDoneString.length)
+      console.log("new steps", nextSteps.map(step => step.name).join(","))
+
+    //  if (!(currSecond % 10))
+    console.log(currSecond, workerPool.map(wrk => wrk.job + " " + wrk.currentTimeLeft).join(" - "), path);
+
+
+    //if (newStepArray.length + jobsUnderWay.length + assignedJobs.length === 0) {
+    if (!workerPool.filter(worker => worker.job !== ".").length) {
+      console.log(newStepArray, jobsDoneString, jobsUnderWay, assignedJobs, currSecond)
+      return path + jobsDoneString + stepArray[0].blocking;
+    }
+
+    workerPool.forEach(worker =>
+      worker.job !== "." ?
+        worker.currentTimeLeft -= 1 : "");
+
+    return goThroughSeconds(
+      newStepArray,
+      newStepArray.length ? path + jobsDoneString : path + jobsDoneString + stepArray[0].blocking,
+      workerPool,
+      currSecond + 1,
+      false)
+  }
+
+  const workerPool = [
+    {
+      id: 0, job: ".", currentTimeLeft: 0
+    },
+    {
+      id: 1, job: ".", currentTimeLeft: 0
+    },
+    {
+      id: 2, job: ".", currentTimeLeft: 0
+    },
+    {
+      id: 3, job: ".", currentTimeLeft: 0
+    },
+    {
+      id: 4, job: ".", currentTimeLeft: 0
+    },
+  ]
+
+  const inputArray = inputIntoArray(input);
+  const workerAmount = 5;
 
   let startTime = new Date()
   console.log(
@@ -189,6 +366,7 @@ Step F must be finished before step E can begin.`;
 
   console.log(
     "B:",
+    goThroughSeconds(inputArray, "", workerPool.slice(-workerAmount)),
     "time:",
     new Date() - startTime,
     "ms"
