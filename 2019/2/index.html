@@ -26,17 +26,17 @@
     arr.length > pos + 4 ? arr[pos + 4] : null;
 
   const calculateNextOperation = (arr, pos) => {
+    if (pos === 0)
+      arr = arr.map(clone => clone)
     const nextOp = arr[pos]
     if (nextOp === 99)
       return arr;
     else if (nextOp === 1) {
       arr[arr[pos + 3]] = (arr[arr[pos + 1]] + arr[arr[pos + 2]])
-      console.log(nextOp, JSON.stringify(arr))
       return calculateNextOperation(arr, pos + 4)
     }
     else if (nextOp === 2) {
       arr[arr[pos + 3]] = (arr[arr[pos + 1]] * arr[arr[pos + 2]])
-      console.log(nextOp, JSON.stringify(arr))
       return calculateNextOperation(arr, pos + 4)
     }
     else
@@ -47,13 +47,29 @@
 
   const inputArray = inputIntoArray(input);
   log("A:",
-    calculateNextOperation(inputArray, 0)
+    calculateNextOperation(inputArray, 0)[0]
   )
 
-  log("B:",
-    inputArray
-      .map(fuel => calculateFuelCompleteNeed(0, calculateFuel(fuel)))
-      .reduce((acc, next) => acc + next, 0));
+  log(
+    "B:",
+    JSON.stringify(Array.from(new Array(10000)).map((e, i) => i)
+      .map(e => ({
+        position: { noun: Math.floor(e / 100), verb: e % 100 },
+        zeroPositionVal: calculateNextOperation(
+          [1, Math.floor(e / 100), e % 100].concat(
+            inputArray
+              //.map(clone => clone)
+              .slice(3))
+          , 0
+        )[0]
+      })
+      )
+      .filter(obj => obj.zeroPositionVal === 19690720)[0]
+      .position
+    )
+  )
+
+
 
 </script>
 </head>
