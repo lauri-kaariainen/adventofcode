@@ -41,13 +41,14 @@ U62,R66,U55,R34,D71,R55,D58,R83`;
 
   const origin = {
     x: 9000,
-    y: 8000
+    y: 8000,
   }
 
-  //  const crossings = [];
+  const visitedCoordinates = {};
 
   const drawLineBetweenPoints = (point1, point2, matrix, lineNum, crossings) => {
     console.log("drawing between", JSON.stringify(point1), JSON.stringify(point2))
+
     const normalMatches = [lineNum, "."];
     if (point2.x === point1.x) {
       if (point2.y > point1.y) {
@@ -55,13 +56,18 @@ U62,R66,U55,R34,D71,R55,D58,R83`;
           if (!normalMatches.includes(matrix[point1.y + i][point1.x]))
             crossings.push({ y: point1.y + i, x: point1.x });
           matrix[point1.y + i][point1.x] = lineNum;
+          window.totalSteps++;
+          visitedCoordinates["x" + point1.x + "y" + (point1.y + i)] = { ...visitedCoordinates["x" + point1.x + "y" + (point1.y + i)], [("lineNum" + lineNum)]: window.totalSteps }
+
         }
       }
       else {
-        for (let i = 1; i <= point1.y - point2.y; i++) {
+        for (let i = point1.y - point2.y - 1; i >= 0; i--) {
           if (!normalMatches.includes(matrix[point2.y + i][point2.x]))
             crossings.push({ y: point2.y + i, x: point2.x });
           matrix[point2.y + i][point2.x] = lineNum;
+          window.totalSteps++;
+          visitedCoordinates["x" + point2.x + "y" + (point2.y + i)] = { ...visitedCoordinates["x" + point2.x + "y" + (point2.y + i)], [("lineNum" + lineNum)]: window.totalSteps }
         }
       }
     }
@@ -71,13 +77,19 @@ U62,R66,U55,R34,D71,R55,D58,R83`;
           if (!normalMatches.includes(matrix[point1.y][point1.x + i]))
             crossings.push({ y: point1.y, x: point1.x + i });
           matrix[point1.y][point1.x + i] = lineNum;
+          window.totalSteps++;
+          visitedCoordinates["x" + (point1.x + i) + "y" + point1.y] = { ...visitedCoordinates["x" + (point1.x + i) + "y" + point1.y], [("lineNum" + lineNum)]: window.totalSteps }
+
         }
       }
       else {
-        for (let i = 1; i <= point1.x - point2.x; i++) {
+        for (let i = point1.x - point2.x - 1; i >= 0; i--) {
           if (!normalMatches.includes(matrix[point2.y][point2.x + i]))
             crossings.push({ y: point2.y, x: point2.x + i });
           matrix[point2.y][point2.x + i] = lineNum;
+          window.totalSteps++;
+          visitedCoordinates["x" + (point2.x + i) + "y" + point2.y] = { ...visitedCoordinates["x" + (point2.x + i) + "y" + point2.y], [("lineNum" + lineNum)]: window.totalSteps }
+
         }
       }
     }
@@ -88,13 +100,18 @@ U62,R66,U55,R34,D71,R55,D58,R83`;
     Math.abs(point1.y - point2.y)
 
   const drawLine = (inputArray, currX, currY, matrix, lineNum, step, crossings) => {
+    //console.log("calling drawLine with", window.totalSteps, step)
+    //log(matrix);
     step = step || 0;
     crossings = crossings || [];
+    //totalSteps = totalSteps || 0; 
     if (step >= inputArray.length)
       return crossings;
 
-    if (step === 0)
-      matrix[currX][currY] = "o"
+    if (step === 0) {
+      window.totalSteps = 0;
+      matrix[currY][currX] = "O"
+    }
     const distance = parseInt(inputArray[step].split(/[RULD]/)[1]);
     var newPoint;
     switch (inputArray[step][0]) {
@@ -103,11 +120,11 @@ U62,R66,U55,R34,D71,R55,D58,R83`;
         drawLineBetweenPoints({ x: currX, y: currY }, newPoint, matrix, lineNum, crossings)
         break;
       case ("R"):
-        newPoint = { x: currX + distance, y: currY }
+        newPoint = { x: (currX + distance), y: currY }
         drawLineBetweenPoints({ x: currX, y: currY }, newPoint, matrix, lineNum, crossings)
         break;
       case ("D"):
-        newPoint = { x: currX, y: currY + distance }
+        newPoint = { x: currX, y: (currY + distance) }
         drawLineBetweenPoints({ x: currX, y: currY }, newPoint, matrix, lineNum, crossings)
         break;
       case ("L"):
@@ -124,16 +141,26 @@ U62,R66,U55,R34,D71,R55,D58,R83`;
   log("A:")
   const crossings =
     inputArray
-      .map((inputLine, i) => drawLine(inputLine, origin.x, origin.y, matrix, i))
-      .reduce(reduceFlatten)
-  //console.log(crossings)
+      .map((inputLine, i) => drawLine(inputLine, origin.x, origin.y, matrix, i, 0, [], 0))
+      .reduce(reduceFlatten);
+  //crossings solved with calc above
+  //const crossings = [{ "y": 7790, "x": 8006 }, { "y": 7726, "x": 8278 }, { "y": 9036, "x": 8710 }, { "y": 9036, "x": 8723 }, { "y": 8582, "x": 9529 }, { "y": 12440, "x": 5637 }, { "y": 11937, "x": 5637 }, { "y": 11139, "x": 5891 }, { "y": 11077, "x": 6382 }, { "y": 11077, "x": 6462 }, { "y": 10820, "x": 6477 }, { "y": 10959, "x": 6477 }, { "y": 10011, "x": 6489 }, { "y": 10011, "x": 6645 }, { "y": 9523, "x": 6792 }, { "y": 9582, "x": 6792 }, { "y": 9728, "x": 6792 }, { "y": 9811, "x": 6792 }, { "y": 9012, "x": 6833 }, { "y": 9012, "x": 6843 }, { "y": 9012, "x": 7310 }, { "y": 8433, "x": 8217 }, { "y": 9036, "x": 8404 }, { "y": 7111, "x": 9752 }, { "y": 7288, "x": 9531 }, { "y": 7959, "x": 9855 }, { "y": 7959, "x": 9991 }, { "y": 8015, "x": 10197 }, { "y": 8314, "x": 10197 }, { "y": 8314, "x": 10617 }, { "y": 8197, "x": 10435 }, { "y": 7408, "x": 9855 }, { "y": 7408, "x": 9991 }];
+  console.log(crossings)
   //log(matrix);
-  console.log(
+  log("A:",
     crossings
       .map(point => calcManhattanDistance(point, origin))
       .sort((a, b) => a - b)
   )
-
+  console.log(
+    crossings
+      .map(coord => visitedCoordinates["x" + coord.x + "y" + coord.y])
+  )
+  console.log(crossings
+    .map(coord => visitedCoordinates["x" + coord.x + "y" + coord.y])
+    .map(lengths => lengths.lineNum0 + lengths.lineNum1)
+    .sort((a, b) => a - b)
+  )
 
 
 </script>
