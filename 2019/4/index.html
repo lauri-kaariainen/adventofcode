@@ -21,9 +21,17 @@
     Array.from(new Array(highLimit - lowLimit + 1)).map((empty, i) => lowLimit + i)
 
 
+  const checkForBLimitation = arr => {
+
+    const countObject = arr.reduce(function (countMap, word) { countMap[word] = ++countMap[word] || 1; return countMap }, {})
+    return Object.values(countObject).includes(2);
+
+  }
+
   const testNum = num =>
     ("" + num) === ("" + num).split("").sort().join("") &&
-    ("" + num) !== ("" + num).split("").filter(uniqueShallow).join("")
+    ("" + num) !== ("" + num).split("").filter(uniqueShallow).join("") &&
+    checkForBLimitation(("" + num).split(""))
 
 
   log("A:",
