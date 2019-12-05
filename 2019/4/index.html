@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+
+<head>
+  <script src="../../help.js"></script>
+
+<body>
+  <pre>check console</pre>
+</body>
+<script>
+  "use strict";
+  const log = (...rest) => {
+    document.body.innerHTML += "<br/>" + rest.join(" ") + "<br/>";
+    console.log(rest);
+  }
+
+  const lowLimit = 147981;
+  const highLimit = 691423;
+
+
+  const arr =
+    Array.from(new Array(highLimit - lowLimit + 1)).map((empty, i) => lowLimit + i)
+
+
+  const testNum = num =>
+    ("" + num) === ("" + num).split("").sort().join("") &&
+    ("" + num) !== ("" + num).split("").filter(uniqueShallow).join("")
+
+
+  log("A:",
+    arr
+      .filter(testNum)
+      .length
+  )
+
+  log(
+    "B:",
+  )
+
+
+
+</script>
+</head>
