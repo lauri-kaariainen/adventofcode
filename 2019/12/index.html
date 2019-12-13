@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+
+<head>
+  <script src="../../help.js"></script>
+
+<body>
+  <pre>check console</pre>
+</body>
+<script>
+  "use strict";
+  const log = (...rest) => {
+    document.body.innerHTML += "<br/>" + rest.join(" ") + "<br/>";
+    console.log(rest);
+  }
+
+
+
+  const testInput =
+    `<x=-1, y=0, z=2>
+<x=2, y=-10, z=-7>
+<x=4, y=-8, z=8>
+<x=3, y=5, z=-1>`;
+
+  const input =
+    `<x=-7, y=-1, z=6>
+<x=6, y=-9, z=-9>
+<x=-12, y=2, z=-7>
+<x=4, y=-17, z=-12>`
+
+
+  const arrayFromInput = str => str
+    .split("\n")
+    .map((line, i) => ({
+      position: {
+        x: parseInt(line.match(/x=(-?\d+)/)[1]),
+        y: parseInt(line.match(/y=(-?\d+)/)[1]),
+        z: parseInt(line.match(/z=(-?\d+)/)[1]),
+      },
+      velocity: {
+        x: 0,
+        y: 0,
+        z: 0
+      },
+      id: i,
+    }))
+    .map((obj, i, arr) => ({
+      ...obj,
+      others:
+        Array.from(new Array(arr.length))
+          .map((_, i) => i)
+          .filter(num => obj.id !== num)
+    }))
+
+  const applyGravityInPlace = objList =>
+    objList.forEach(obj =>
+      obj.others.forEach(otherIndex => {
+        const otherObj = objList[otherIndex]
+        if (otherObj.position.x > obj.position.x)
+          obj.velocity.x++;
+        if (otherObj.position.x < obj.position.x)
+          obj.velocity.x--;
+        if (otherObj.position.y > obj.position.y)
+          obj.velocity.y++;
+        if (otherObj.position.y < obj.position.y)
+          obj.velocity.y--;
+        if (otherObj.position.z > obj.position.z)
+          obj.velocity.z++;
+        if (otherObj.position.z < obj.position.z)
+          obj.velocity.z--;
+      })
+    )
+
+  const applyVelocityInPlace = obj =>
+    ["x", "y", "z"]
+      .forEach(key =>
+        obj.position[key] += obj.velocity[key])
+
+
+  const inputArray = arrayFromInput(input);
+
+  for (let i = 0; i < 1001; i++) {
+    //console.log("after step " + i);
+    //inputArray.forEach(obj => console.log("pos<" + JSON.stringify(obj.position), "> vel<", JSON.stringify(obj.velocity), ">"))
+    applyGravityInPlace(inputArray)
+    inputArray.forEach(applyVelocityInPlace);
+
+  }
+
+
+  log("A:",
+    inputArray
+  );
+
+  log(
+    "B:",
+  );
+
+
+
+</script>
+</head>
