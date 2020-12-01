@@ -3,6 +3,16 @@
 // console.log(find4);
 console.log(getInput().length);
 console.log(getTESTInput().length);
+function log() {
+    var args = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        args[_i] = arguments[_i];
+    }
+    if (typeof (console) !== 'undefined') {
+        console.log.apply(console, args);
+        document.querySelector('pre').innerHTML += "<br/>" + args.join(" ");
+    }
+}
 var testInputArr = getTESTInput();
 var inputArr = getInput();
 var getAResult = function (inputArr) {
@@ -11,13 +21,13 @@ var getAResult = function (inputArr) {
         if (match)
             return { first: parseInt(match), second: parseInt(next) };
         else
-            return (answer);
+            return answer;
     }, { first: 0, second: 0 });
 };
 var testResult = getAResult(testInputArr);
 var aResult = getAResult(inputArr);
-console.log("test a:", testResult ? (testResult.first || 0) * (testResult.second || 0) : undefined);
-console.log("a:", aResult ? (aResult.first || 0) * (aResult.second || 0) : undefined);
+log("test a:", testResult ? (testResult.first || 0) * (testResult.second || 0) : undefined);
+log("a:", aResult ? (aResult.first || 0) * (aResult.second || 0) : undefined);
 var getBResult = function (inputArr) {
     return inputArr.reduce(function (answer, next, i, arr) {
         var match = arr.find(function (el) {
@@ -37,8 +47,8 @@ var getBResult = function (inputArr) {
 };
 var testBResult = getBResult(testInputArr);
 var bResult = getBResult(inputArr);
-console.log("test b:", testBResult ? (testBResult.first || 0) * (testBResult.second || 0) * (testBResult.third || 0) : undefined);
-console.log("b:", bResult ? (bResult.first || 0) * (bResult.second || 0) * (bResult.third || 0) : undefined);
+log("test b:", testBResult ? (testBResult.first || 0) * (testBResult.second || 0) * (testBResult.third || 0) : undefined);
+log("b:", bResult ? (bResult.first || 0) * (bResult.second || 0) * (bResult.third || 0) : undefined);
 function getTESTInput() {
     return ("1721\n    979\n    366\n    299\n    675\n    1456".split("\n"));
 }

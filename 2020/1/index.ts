@@ -3,36 +3,51 @@
 console.log(getInput().length);
 console.log(getTESTInput().length);
 
-
+function log(...args: any[]): void {
+    if (typeof (console) !== 'undefined') {
+        console.log(...args);
+        document.querySelector('pre')!.innerHTML += "<br/>" + args.join(" ");
+    }
+}
 
 const testInputArr: string[] = getTESTInput();
 const inputArr: string[] = getInput();
 
+interface AResult {
+    first: number,
+    second: number
+}
 
-const getAResult = (inputArr: string[]): { first?: number, second?: number } =>
-    inputArr.reduce((answer: object, next: string, i: number, arr: string[]): object => {
+const getAResult = (inputArr: string[]): AResult =>
+    inputArr.reduce<AResult>((answer: object, next: string, i: number, arr: string[]): AResult => {
         const match: string | undefined =
             arr.find((el: string) => parseInt(el) + parseInt(next) === 2020);
         if (match) return { first: parseInt(match), second: parseInt(next) };
-        else return (answer);
+        else return (<AResult>answer);
     }
         , { first: 0, second: 0 })
 
-const testResult = getAResult(testInputArr);
-const aResult = getAResult(inputArr)
+const testResult: AResult = getAResult(testInputArr);
+const aResult: AResult = getAResult(inputArr)
 
 
 
-console.log("test a:",
+log("test a:",
     testResult ? (testResult.first || 0) * (testResult.second || 0) : undefined)
 
-console.log("a:",
+log("a:",
     aResult ? (aResult.first || 0) * (aResult.second || 0) : undefined)
+
+interface BResult {
+    first: number,
+    second: number,
+    third: number
+}
 
 
 const getBResult =
-    (inputArr: string[]): { first?: number, second?: number, third?: number } =>
-        inputArr.reduce((answer: object, next: string, i: number, arr: string[]): object => {
+    (inputArr: string[]): BResult =>
+        inputArr.reduce<BResult>((answer: object, next: string, i: number, arr: string[]): BResult => {
             const match: string | undefined =
                 arr.find((el: string) =>
                     arr.find((possibleThird: string) =>
@@ -42,19 +57,19 @@ const getBResult =
                 second: parseInt(next),
                 third: 2020 - parseInt(match) - parseInt(next)
             };
-            else return answer;
+            else return <BResult>answer;
         }
             , { first: 0, second: 0, third: 0 })
 
-const testBResult = getBResult(testInputArr);
-const bResult = getBResult(inputArr)
+const testBResult: BResult = getBResult(testInputArr);
+const bResult: BResult = getBResult(inputArr)
 
 
 
-console.log("test b:",
+log("test b:",
     testBResult ? (testBResult.first || 0) * (testBResult.second || 0) * (testBResult.third || 0) : undefined)
 
-console.log("b:",
+log("b:",
     bResult ? (bResult.first || 0) * (bResult.second || 0) * (bResult.third || 0) : undefined)
 
 
