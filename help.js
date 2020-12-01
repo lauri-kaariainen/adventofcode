@@ -71,8 +71,17 @@ const hex2bin = (hex, nulls) => {
 const num2hex = num => num.toString(16);
 
 const swapPositions = (arr, index1, index2) => (
+  //console.log(arr, index1, index2),
   ([arr[index1], arr[index2]] = [arr[index2], arr[index1]]), arr
 );
+
+const insertValueAtMutating = (arr, index, newValue) => {
+  arr
+    .splice(index, 1, newValue);
+  // .map(e => e.map ? e.map(i => i) : e) //clone
+  return arr
+}
+
 
 const arrayRotate = (arr, reverse) => (
   reverse ? arr.unshift(arr.pop()) : arr.push(arr.shift()), arr
@@ -95,7 +104,7 @@ const uniqueDeep = (item, i, arr) =>
 const combineMatrices = (larger, smaller) =>
   larger
     //clone
-    .map(e => e)
+    .map(e => e.map(i => i))
     .map((largerLine, lineNum) => {
       const startPoint = Math.floor(
         (largerLine.length - smaller[0].length) / 2
@@ -153,3 +162,9 @@ const permutations = xs => {
   }
   return ret;
 }
+
+const returnUniqueAmountsAsObj = array =>
+  array.reduce((acc, val) => {  //amounts as an object
+    acc[val] = acc[val] === undefined ? 1 : acc[val] += 1;
+    return acc;
+  }, {});
