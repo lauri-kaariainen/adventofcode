@@ -26,8 +26,8 @@ var getAResult = function (inputArr) {
 };
 var testResult = getAResult(testInputArr);
 var aResult = getAResult(inputArr);
-log("test a:", testResult ? (testResult.first || 0) * (testResult.second || 0) : undefined);
-log("a:", aResult ? (aResult.first || 0) * (aResult.second || 0) : undefined);
+log("test a:", testResult ? (testResult.first) * (testResult.second) : undefined);
+log("a:", aResult ? aResult.first * aResult.second : undefined);
 var getBResult = function (inputArr) {
     return inputArr.reduce(function (answer, next, i, arr) {
         var match = arr.find(function (el) {
@@ -47,8 +47,8 @@ var getBResult = function (inputArr) {
 };
 var testBResult = getBResult(testInputArr);
 var bResult = getBResult(inputArr);
-log("test b:", testBResult ? (testBResult.first || 0) * (testBResult.second || 0) * (testBResult.third || 0) : undefined);
-log("b:", bResult ? (bResult.first || 0) * (bResult.second || 0) * (bResult.third || 0) : undefined);
+log("test b:", testBResult ? testBResult.first * testBResult.second * testBResult.third : undefined);
+log("b:", bResult ? bResult.first * bResult.second * bResult.third : undefined);
 function getTESTInput() {
     return ("1721\n    979\n    366\n    299\n    675\n    1456".split("\n"));
 }

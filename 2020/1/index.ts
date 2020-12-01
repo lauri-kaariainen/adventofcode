@@ -33,10 +33,10 @@ const aResult: AResult = getAResult(inputArr)
 
 
 log("test a:",
-    testResult ? (testResult.first || 0) * (testResult.second || 0) : undefined)
+    testResult ? (testResult.first) * (testResult.second) : undefined)
 
 log("a:",
-    aResult ? (aResult.first || 0) * (aResult.second || 0) : undefined)
+    aResult ? aResult.first * aResult.second : undefined)
 
 interface BResult {
     first: number,
@@ -67,10 +67,10 @@ const bResult: BResult = getBResult(inputArr)
 
 
 log("test b:",
-    testBResult ? (testBResult.first || 0) * (testBResult.second || 0) * (testBResult.third || 0) : undefined)
+    testBResult ? testBResult.first * testBResult.second * testBResult.third : undefined)
 
 log("b:",
-    bResult ? (bResult.first || 0) * (bResult.second || 0) * (bResult.third || 0) : undefined)
+    bResult ? bResult.first * bResult.second * bResult.third : undefined)
 
 
 
