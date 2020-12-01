@@ -123,10 +123,16 @@ deal into new stack
 deal with increment 12
 cut 5944`
 
+  //A
   const DECKLENGTH = 10007;
-
+  //B
+  //const DECKLENGTH = 119315717514047; // too long for array!
+  //const DIVIDER = 100000000;
   const factory_deck =
-    Array.from(new Array(DECKLENGTH)).map((_, i) => i);
+    Array.from(new Array(Math.floor(DECKLENGTH))).map((_, i) => i);
+  //      Array.from(new Array(DIVIDER)).map((_, j) => i * DIVIDER + j))
+  //debugger;
+  //factory_deck.derp();
 
   const arrayFromInput = str => str
     .split("\n")

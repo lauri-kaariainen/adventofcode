@@ -51,38 +51,62 @@
           .filter(num => obj.id !== num)
     }))
 
-  const applyGravityInPlace = objList =>
-    objList.forEach(obj =>
-      obj.others.forEach(otherIndex => {
-        const otherObj = objList[otherIndex]
-        if (otherObj.position.x > obj.position.x)
-          obj.velocity.x++;
-        if (otherObj.position.x < obj.position.x)
-          obj.velocity.x--;
-        if (otherObj.position.y > obj.position.y)
-          obj.velocity.y++;
-        if (otherObj.position.y < obj.position.y)
-          obj.velocity.y--;
-        if (otherObj.position.z > obj.position.z)
-          obj.velocity.z++;
-        if (otherObj.position.z < obj.position.z)
-          obj.velocity.z--;
-      })
-    )
+  const applyGravityInPlace = (obj, objList) => {
+    //objList.forEach(obj =>
+    //for (let otherIndex of obj.others) {
+    for (let i = 0; i < obj.others.length; i++) {
+      const otherIndex = obj.others[i]
+      //obj.others.forEach(otherIndex => {
+      const otherObj = objList[otherIndex]
+      if (otherObj.position.x > obj.position.x)
+        obj.velocity.x++;
+      if (otherObj.position.x < obj.position.x)
+        obj.velocity.x--;
+      if (otherObj.position.y > obj.position.y)
+        obj.velocity.y++;
+      if (otherObj.position.y < obj.position.y)
+        obj.velocity.y--;
+      if (otherObj.position.z > obj.position.z)
+        obj.velocity.z++;
+      if (otherObj.position.z < obj.position.z)
+        obj.velocity.z--;
+    }
+  }
+  //)
 
-  const applyVelocityInPlace = obj =>
-    ["x", "y", "z"]
-      .forEach(key =>
-        obj.position[key] += obj.velocity[key])
+  const applyVelocityInPlace = obj => {
+    obj.position["x"] += obj.velocity["x"]
+    obj.position["y"] += obj.velocity["y"]
+    obj.position["z"] += obj.velocity["z"]
+  }
+
 
 
   const inputArray = arrayFromInput(input);
 
-  for (let i = 0; i < 1001; i++) {
-    //console.log("after step " + i);
+
+
+
+  let prevMatch = 0;
+  for (let i = 0; i < 300000; i++) {
+    if (i % 1000000 === 0)
+      console.log("after step " + i);
+    if (inputArray[0].position.z === 6) {
+
+
+      console.log("x match after step", i)
+      console.log("diff to prev:", i - prevMatch)
+      prevMatch = i;
+    }
     //inputArray.forEach(obj => console.log("pos<" + JSON.stringify(obj.position), "> vel<", JSON.stringify(obj.velocity), ">"))
-    applyGravityInPlace(inputArray)
-    inputArray.forEach(applyVelocityInPlace);
+    for (let j = 0; j < inputArray.length; j++) {
+      applyGravityInPlace(inputArray[j], inputArray)
+    }
+    // inputArray.forEach(applyVelocityInPlace);
+    for (let j = 0; j < inputArray.length; j++) {
+      applyVelocityInPlace(inputArray[j])
+    }
+
 
   }
 
