@@ -1,0 +1,11 @@
+ {
+    "compilerOptions": {
+      "allowJs": true,
+      "sourceMap":true,
+      "strict": true,
+      "lib":["ES2015","DOM"],
+     
+    },
+    "include":["./*.ts"]
+ }
+
