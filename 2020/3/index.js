@@ -2,18 +2,28 @@
 "use strict";
 var testInputArr = getTESTInput();
 var inputArr = getInput();
-var iterateOverForest = function (forest, positionY, positionX, treesEncountered) {
+var iterateOverForest = function (forest, stepY, stepX, positionY, positionX, treesEncountered) {
+    if (stepY === void 0) { stepY = 1; }
+    if (stepX === void 0) { stepX = 1; }
     if (positionY === void 0) { positionY = 0; }
     if (positionX === void 0) { positionX = 0; }
     if (treesEncountered === void 0) { treesEncountered = 0; }
-    return positionY === forest.length || (console.log(positionY, positionX, positionX % (forest[positionY].length), forest[positionY][positionX % (forest[positionY].length)])) ?
+    return positionY >= forest.length ?
         treesEncountered :
-        iterateOverForest(forest, positionY + 1, positionX + 3, forest[positionY][positionX % (forest[positionY].length)] == "#" ? treesEncountered + 1 : treesEncountered);
+        iterateOverForest(forest, stepY, stepX, positionY + stepY, positionX + stepX, forest[positionY][positionX % (forest[positionY].length)] == "#" ? treesEncountered + 1 : treesEncountered);
 };
-log("test a:", iterateOverForest(testInputArr));
-log("a:", iterateOverForest(inputArr));
-log("test b:");
-log("b:");
+log("test a:", iterateOverForest(testInputArr, 1, 3));
+log("a:", iterateOverForest(inputArr, 1, 3));
+log("test b:", iterateOverForest(testInputArr, 1, 1) *
+    iterateOverForest(testInputArr, 1, 3) *
+    iterateOverForest(testInputArr, 1, 5) *
+    iterateOverForest(testInputArr, 1, 7) *
+    iterateOverForest(testInputArr, 2, 1));
+log("b:", iterateOverForest(inputArr, 1, 1) *
+    iterateOverForest(inputArr, 1, 3) *
+    iterateOverForest(inputArr, 1, 5) *
+    iterateOverForest(inputArr, 1, 7) *
+    iterateOverForest(inputArr, 2, 1));
 function log() {
     var args = [];
     for (var _i = 0; _i < arguments.length; _i++) {

@@ -6,38 +6,49 @@ const inputArr: string[] = getInput();
 
 const iterateOverForest = (
     forest: string[],
+    stepY: number = 1,
+    stepX: number = 1,
     positionY: number = 0,
     positionX: number = 0,
     treesEncountered: number = 0): any =>
-    positionY === forest.length || (console.log(positionY, positionX, positionX % (forest[positionY].length), forest[positionY][positionX % (forest[positionY].length)])) ?
+    positionY >= forest.length ?
         treesEncountered :
         iterateOverForest(
             forest,
-            positionY + 1,
-            positionX + 3,
+            stepY,
+            stepX,
+            positionY + stepY,
+            positionX + stepX,
             forest[positionY][positionX % (forest[positionY].length)] == "#" ? treesEncountered + 1 : treesEncountered);
 
 
 
 
 log("test a:",
-    iterateOverForest(testInputArr)
+    iterateOverForest(testInputArr, 1, 3)
 
 )
 
 log("a:",
-    iterateOverForest(inputArr)
+    iterateOverForest(inputArr, 1, 3)
 )
 
 
 log("test b:",
-    // turnInputIntoObjects(testInputArr)
-    //     .filter((elem: InputObject) => checkIfValidPartTwo(elem)).length
+    iterateOverForest(testInputArr, 1, 1) *
+    iterateOverForest(testInputArr, 1, 3) *
+    iterateOverForest(testInputArr, 1, 5) *
+    iterateOverForest(testInputArr, 1, 7) *
+    iterateOverForest(testInputArr, 2, 1)
+
 )
 
 log("b:",
-    // turnInputIntoObjects(inputArr)
-    //     .filter((elem: InputObject) => checkIfValidPartTwo(elem)).length
+    iterateOverForest(inputArr, 1, 1) *
+    iterateOverForest(inputArr, 1, 3) *
+    iterateOverForest(inputArr, 1, 5) *
+    iterateOverForest(inputArr, 1, 7) *
+    iterateOverForest(inputArr, 2, 1)
 )
 
 
