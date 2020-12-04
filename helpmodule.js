@@ -169,6 +169,9 @@ const returnUniqueAmountsAsObj = array =>
     return acc;
   }, {});
 
+const betweenOrEqual = (number, min, max) =>
+  number >= min && number <= max
+
 export {
   find4,
   get8,
@@ -188,5 +191,6 @@ export {
   reduceMultiply,
   reduceFlatten,
   permutations,
-  returnUniqueAmountsAsObj
+  returnUniqueAmountsAsObj,
+  betweenOrEqual
 }
