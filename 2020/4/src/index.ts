@@ -32,17 +32,17 @@ type PassportKey = keyof Passport;
 const checkIfValid = (str: string, minimumValidKeys: string[]) => {
     const passportObj: Passport = str
         .split(/\s/)
-        .reduce<Passport>((curr: Passport, next: string): Passport =>
+        .reduce((curr: Passport, next: string): Passport =>
             (curr[<PassportKey>next.split(":")[0].toString()] =
-                next.split(":")[1], curr as Passport), {
-                    byr: "",
-                    iyr: "",
-                    eyr: "",
-                    hgt: "",
-                    hcl: "",
-                    ecl: "",
-                    pid: "",
-                } as Passport)
+                next.split(":")[1], curr), {
+            byr: "",
+            iyr: "",
+            eyr: "",
+            hgt: "",
+            hcl: "",
+            ecl: "",
+            pid: ""
+        })
     return minimumValidKeys
         .findIndex((key: string) =>
             (!Object.keys(passportObj).includes(key) ||

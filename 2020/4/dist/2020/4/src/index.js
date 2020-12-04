@@ -21,7 +21,6 @@ var checkIfValid = function (str, minimumValidKeys) {
     });
     return minimumValidKeys
         .findIndex(function (key) {
-        // console.log(Object.keys(passportObj), passportObj[<PassportKey>key], key) === undefined &&
         return (!Object.keys(passportObj).includes(key) ||
             !(passportObj[key] !== ""));
     })
