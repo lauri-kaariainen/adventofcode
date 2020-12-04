@@ -4,24 +4,31 @@ var testInputArr = getTESTInput();
 var inputArr = getInput();
 var VALIDS = "byr (Birth Year)\niyr (Issue Year)\neyr (Expiration Year)\nhgt (Height)\nhcl (Hair Color)\necl (Eye Color)\npid (Passport ID)\ncid (Country ID)".split("\n").map(function (line) { return line.trim().split(" ")[0]; });
 var VALIDSFORA = VALIDS.filter(function (str) { return str !== "cid"; });
-// type Passport = {
-//     byr: number,
-//     iyr: number,
-//     eyr: number,
-//     hgt: string,
-//     hcl: string,
-//     ecl: string,
-//     pid: string,
-//     cid?: string
-// }
 var checkIfValid = function (str, minimumValidKeys) {
     var passportObj = str
         .split(/\s/)
         .reduce(function (curr, next) {
         return (curr[next.split(":")[0].toString()] =
             next.split(":")[1], curr);
-    }, {});
-    return minimumValidKeys.findIndex(function (key) { return !Object.keys(passportObj).includes(key); }) === -1;
+    }, {
+        byr: "",
+        iyr: "",
+        eyr: "",
+        hgt: "",
+        hcl: "",
+        ecl: "",
+        pid: ""
+    });
+    return minimumValidKeys
+        .findIndex(function (key) {
+        // console.log(Object.keys(passportObj), passportObj[<PassportKey>key], key) === undefined &&
+        return (!Object.keys(passportObj).includes(key) ||
+            !(passportObj[key] !== ""));
+    })
+        === -1;
+    //B:
+    // &&
+    // betweenOrEqual(passportObj.byr, 1920, 2002)
 };
 log("test a:", testInputArr.filter(function (line) { return checkIfValid(line, VALIDSFORA); }));
 log("a:", inputArr.filter(function (line) { return checkIfValid(line, VALIDSFORA); })

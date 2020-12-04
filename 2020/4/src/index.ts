@@ -15,25 +15,42 @@ cid (Country ID)`.split("\n").map((line: string) => line.trim().split(" ")[0])
 
 const VALIDSFORA = VALIDS.filter((str: string) => str !== "cid")
 
-// type Passport = {
-//     byr: number,
-//     iyr: number,
-//     eyr: number,
-//     hgt: string,
-//     hcl: string,
-//     ecl: string,
-//     pid: string,
-//     cid?: string
-// }
 
+type Passport = {
+    "byr": string,
+    "iyr": string,
+    "eyr": string,
+    "hgt": string,
+    "hcl": string,
+    "ecl": string,
+    "pid": string,
+    "cid"?: string
+}
+
+type PassportKey = keyof Passport;
 
 const checkIfValid = (str: string, minimumValidKeys: string[]) => {
-    const passportObj: object = str
+    const passportObj: Passport = str
         .split(/\s/)
-        .reduce((curr: any, next: string): object =>
-            (curr[next.split(":")[0].toString()] =
-                next.split(":")[1], curr), {})
-    return minimumValidKeys.findIndex((key: string) => !Object.keys(passportObj).includes(key)) === -1
+        .reduce<Passport>((curr: Passport, next: string): Passport =>
+            (curr[<PassportKey>next.split(":")[0].toString()] =
+                next.split(":")[1], curr as Passport), {
+                    byr: "",
+                    iyr: "",
+                    eyr: "",
+                    hgt: "",
+                    hcl: "",
+                    ecl: "",
+                    pid: "",
+                } as Passport)
+    return minimumValidKeys
+        .findIndex((key: string) =>
+            (!Object.keys(passportObj).includes(key) ||
+                !(passportObj[<PassportKey>key] !== "")))
+        === -1
+    //B:
+    // &&
+    // betweenOrEqual(passportObj.byr, 1920, 2002)
 
 
 }
