@@ -1,0 +1,12 @@
+ {
+    "compilerOptions": {
+      "allowJs":true,
+      "sourceMap":true,
+      "strict": true,
+      "lib":["ES2016","DOM"],
+      "outDir":"dist/"
+     
+    },
+    "include":["./src/*"],
+ }
+
