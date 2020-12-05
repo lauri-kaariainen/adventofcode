@@ -52,7 +52,7 @@ const seatIds: number[] =
         // .split("\n")
         // .map((line:string) => line.trim())
         .map((line: string) => ({ row: parseInt(line.slice(0, 7), 2), column: parseInt(line.slice(7), 2) }))
-        .map((obj: object) => ({ ...obj, seatId: obj.row * 8 + obj.column }))
+        .map((obj: { row: number, column: number }): Seat => ({ ...obj, seatId: obj.row * 8 + obj.column }))
         .map((e: Seat) => e.seatId) || []
 //A:        
 log(
