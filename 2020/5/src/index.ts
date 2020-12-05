@@ -50,10 +50,10 @@ const seatIds: number[] =
         // .replace(/[BR]/g, "1")
         // .replace(/[FL]/g, "0")
         // .split("\n")
-        // .map(line => line.trim())
-        .map(line => ({ row: parseInt(line.slice(0, 7), 2), column: parseInt(line.slice(7), 2) }))
-        .map(obj => ({ ...obj, seatId: obj.row * 8 + obj.column }))
-        .map(e => e.seatId) || []
+        // .map((line:string) => line.trim())
+        .map((line: string) => ({ row: parseInt(line.slice(0, 7), 2), column: parseInt(line.slice(7), 2) }))
+        .map((obj: object) => ({ ...obj, seatId: obj.row * 8 + obj.column }))
+        .map((e: Seat) => e.seatId) || []
 //A:        
 log(
     "A:", Math.max(...seatIds)
@@ -64,8 +64,8 @@ log(
     "B:",
 
     seatIds
-        .sort((a, b) => a - b)
-        .find((num, i, arr) => arr[i + 1] !== num + 1)! + 1 //typescript: exclamation mark denotes that this surely can't be undefined, otherwise input is wrong
+        .sort((a: number, b: number) => a - b)
+        .find((num: number, i, arr) => arr[i + 1] !== num + 1)! + 1 //typescript: exclamation mark denotes that this surely can't be undefined, otherwise input is wrong
 
 )
 
