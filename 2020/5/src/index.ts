@@ -44,6 +44,33 @@ log("b:",
     findOwnPlace(getInput().map(findSeat))
 )
 
+log("short version answers:")
+const seatIds: number[] =
+    getInput()
+        // .replace(/[BR]/g, "1")
+        // .replace(/[FL]/g, "0")
+        // .split("\n")
+        // .map(line => line.trim())
+        .map(line => ({ row: parseInt(line.slice(0, 7), 2), column: parseInt(line.slice(7), 2) }))
+        .map(obj => ({ ...obj, seatId: obj.row * 8 + obj.column }))
+        .map(e => e.seatId) || []
+//A:        
+log(
+    "A:", Math.max(...seatIds)
+)
+
+//B:
+log(
+    "B:",
+
+    seatIds
+        .sort((a, b) => a - b)
+        .find((num, i, arr) => arr[i + 1] !== num + 1)! + 1 //typescript: exclamation mark denotes that this surely can't be undefined, otherwise input is wrong
+
+)
+
+
+
 function log(...args: any[]): void {
     if (typeof (console) !== 'undefined') {
         console.log(...args);
