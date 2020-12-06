@@ -10,23 +10,24 @@ var getGroupsAsArr = function (input) {
 log("a:", getGroupsAsArr(getInput())
     .map(function (group) {
     return group
-        .flatMap(function (e) { return e.split(""); })
+        .flatMap(function (answers) { return answers.split(""); })
         .filter(helpmodule_js_1.uniqueShallow).length;
 })
     .reduce(function (curr, next) { return curr + next; }));
 log("b:", getGroupsAsArr(getInput())
     .map(function (group) {
     return group
-        .map(function (groupStr) { return groupStr.split(""); })
-        .map(function (groupArr, i, arr) {
-        return groupArr.filter(function (elem) {
-            return arr
-                .flatMap(function (group) { return group; })
+        .map(function (answers) { return answers.split(""); })
+        .map(function (answersArr, i, groupPeople) {
+        //only save answers that are answered groupPeople.length times 
+        return answersArr.filter(function (elem) {
+            return groupPeople
+                .flatMap(function (answers) { return answers; })
                 .filter(function (answer) { return answer === elem; })
-                .length === arr.length;
+                .length === groupPeople.length;
         });
     })
-        .flatMap(function (groupArr) { return groupArr; })
+        .flatMap(function (answersArr) { return answersArr; })
         .filter(helpmodule_js_1.uniqueShallow).length;
 })
     .reduce(function (curr, next) { return curr + next; }));

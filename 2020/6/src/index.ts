@@ -11,7 +11,7 @@ log("a:",
     getGroupsAsArr(getInput())
         .map((group: string[]) =>
             group
-                .flatMap((e: string): string[] => e.split(""))
+                .flatMap((answers: string): string[] => answers.split(""))
                 .filter(uniqueShallow).length)
         .reduce((curr: number, next: number) => curr + next)
 )
@@ -20,15 +20,16 @@ log("b:",
     getGroupsAsArr(getInput())
         .map((group: string[]) =>
             group
-                .map((groupStr: string): string[] => groupStr.split(""))
-                .map((groupArr: string[], i, arr: string[][]) =>
-                    groupArr.filter((elem: string) =>
-                        arr
-                            .flatMap((group: string[]) => group)
+                .map((answers: string): string[] => answers.split(""))
+                .map((answersArr: string[], i, groupPeople: string[][]) =>
+                    //only save answers that are answered groupPeople.length times 
+                    answersArr.filter((elem: string) =>
+                        groupPeople
+                            .flatMap((answers: string[]) => answers)
                             .filter((answer: string) => answer === elem)
-                            .length === arr.length
+                            .length === groupPeople.length
                     ))
-                .flatMap((groupArr: string[]) => groupArr)
+                .flatMap((answersArr: string[]) => answersArr)
                 .filter(uniqueShallow).length
         )
         .reduce((curr: number, next: number) => curr + next)
