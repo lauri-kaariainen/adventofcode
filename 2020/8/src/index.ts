@@ -10,6 +10,11 @@ type Instruction = {
     argument: string
 }
 
+type Result = {
+    naturalTermination: boolean,
+    accumulator: number
+}
+
 const handleInputToInstructions = (str: string): Instruction[] =>
     str
         .split(/\s*\n\s*/)
@@ -18,38 +23,70 @@ const handleInputToInstructions = (str: string): Instruction[] =>
             argument: line.split(" ")[1]
         }))
 
+
 const goThroughInstructions = (
     list: Instruction[],
     position: number = 0,
     accumulator: number = 0,
     step: number = 0,
-    visitedPositions: number[] = []): number =>
-    visitedPositions.filter((pos: number) => pos === position).length ?
-        accumulator :
-        goThroughInstructions(
+    visitedPositions: number[] = []): Result =>
+    list[position] === undefined ?
+        { naturalTermination: true, accumulator: accumulator } :
+        visitedPositions.filter((pos: number) => pos === position).length ?
+            { naturalTermination: false, accumulator: accumulator } :
+            goThroughInstructions(
+                list,
+                position +
+                (list[position].operation === "jmp" ?
+                    parseInt(list[position].argument) :
+                    1),
+                accumulator + (list[position].operation === "acc" ?
+                    parseInt(list[position].argument) :
+                    0),
+                step + 1,
+                visitedPositions.concat(position))
+
+
+
+const recursivelyGoThroughListUntilNaturalTermination = (
+    list: Instruction[],
+    lastResult: Result = goThroughInstructions(list),
+    nextPosition: number =
+        list
+            .findIndex((instr: Instruction) =>
+                instr.operation === "jmp" || instr.operation === "nop")
+): number =>
+    lastResult.naturalTermination ?
+        lastResult.accumulator :
+        recursivelyGoThroughListUntilNaturalTermination(
             list,
-            position +
-            (list[position].operation === "jmp" ?
-                parseInt(list[position].argument) :
-                1),
-            accumulator + (list[position].operation === "acc" ?
-                parseInt(list[position].argument) :
-                0),
-            step + 1,
-            visitedPositions.concat(position))
+            goThroughInstructions(
+                list.map((instr: Instruction, i) =>
+                    i === nextPosition ?
+                        (instr.operation === "jmp" ?
+                            { ...instr, operation: "nop" } :
+                            { ...instr, operation: "jmp" }) :
+                        instr)),
+            list.findIndex((instr: Instruction, index) =>
+                index > nextPosition && (instr.operation === "jmp" || instr.operation === "nop"))
+        )
+
 
 
 
 log("a:",
-    goThroughInstructions(
+    JSON.stringify(goThroughInstructions(
 
         handleInputToInstructions(getInput())
-    )
+    ))
 )
 
-// log("b:",
-
-// )
+log("b:",
+    JSON.stringify(
+        recursivelyGoThroughListUntilNaturalTermination(
+            handleInputToInstructions(getInput()))
+    )
+)
 
 
 function log(...args: any[]): void {
