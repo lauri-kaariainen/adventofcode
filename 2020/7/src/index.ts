@@ -1,10 +1,9 @@
-import { uniqueShallow } from "../../../helpmodule.js";
+// import { uniqueShallow } from "../../../helpmodule.js";
 
 type Bag = {
     color: string,
     innerBags: { amount: number, color: string }[]
 }
-
 
 const handleInputToObjects = (input: string): Bag[] =>
     input
@@ -24,9 +23,28 @@ const handleInputToObjects = (input: string): Bag[] =>
         })
 
 
-const iterateAndCountOccurrences: any | number =
-    (list: Bag[], searchedOccurrences: string[], numOfOccurrences: number = 0, depth: number = 0) => {
-        // console.log(depth, list, searchedOccurrences, numOfOccurrences);
+//NOTE! returns total bags but question only wants amount inside the first bag
+const countBags = (list: Bag[], currBagColor: string): number => {
+    const currBag = list.filter((bag: Bag) => bag.color === currBagColor)[0]
+    if (currBag.innerBags.length === 0) {
+        return 1;
+    }
+    else
+        return 1 + currBag.innerBags
+            .map((innerBag: any): number =>
+                innerBag.amount * countBags(
+                    list,
+                    innerBag.color,
+                ))
+            .reduce((acc: number, next: number) => acc + next, 0)
+}
+
+
+
+
+const iterateAndCountOccurrences =
+    (list: Bag[], searchedOccurrences: string[], numOfOccurrences: number = 0, depth: number = 0): Function | number => {
+
         if (!searchedOccurrences.length)
             return numOfOccurrences
         const matchedItems =
@@ -47,13 +65,15 @@ const iterateAndCountOccurrences: any | number =
 
 
 
+
 log("a:",
     iterateAndCountOccurrences(
         handleInputToObjects(getInput()), ["shiny gold"])
 )
 
 log("b:",
-
+    countBags(
+        handleInputToObjects(getInput()), "shiny gold") - 1
 )
 
 
@@ -75,6 +95,15 @@ function getTestInput(): string {
     vibrant plum bags contain 5 faded blue bags, 6 dotted black bags.
     faded blue bags contain no other bags.
     dotted black bags contain no other bags.`)
+}
+function getAnotherTestInput(): string {
+    return `shiny gold bags contain 2 dark red bags.
+    dark red bags contain 2 dark orange bags.
+    dark orange bags contain 2 dark yellow bags.
+    dark yellow bags contain 2 dark green bags.
+    dark green bags contain 2 dark blue bags.
+    dark blue bags contain 2 dark violet bags.
+    dark violet bags contain no other bags.`;
 }
 
 function getInput(): string {

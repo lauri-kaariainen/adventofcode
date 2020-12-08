@@ -15,6 +15,15 @@ var handleInputToObjects = function (input) {
         };
     });
 };
+// const recursivelyMapIntoTree = (input: string[], bags: Bag2[] | null): Function | Bag2[] =>
+//     input
+var countBags = function (list, currBagColor) {
+    var currBag = list.filter(function (bag) { return bag.color === currBagColor; })[0];
+    return currBag.innerBags.reduce(function (sum, innerBag) { return (sum.push(innerBag.amount) &&
+        countBags(
+        //list.filter((bag: Bag) => bag.color !== innerBag.color),
+        list, list.filter(function (bag) { return bag.color === innerBag.color; })[0].color), sum); }, []);
+};
 var iterateAndCountOccurrences = function (list, searchedOccurrences, numOfOccurrences, depth) {
     if (numOfOccurrences === void 0) { numOfOccurrences = 0; }
     if (depth === void 0) { depth = 0; }
@@ -33,8 +42,24 @@ var iterateAndCountOccurrences = function (list, searchedOccurrences, numOfOccur
     numOfOccurrences +
         matchedItems.length, depth + 1);
 };
+var BPartIterateAndCountOccurrences = function (list, searchedOccurrences, numOfOccurrences, depth) {
+    if (numOfOccurrences === void 0) { numOfOccurrences = 0; }
+    if (depth === void 0) { depth = 0; }
+    // console.log(depth, list, searchedOccurrences, numOfOccurrences);
+    if (!searchedOccurrences.length)
+        return numOfOccurrences;
+    var matchedItems = list.filter(function (bag) {
+        return searchedOccurrences.map(function (searchedBag) { return searchedBag.color; }).includes(bag.color);
+    });
+    return BPartIterateAndCountOccurrences(
+    //take out those bags that have searchedOccurrence color bag inside 
+    list.filter(function (bag) { return !matchedItems.map(function (bag) { return bag.color; }).includes(bag.color); }), matchedItems, 
+    //how many correct bags found this time
+    numOfOccurrences +
+        matchedItems.length, depth + 1);
+};
 log("a:", iterateAndCountOccurrences(handleInputToObjects(getInput()), ["shiny gold"]));
-log("b:");
+log("b:", countBags(handleInputToObjects(getTestInput()), "shiny gold"));
 function log() {
     var args = [];
     for (var _i = 0; _i < arguments.length; _i++) {
