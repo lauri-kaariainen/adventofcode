@@ -1,7 +1,7 @@
 import { trampoline } from "../../../helpmodule.js";
 
-const TEST_PREAMBLE = 5;
-const PREAMBLE = 25;
+const TEST_PREAMBLE:number = 5;
+const PREAMBLE:number = 25;
 
 
 
@@ -22,7 +22,7 @@ const recursivelyFindContiguousSet = (
         if (step % 1000 === 0)
             console.log(`currently on line ${position} of ${list.length}`)
 
-        const getSum =
+        const getSum:number =
             list
                 .slice(position, length)
                 .reduce((sum: number, next: number) => sum + next, 0)

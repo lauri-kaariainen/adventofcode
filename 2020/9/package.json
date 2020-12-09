@@ -4,7 +4,7 @@
  },
  "scripts": {
   "tsc": "tsc",
-  "tscparcel": "npm run tsc && parcel build --public-url \".\" src/index.ts"
+  "build": "tsc --noEmit && parcel build --public-url \".\" src/index.ts"
  },
  "dependencies": {}
 }
