@@ -18,7 +18,7 @@ const recursivelyFindContiguousSet = (
     length: number = 1,
     position: number = 0,
     step = 0):
-    Function | number[] => () => { //note extra function wrap for trampoline!!
+    Function => (): Function | number[] => { //note extra function wrap for trampoline!!
         if (step % 1000 === 0)
             console.log(`currently on line ${position} of ${list.length}`)
 
