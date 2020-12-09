@@ -1,4 +1,4 @@
-// import { uniqueShallow } from "../../../helpmodule.js";
+import { trampoline } from "../../../helpmodule.js";
 
 const TEST_PREAMBLE = 5;
 const PREAMBLE = 25;
@@ -12,9 +12,35 @@ const checkNumCorrectness = (num: number, preamble: number[]): boolean =>
                 anotherNum + preambleNum === num &&
                 anotherNum !== preambleNum) !== undefined)
 
+const recursivelyFindContiguousSet = (
+    list: number[],
+    target: number,
+    length: number = 1,
+    position: number = 0,
+    step = 0):
+    Function | number[] => () => { //note extra function wrap for trampoline!!
+        if (step % 1000 === 0)
+            console.log(`currently on line ${position} of ${list.length}`)
 
-log("a:",
+        const getSum =
+            list
+                .slice(position, length)
+                .reduce((sum: number, next: number) => sum + next, 0)
 
+        return getSum === target ?
+            list.slice(position, length) :
+            recursivelyFindContiguousSet(
+                list,
+                target,
+                getSum >= target ? 1 : length + 1,
+                getSum >= target ? position + 1 : position,
+                step + 1
+            )
+    }
+
+
+
+const numForA: number =
     getInput()
         .split(/\s*\n\s*/)
         .map((str: string): number => parseInt(str))
@@ -22,11 +48,27 @@ log("a:",
             i >= PREAMBLE ?
                 !checkNumCorrectness(num, arr.slice(i - PREAMBLE, i)) :
                 false
-        )
+        ) as number
 
+
+const listForB: number[] =
+    trampoline(
+
+        recursivelyFindContiguousSet(
+            getInput()
+                .split(/\s*\n\s*/)
+                .map((str: string): number => parseInt(str)),
+            numForA
+        )
+    )
+
+log("a:",
+
+    numForA
 )
 
 log("b:",
+    Math.max(...listForB) + Math.min(...listForB)
 
 )
 
