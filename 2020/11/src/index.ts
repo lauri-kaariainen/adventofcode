@@ -8,70 +8,103 @@ enum Position {
     Floor = "."
 }
 
-type Chair = {
-    seat: Position,
-    seatsAround: string[]
-}
+const getSeenTakenSeatsA = (x: number, y: number, arr: string[][]): string[] =>
+    get8Typed(x, y, arr)
+        .filter((anotherSeat: string) => anotherSeat === Position.TakenSeat)
+
+const getFirstSeenSeat = (rule: { addX: number, addY: number }, x: number, y: number, arr: string[][]): string =>
+    arr[y + rule.addY] === undefined ? "" :
+        arr[y + rule.addY][x + rule.addX] === undefined ? "" :
+            arr[y + rule.addY][x + rule.addX] === Position.Floor ?
+                getFirstSeenSeat(rule, x + rule.addX, y + rule.addY, arr) :
+                arr[y + rule.addY][x + rule.addX]
+
+const getSeenTakenSeatsB = (x: number, y: number, arr: string[][]): string[] =>
+    [
+        { addX: -1, addY: -1 },
+        { addX: 0, addY: -1 },
+        { addX: 1, addY: -1 },
+        { addX: -1, addY: 0 },
+        { addX: 1, addY: 0 },
+        { addX: -1, addY: 1 },
+        { addX: 0, addY: 1 },
+        { addX: 1, addY: 1 }
+    ]
+        .map((rule: any): string =>
+            getFirstSeenSeat(
+                rule,
+                x, y, arr
+            ))
+        .filter((anotherSeat: string) => anotherSeat === Position.TakenSeat)
 
 const recursivelyTakeSeats = (
     inputMatrix: string[][],
+    lookingForBAnswer: boolean = false,
     step = 0,
-    lastResult: string[][] = [[]]): string[][] => {
-    console.log(step)
-    if (lastResult[0].join("") === inputMatrix[0].join("")) {
-        if (lastResult.slice(-1).join("") === inputMatrix.slice(-1).join("")) {
-            if (lastResult.slice(Math.floor(-lastResult.length / 6)).join("") === inputMatrix.slice(Math.floor(-inputMatrix.length / 6)).join("")) {
-
-                console.log("started checking if completely equal")
-                if (lastResult.map(line => line.join("")).join("") ===
-                    inputMatrix.map(line => line.join("")).join(""))
-                    return inputMatrix
-            }
-        }
-    }
+    lastResult: string[][] = [[]],
+): string[][] => {
+    // console.log(step)
+    if (lastResult.map(line => line.join("")).join("") ===
+        inputMatrix.map(line => line.join("")).join(""))
+        return inputMatrix
 
     return recursivelyTakeSeats(
         inputMatrix
-            // .map(line => line.slice()) //don't mutate old one
             .map((line: string[], y: number, arr: string[][]): any =>
                 line.map((char: string, x: number): string =>
                     char === Position.Floor ?
                         char :
                         char === Position.TakenSeat ?
-                            get8Typed(x, y, arr)
-                                .filter((anotherSeat: string) => anotherSeat === Position.TakenSeat)
-                                .length >= 4 ?
+                            (lookingForBAnswer ?
+                                getSeenTakenSeatsB(x, y, arr) :
+                                getSeenTakenSeatsA(x, y, arr))
+                                .length >= (lookingForBAnswer ? 5 : 4) ?
                                 Position.EmptySeat :
                                 Position.TakenSeat :
                             //char===Position.EmptySeat
-                            get8Typed(x, y, arr)
-                                .find((anotherSeat: string) => anotherSeat === Position.TakenSeat) ?
+                            (lookingForBAnswer ?
+                                getSeenTakenSeatsB(x, y, arr) :
+                                getSeenTakenSeatsA(x, y, arr)).length ?
                                 Position.EmptySeat :
                                 Position.TakenSeat
                 )
             ),
+        lookingForBAnswer,
         step + 1,
         inputMatrix.map(line => line.slice())
     )
 }
-
+const startTime = new Date().getTime()
 
 log("a:\n",
 
     recursivelyTakeSeats(
-
         getInput()
             .split(/\s*\n\s*/)
-            .map(line => line.split(""))
-    )
-        // .filter(str => (console.log(str.split("\n").flatMap(line => line.split("")).filter(char => char === "#")), true))
-        .map(line => line.join("")).join("\n")
+            .map(line => line.split("")))
+        .map((line: string[]) => line.join("")).join("\n")
+        //comment out below to show the last layout
+        .split("\n")
+        .map((line: string): number => line.split("").filter((char: string) => char === Position.TakenSeat).length)
+        .reduce((a: number, b: number) => a + b, 0)
 )
 
 log("b:",
-
+    recursivelyTakeSeats(
+        getInput()
+            .split(/\s*\n\s*/)
+            .map(line => line.split("")), true)
+        .map((line: string[]) => line.join("")).join("\n")
+        //comment out below to show the last layout
+        .split("\n")
+        .map((line: string): number => line.split("").filter((char: string) => char === Position.TakenSeat).length)
+        .reduce((a: number, b: number) => a + b, 0)
 )
-
+log(
+    "everything took",
+    new Date().getTime() - startTime,
+    "ms"
+)
 
 function log(...args: any[]): void {
     if (typeof (console) !== 'undefined') {
