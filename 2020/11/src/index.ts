@@ -93,7 +93,8 @@ log("b:",
     recursivelyTakeSeats(
         getInput()
             .split(/\s*\n\s*/)
-            .map(line => line.split("")), true)
+            .map(line => line.split("")),
+        true)
         .map((line: string[]) => line.join("")).join("\n")
         //comment out below to show the last layout
         .split("\n")
