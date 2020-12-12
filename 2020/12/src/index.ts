@@ -18,18 +18,27 @@ const getNextPosition = (
     input: string,
     position: ShipPosition
 ): ShipPosition =>
-    input[0] === Direction.North ? { ...position, y: position.y - parseInt(input.substr(1)) } :
-        input[0] === Direction.South ? { ...position, y: position.y + parseInt(input.substr(1)) } :
-            input[0] === Direction.East ? { ...position, x: position.x - parseInt(input.substr(1)) } :
-                input[0] === Direction.West ? { ...position, x: position.x + parseInt(input.substr(1)) } :
-                    input[0] === "R" ? {
-                        ...position,
-                        degrees: (position.degrees + parseInt(input.substr(1))) % 360,
-                    } :
-                        input[0] === "L" ? {
+    input[0] === Direction.North ?
+        { ...position, y: position.y - parseInt(input.substr(1)) } :
+        input[0] === Direction.South ?
+            { ...position, y: position.y + parseInt(input.substr(1)) } :
+            input[0] === Direction.East ?
+                { ...position, x: position.x + parseInt(input.substr(1)) } :
+                input[0] === Direction.West ?
+                    { ...position, x: position.x - parseInt(input.substr(1)) } :
+                    input[0] === "R" ?
+                        {
                             ...position,
-                            degrees: (position.degrees - parseInt(input.substr(1))) % 360,
+                            degrees: (position.degrees + parseInt(input.substr(1))) % 360,
                         } :
+                        input[0] === "L" ?
+                            {
+                                ...position,
+                                degrees:
+                                    position.degrees - parseInt(input.substr(1)) >= 0 ?
+                                        (position.degrees - parseInt(input.substr(1))) % 360 :
+                                        (position.degrees - parseInt(input.substr(1))) % 360 + 360
+                            } :
                             //input[0] === "F" ? 
                             {
                                 ...position,
@@ -38,7 +47,7 @@ const getNextPosition = (
                                     position.degrees === 270 ?
                                         position.x - parseInt(input.substr(1)) :
                                         position.x,
-                                y: position.degrees === 0 ?
+                                y: position.degrees === 0 || position.degrees === 360 ?
                                     position.y - parseInt(input.substr(1)) :
                                     position.degrees === 180 ?
                                         position.y + parseInt(input.substr(1)) :
@@ -50,11 +59,12 @@ const getNextPosition = (
 
 const recursivelyFollowInstructions =
     (inputLeft: string[],
-        currPosition: ShipPosition = { x: 0, y: 0, degrees: 90 },
-        currDirection: Direction = Direction.East
+        currPosition: ShipPosition = { x: 0, y: 0, degrees: 90 }
+        // currDirection: Direction = Direction.East
     ): ShipPosition =>
         !inputLeft.length ?
             currPosition :
+            // (console.log(inputLeft[0], currPosition.x, currPosition.y, currPosition.degrees),
             recursivelyFollowInstructions(
                 inputLeft.slice(1),
                 getNextPosition(
@@ -73,12 +83,13 @@ const recursivelyFollowInstructions =
 
 const startTime = new Date().getTime()
 
-log("a:\n",
+const resultForA =
     recursivelyFollowInstructions(
+        getInput()
+            .split(/\s*\n*\s/g))
 
-        getTestInput()
-            .split(/\s*\n*\s/g)
-    )
+log("a:\n",
+    Math.abs(resultForA.x) + Math.abs(resultForA.y)
 
 )
 
