@@ -60,7 +60,6 @@ const getNextPosition = (
 const recursivelyFollowInstructions =
     (inputLeft: string[],
         currPosition: ShipPosition = { x: 0, y: 0, degrees: 90 }
-        // currDirection: Direction = Direction.East
     ): ShipPosition =>
         !inputLeft.length ?
             currPosition :
