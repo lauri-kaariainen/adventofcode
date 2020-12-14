@@ -2,24 +2,43 @@ import { trampoline } from "../../../helpmodule.js";
 
 const startTime = new Date().getTime()
 
-// const checkIfNumIsCorrect = (
-//     leaveTime: number,
-//     item: { id: number, position: number }): boolean =>
-//     leaveTime + item.position %
+
+const calculateTimeToCorrectRemainder = (
+    minutes: number,
+    offset: number,
+    divisioner: number): number => {
+    while ((minutes + offset) % divisioner > 0)
+        minutes += divisioner
+    return minutes
+}
 
 
 const recursivelyFindCorrectTimeB = (
     inputObjs: { id: number, position: number }[],
-    multiplicator: number = 1,
+    // multiplicator: number = 1,
+    minutes: number = 0,
     step: number = 0
-): Function | number =>
-    inputObjs.find((obj: any) =>
-        (inputObjs[0].id * multiplicator + obj.position) % obj.id !== 0) ?
+): Function | number => {
+    // console.log(multiplicator)
+    if (!inputObjs.length)
+        return minutes
+    console.log(minutes)
+    return (
         //note extra function, for the trampoline
-        () => recursivelyFindCorrectTimeB(inputObjs, multiplicator + 1, step + 1) :
-        multiplicator
+        () => recursivelyFindCorrectTimeB(
+            inputObjs.slice(1),
+            calculateTimeToCorrectRemainder(
+                minutes,
+                inputObjs[0].position,
+                inputObjs[0].id) * inputObjs[0].id,
+            step + 1)
+    )
+}
 
-const inputUsed = getTestInput3()
+
+
+
+const inputUsed = getTestInput()
 
 const departTime = parseInt(inputUsed.split("\n")[0])
 
@@ -38,7 +57,8 @@ log("a:\n",
 
 const firstDepartureId = parseInt(inputUsed.split("\n")[1])
 
-log("b:",
+
+log("b: DOESN'T WORK, WRONG ANSWER",
     trampoline(
         recursivelyFindCorrectTimeB(
 
@@ -49,7 +69,8 @@ log("b:",
                 .map((id: number, i: number) => ({ id: id, position: i }))
                 .filter((obj: any) => !isNaN(obj.id))
         )
-    ) * firstDepartureId
+    )
+    * firstDepartureId
 )
 
 log(
@@ -78,6 +99,10 @@ function getTestInput2(): string {
 function getTestInput3(): string {
     return (`939
     1789,37,47,1889`)
+}
+function getTestInput4(): string {
+    return (`939
+    x,3,x,x,x,11,7`)
 }
 
 
