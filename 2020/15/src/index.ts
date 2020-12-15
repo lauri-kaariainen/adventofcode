@@ -2,22 +2,10 @@ import { trampoline } from "../../../helpmodule.js";
 
 const startTime = new Date().getTime()
 
-
-// type SpokenNumber =
-//     {
-//         number: number,
-//         spokeTurn: number
-//     }
-
-// const checkWhenLastSpoken = (number: number, list: SpokenNumber[]): SpokenNumber[] =>
-//     list
-//         .filter((spkn: SpokenNumber) => spkn.number === number)
-//         .slice(-1)
-const getLastIndexBeforeLatest = (list: number[]) =>
-    list.slice(0, -1).lastIndexOf(list.slice(-1)[0])
+// const getLastIndexBeforeLatest = (list: number[]) =>
+//     list.slice(0, -1).lastIndexOf(list.slice(-1)[0])
 
 const recursivelyGetNextNumber = (
-    // numberList: number[],
     nextNumber: number,
     targetTurn: number = 10,
     resultObj: any = {},
@@ -25,28 +13,16 @@ const recursivelyGetNextNumber = (
 ): Function | number =>
     step >= targetTurn ?
         nextNumber :
-        // (console.log("step:", step, "next:", nextNumber, "obj:", JSON.stringify(resultObj)),
-        () => recursivelyGetNextNumber(
-            resultObj[nextNumber.toString()] ? step - resultObj[nextNumber.toString()] : 0,
-            targetTurn,
-            { ...resultObj, [nextNumber]: step },
-            step + 1
+        ((step % 1000000 === 0 ? console.log("step:", step, "next:", nextNumber, "obj-len:", Object.keys(resultObj).length) : true),
+            () => recursivelyGetNextNumber(
+                resultObj[nextNumber.toString()] ? step - resultObj[nextNumber.toString()] : 0,
+                targetTurn,
+                // { ...resultObj, [nextNumber]: step }, 
+                //cheap out on creating a new object... save 99% on runtime
+                (resultObj[nextNumber.toString()] = step, resultObj),
+                step + 1
+            )
         )
-// )
-// numberList :
-// (
-//     step % 10000 === 0 ? console.log(numberList.length, step) : true,
-//     () => recursivelyGetNextNumber(
-//         numberList
-//             .concat(getLastIndexBeforeLatest(numberList) === -1 ? 0 :
-//                 step - (getLastIndexBeforeLatest(numberList) + 1)
-//             ),
-//         targetTurn,
-//         step + 1
-//     ))
-
-
-// const inputUsed = getTestInput()
 
 log("a:\n",
     trampoline(
@@ -69,16 +45,11 @@ log("a:\n",
 
 
 log("b:",
-    // trampoline(recursivelyGetNextNumber(
-    //     inputUsed
-    //         .split(",")
-    //         .map((num: string) => parseInt(num))
-    //     // .map((num: number, i): SpokenNumber => ({
-    //     //     number: num,
-    //     //     spokeTurn: i
-    //     // }))
-    //     , 30000000)
-
+    trampoline(
+        recursivelyGetNextNumber(
+            0,
+            30000000,
+            { 2: 1, 0: 2, 1: 3, 9: 4, 5: 5, 19: 6 }))
 )
 
 
