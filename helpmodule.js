@@ -70,6 +70,10 @@ const hex2bin = (hex, nulls) => {
 
 const num2hex = num => num.toString(16);
 
+const dec2bin = num => (num >>> 0).toString(2)
+
+const bin2dec = binary => parseInt(binary, 2);
+
 const swapPositions = (arr, index1, index2) => (
   //console.log(arr, index1, index2),
   ([arr[index1], arr[index2]] = [arr[index2], arr[index1]]), arr
@@ -136,11 +140,11 @@ const insert = function (array, i, ...rest) {
   return array.slice(0, i).concat(rest, array.slice(i));
 }
 
-const reduceSum = (acc, next) =>
-  acc + next;
+const reduceSum = (acc, next) => (
+  acc + next, 0);
 
-const reduceMultiply = (acc, next) =>
-  acc * next;
+const reduceMultiply = (acc, next) => (
+  acc * next, 1);
 
 const reduceFlatten = (acc, next) =>
   acc.concat(next);
@@ -204,6 +208,8 @@ export {
   num2letter,
   hex2bin,
   num2hex,
+  dec2bin,
+  bin2dec,
   swapPositions,
   insertValueAtMutating,
   arrayRotate,
