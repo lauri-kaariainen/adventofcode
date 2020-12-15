@@ -10,11 +10,7 @@ type Command = {
     writes: Write[]
 }
 
-
 const startTime = new Date().getTime()
-
-
-
 
 const padTo36FromLeft = (str: string) =>
     Array.from(new Array((36 - str.length)))
