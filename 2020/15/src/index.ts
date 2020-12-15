@@ -2,9 +2,6 @@ import { trampoline } from "../../../helpmodule.js";
 
 const startTime = new Date().getTime()
 
-// const getLastIndexBeforeLatest = (list: number[]) =>
-//     list.slice(0, -1).lastIndexOf(list.slice(-1)[0])
-
 const recursivelyGetNextNumber = (
     nextNumber: number,
     targetTurn: number = 10,
@@ -31,13 +28,6 @@ log("a:\n",
             2020,
             // { 0: 1, 3: 2, 6: 3 }
             { 2: 1, 0: 2, 1: 3, 9: 4, 5: 5, 19: 6 }
-
-
-            // inputUsed
-            //     .split(",")
-            //     .map((num: string) => parseInt(num))
-
-            // , 10)
         )
 
     )
