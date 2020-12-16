@@ -140,11 +140,11 @@ const insert = function (array, i, ...rest) {
   return array.slice(0, i).concat(rest, array.slice(i));
 }
 
-const reduceSum = (acc, next) => (
-  acc + next, 0);
+const reduceSum = (acc, next) =>
+  acc + next;
 
-const reduceMultiply = (acc, next) => (
-  acc * next, 1);
+const reduceMultiply = (acc, next) =>
+  acc * next;
 
 const reduceFlatten = (acc, next) =>
   acc.concat(next);
