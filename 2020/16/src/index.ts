@@ -1,13 +1,20 @@
-import { betweenOrEqual, reduceSum } from "../../../helpmodule.js";
+import { betweenOrEqual, reduceSum, uniqueShallow } from "../../../helpmodule.js";
 
 const startTime = new Date().getTime()
 
-const usedInput = getInput()
+const usedInput = getTestInput2()
+
+
+
+type Field = {
+    name: string,
+    limits: number[][]
+}
 
 type ResultObj = {
     ownTicket: number[],
-    othersTickets: number[][]
-    limits: number[][][],
+    othersTickets: number[][],
+    limits: Field[]
 }
 
 const handleStringsToObject = (input: string): ResultObj =>
@@ -34,15 +41,18 @@ const handleStringsToObject = (input: string): ResultObj =>
                         resultObj["limits"] =
                         line
                             .split(/\n\s*/g)
-                            .map((limitString: string): number[][] =>
-                                limitString
-                                    .split(": ")[1]
-                                    .split(" or ")
-                                    .map((limit: string): number[] =>
-                                        limit
-                                            .split("-")
-                                            .map((num: string): number => parseInt(num))
-                                    )
+                            .map((limitString: string): Field/*number[][]*/ => (
+                                {
+                                    name: limitString
+                                        .split(": ")[0],
+                                    limits: limitString
+                                        .split(": ")[1]
+                                        .split(" or ")
+                                        .map((limit: string): number[] =>
+                                            limit
+                                                .split("-")
+                                                .map((num: string): number => parseInt(num)))
+                                })
                             ) :
                         line
                 , resultObj)
@@ -59,6 +69,7 @@ log("a:\n",
             ticket
                 .filter((fieldValue: number) =>
                     !ticketObject.limits
+                        .map((field: Field) => field.limits)
                         .flatMap(e => e)
                         .find((limitArr: number[]) =>
                             betweenOrEqual(fieldValue, limitArr[0], limitArr[1])
@@ -66,14 +77,43 @@ log("a:\n",
         )
         .filter(arr => arr.length)
         .flatMap(arr => arr)
-        .reduce(reduceSum)
+        .reduce(reduceSum, 0)
 
 
 )
 
+const validOthersTickets =
+    ticketObject.othersTickets
+        .map((ticket: number[]) =>
+            ticket
+                .filter((fieldValue: number) =>
+                    ticketObject.limits
+                        .flatMap((field: Field) => field.limits)
+                        .find((limitArr: number[]) =>
+                            betweenOrEqual(fieldValue, limitArr[0], limitArr[1])
+                        ))
+        )
+        .filter((ticket: number[]) => ticketObject.ownTicket.length === ticket.length)
+
+const possibleFields =
+    validOthersTickets.map((ticket: number[]) =>
+        ticket.map((ticketNum: number) =>
+            ticketObject.limits.map((field: Field, i): string =>
+                field.limits
+                    .find((limit: number[]) =>
+                        betweenOrEqual(ticketNum, limit[0], limit[1]))
+                    ? field.name : "")
+                .filter((line: string) => line.length)
+        )
+    )
+
 
 log("b:",
-
+    // validOthersTickets,
+    // ticketObject.limits,
+    possibleFields,
+    possibleFields.map(arr => arr.flatMap(e => e).filter(uniqueShallow))
+    // handleStringsToObject(usedInput)
 )
 
 
@@ -107,7 +147,19 @@ function getTestInput(): string {
     55,2,20
     38,6,12`)
 }
-
+function getTestInput2(): string {
+    return (`class: 0-1 or 4-19
+    row: 0-5 or 8-19
+    seat: 0-13 or 16-19
+    
+    your ticket:
+    11,12,13
+    
+    nearby tickets:
+    3,9,18
+    15,1,5
+    5,14,9`)
+}
 
 
 function getInput(): string {
