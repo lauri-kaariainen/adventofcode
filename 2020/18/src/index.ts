@@ -1,47 +1,95 @@
 // import { get8, betweenOrEqual } from "../../../helpmodule.js";
 
-// enum Position {
-//     Active = "#",
-//     InActive = "."
-// }
 
 
-const recursivelySolveEquation = (
+const solveEquationWithoutBrackets = (
     input: string[],
-    // lastChar:string,
     step: number = 0,
-    // lastOp:string = "+",
     total: number = 0,
-    // lastOp:string,
-    // lastNumber:number
 ): number =>
-    console.log(step, input[step], total) !== undefined ? 0 :
-        step >= input.length ?
-            total :
-            recursivelySolveEquation(
-                input,
-                step + 1,
-                // !isNaN(eval(total+" "+input[step-1]+" "+input[step]) ? )
-                step === 0 ? parseInt(input[step]) :
-                    step % 2 === 0 ?
-                        input[step - 1] === "+" ?
-                            total + parseInt(input[step]) :
-                            total * parseInt(input[step]) :
-                        total
-            )
+    step >= input.length ?
+        total :
+        solveEquationWithoutBrackets(
+            input,
+            step + 1,
+            step === 0 ? parseInt(input[step]) :
+                step % 2 === 0 ?
+                    input[step - 1] === "+" ?
+                        total + parseInt(input[step]) :
+                        total * parseInt(input[step]) :
+                    total
+        )
+
+const getDeepestInnerBrackets = (
+    input: string[],
+    depth: number = 0,
+    resultList: { char: string, depth: number, index: number }[] = []
+): /*string[]*/any =>
+    !input.length ?
+        resultList
+            .filter((res) =>
+                res.depth === Math.max(...resultList.map(res => res.depth)))
+            .slice(0,
+                resultList
+                    .filter((res) =>
+                        res.depth === Math.max(...resultList.map(res => res.depth)))
+                    .findIndex(res => res.char === ")"))
+        :
+        getDeepestInnerBrackets(
+            input.slice(1),
+            input[0] === "(" ?
+                depth + 1 :
+                input[0] === ")" ?
+                    depth - 1 :
+                    depth,
+            resultList.concat(
+                {
+                    char: input[0],
+                    depth: depth,
+                    index: resultList.length
+                })
+        )
+
+
+const openBrackets = (
+    input: string[],
+): number => {
+    const innerBrackets = getDeepestInnerBrackets(input)
+    if (!input.find((char: string) => char === "(")) {
+        return solveEquationWithoutBrackets(input)
+    }
+
+    const innerResult = solveEquationWithoutBrackets(innerBrackets.map((obj: any) => obj.char))
+
+    return openBrackets(
+        input
+            .filter((elem, index) => !innerBrackets.find((bracketElem: any) => bracketElem.index === index))
+            .join("")
+            .replace("()", "" + innerResult)
+            .split(/(\d+|\+|\\*)/g).filter(e => e.length)
+    )
+}
+
+
 
 
 
 const startTime = new Date().getTime()
 
-const usedInput = getTestInput();
+const usedInput = getInput();
 
 log("a:\n",
-    recursivelySolveEquation(
-        usedInput
-            .split(" ")
 
-    )
+    usedInput
+        .split("\n")
+        .map((line: string) =>
+            openBrackets(
+                line
+                    .trim()
+                    .split("")
+                    .filter(e => e.trim().length)))
+
+
 )
 
 log("b:",
@@ -62,7 +110,8 @@ function log(...args: any[]): void {
 
 
 function getTestInput(): string {
-    return (`1 + 2 * 3 + 4 * 5 + 6`)
+    return (`1 + (2 * 3) + (4 * (5 + 6))
+    ((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2`)
 }
 
 function getInput(): string {
