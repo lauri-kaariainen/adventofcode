@@ -4,7 +4,7 @@
 
 const startTime = new Date().getTime()
 
-const usedInput = getInput();
+const usedInput = getTestInput();
 
 const rules: string[] = usedInput
     .split(/\s*\n\s*\n\s*/)[0]
