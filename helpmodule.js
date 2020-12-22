@@ -86,9 +86,15 @@ const insertValueAtMutating = (arr, index, newValue) => {
   return arr
 }
 
-
 const arrayRotate = (arr, reverse) => (
   reverse ? arr.unshift(arr.pop()) : arr.push(arr.shift()), arr
+);
+
+const arrayRotateLeft = (arr) => (
+  arr.push(arr.shift()), arr
+);
+const arrayRotateRight = (arr) => (
+  arr.unshift(arr.pop()), arr
 );
 
 const trampoline = fn => {
@@ -213,6 +219,8 @@ export {
   swapPositions,
   insertValueAtMutating,
   arrayRotate,
+  arrayRotateLeft,
+  arrayRotateRight,
   trampoline,
   uniqueShallow,
   uniqueDeep,
