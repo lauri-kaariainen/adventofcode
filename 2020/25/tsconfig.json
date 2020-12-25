@@ -1,0 +1,12 @@
+ {
+    "compilerOptions": {
+      "allowJs":true,
+      "sourceMap":true,
+      "strict": true,
+      "lib":["ES2020","DOM"],
+      "outDir":"dist/",
+      "target": "ESNext",
+    },
+    "include":["./src/*"],
+ }
+

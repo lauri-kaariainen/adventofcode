@@ -1,0 +1,10 @@
+{
+ "devDependencies": {
+  "typescript": "^4.1.3"
+ },
+ "scripts": {
+  "tsc": "tsc",
+  "build": "tsc --noEmit && parcel build --public-url \".\" src/index.ts"
+ },
+ "dependencies": {}
+}
