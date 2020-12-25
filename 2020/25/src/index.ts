@@ -33,10 +33,6 @@ const input = getInput()
     .split("\n")
     .map((n: string): number => parseInt(n))
 
-console.log(input[0],
-    trampoline(findLoopSize(
-        input[1])))
-
 log("a:\n",
     trampoline(findKey(
         input[0],
