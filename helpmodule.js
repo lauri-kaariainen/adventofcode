@@ -205,6 +205,20 @@ function lcm(array) {
     n = lcm2(array[i], n);
   return n;
 }
+function mostFrequentElems(array) {
+  const mostCommon = array
+    .filter(uniqueShallow)
+    .sort((a, b) =>
+      array
+        .filter(e => e === b).length - array.filter(e => e === a).length)[0];
+
+  const mostCommonLength =
+    array.filter(e => e === mostCommon).length
+
+  return array
+    .filter(e => array.filter(another => another === e).length === mostCommonLength)
+    .filter(uniqueShallow)
+}
 
 
 
@@ -234,5 +248,6 @@ export {
   returnUniqueAmountsAsObj,
   betweenOrEqual,
   lcm,
-  gcd
+  gcd,
+  mostFrequentElems
 }
