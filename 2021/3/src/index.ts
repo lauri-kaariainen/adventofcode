@@ -13,9 +13,25 @@ const testInputArr: string[] = getTESTInput();
 const inputArr: string[] = getInput();
 
 
+/* works on 1s and 0s, on equal num, return 1*/
+const getMostCommonNum = (arr: string[], position: number = 0): string =>
+    (arr
+        .map((line: string): string => line[position])
+        .join("")
+        .match(/1/g) || []).length >= (arr.length / 2) ? "1" : "0"
 
+/* works on 1s and 0s, on equal num, return 0*/
+const getLeastCommonNum = (arr: string[], position: number = 0): string =>
+    (arr
+        .map((line: string): string => line[position])
+        .join("")
+        .match(/1/g) || []).length < (arr.length / 2) ? "1" : "0"
 
 const arrInUse = inputArr;
+
+
+
+
 const gammaRate =
     arrInUse[0].split("")
         .map((char: string, i: number): string =>
@@ -32,11 +48,29 @@ const epsilonRate =
         .reduce((acc: string, next: string): string =>
             (next.match(/1/g) || []).length < (arrInUse.length / 2) ? acc + "1" : acc + "0", "")
 
-
-
-
 log("test a:", parseInt(gammaRate, 2) * parseInt(epsilonRate, 2)
 )
+
+const getOxygenRating = (array: string[], position: number = 0): string =>
+    array.length < 2 ? array[0] :
+        getOxygenRating(
+            array.filter((binary: string) => binary[position] === getMostCommonNum(array, position)),
+            position + 1
+        )
+
+const getCO2ScrubberRating = (array: string[], position: number = 0): string =>
+    array.length < 2 ? array[0] :
+        getCO2ScrubberRating(
+            array.filter((binary: string) => binary[position] === getLeastCommonNum(array, position)),
+            position + 1
+        )
+
+
+log("test b:",
+    parseInt(getOxygenRating(arrInUse), 2) *
+    parseInt(getCO2ScrubberRating(arrInUse), 2),
+    getOxygenRating(arrInUse),
+    getCO2ScrubberRating(arrInUse))
 
 
 function getTESTInput(): string[] {
