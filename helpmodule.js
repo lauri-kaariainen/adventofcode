@@ -220,6 +220,7 @@ function mostFrequentElems(array) {
     .filter(uniqueShallow)
 }
 
+const transpose = m => m[0].map((x, i) => m.map(x => x[i]))
 
 
 export {
@@ -249,5 +250,6 @@ export {
   betweenOrEqual,
   lcm,
   gcd,
-  mostFrequentElems
+  mostFrequentElems,
+  transpose
 }
