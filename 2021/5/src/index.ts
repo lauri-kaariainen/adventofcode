@@ -58,6 +58,26 @@ const getPointsBetweenCoordinates = (
             copyorigin.x--
         }
     }
+    else if (copyorigin.x < target.x && copyorigin.y < target.y) {
+
+        points.push({ x: copyorigin.x + 1, y: copyorigin.y + 1 })
+        copyorigin.x++; copyorigin.y++;
+    }
+    else if (copyorigin.x < target.x && copyorigin.y > target.y) {
+
+        points.push({ x: copyorigin.x + 1, y: copyorigin.y - 1 })
+        copyorigin.x++; copyorigin.y--;
+    }
+    else if (copyorigin.x > target.x && copyorigin.y > target.y) {
+
+        points.push({ x: copyorigin.x - 1, y: copyorigin.y - 1 })
+        copyorigin.x--; copyorigin.y--;
+    }
+    else if (copyorigin.x > target.x && copyorigin.y < target.y) {
+
+        points.push({ x: copyorigin.x - 1, y: copyorigin.y + 1 })
+        copyorigin.x--; copyorigin.y++;
+    }
     return () => getPointsBetweenCoordinates(
         copyorigin, target, points
     )
@@ -66,7 +86,7 @@ const getPointsBetweenCoordinates = (
 
 const arrInUse = inputArr;
 
-log("test a:",
+log("a:",
 
     Object.values(
 
@@ -81,6 +101,28 @@ log("test a:",
                             ventPoints.origin.x === ventPoints.target.x ||
                             ventPoints.origin.y === ventPoints.target.y
                     )
+                    .map((ventPoints: any) =>
+                        trampoline(getPointsBetweenCoordinates(ventPoints.origin, ventPoints.target))
+                    )
+            )
+                .map((obj: any) => obj.x + "," + obj.y)
+        )
+    )
+        .filter((amount: any) => amount > 1)
+        .length
+
+)
+
+log("b:",
+
+    Object.values(
+
+        returnUniqueAmountsAsObj(
+
+            flatten(
+
+                parseInput(
+                    arrInUse)
                     .map((ventPoints: any) =>
                         trampoline(getPointsBetweenCoordinates(ventPoints.origin, ventPoints.target))
                     )
