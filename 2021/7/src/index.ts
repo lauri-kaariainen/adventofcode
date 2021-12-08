@@ -17,6 +17,14 @@ const findFuelConsumption = (crabList: number[], position: number): number =>
         .map((crabPos: number) => Math.abs(position - crabPos))
         .reduce((acc, next) => acc + next, 0)
 
+const calculateSummation = (num: number): number =>
+    (Math.pow(num, 2) + num) / 2
+
+const findFuelConsumptionForB = (crabList: number[], position: number): number =>
+    crabList
+        .map((crabPos: number) => calculateSummation(Math.abs(position - crabPos)))
+        .reduce((acc, next) => acc + next, 0)
+
 const arrInUse: number[] = inputArr;
 
 const crabFuelConsumptionList =
@@ -28,6 +36,18 @@ log("a:",
     // crabFuelConsumptionList,
     // crabFuelConsumptionList.indexOf(minimumFuel),
     minimumFuel
+
+)
+
+
+const crabFuelConsumptionListForB =
+    Array.from(Array(Math.max(...arrInUse)).keys())
+        .map((key: number): number => findFuelConsumptionForB(arrInUse, key))
+const minimumFuelB = Math.min(...crabFuelConsumptionListForB)
+
+log("b:",
+
+    minimumFuelB
 
 )
 
