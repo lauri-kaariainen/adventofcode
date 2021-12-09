@@ -18,14 +18,103 @@ const parseInput = (input: string): { uniques: string[], output: string[] }[] =>
     input
         .split("\n")
         .map((line: string): { uniques: string[], output: string[] } => {
-            const matches = line.match(/(\d+),(\d+) -> (\d+),(\d+)/)
             return ({
                 uniques: line.split(" | ")[0].split(" "),
                 output: line.split(" | ")[1].split(" ")
             })
         })
 
-const arrInUse = inputArr;
+
+const analyzeSignalFromUniques = (uniques: string[]): any => {
+    const one = uniques.filter(str => str.length === 2)[0]
+    const four = uniques.filter(str => str.length === 4)[0]
+    const seven = uniques.filter(str => str.length === 3)[0]
+    const upmost = seven.split("").filter(letter => !one.includes(letter))[0]
+
+    const randomFiveLong = uniques.filter(str => str.length === 5)[0]
+    const bottom = randomFiveLong.split("").filter(letter =>
+        !one.concat(four).concat(seven).includes(letter)
+    )
+        .filter(possibleBottom =>
+            uniques
+                .filter(str => str.length === 5)
+                .every(otherPattern => otherPattern.includes(possibleBottom)))[0]
+    const middle = uniques.filter(str => str.length === 5)
+        //select the one that is number three, has 5 segments and both number 1 right side segments
+        .filter((unique: string) => one.split("").every(letter => unique.includes(letter))
+        )[0]
+        //remove bottom, top and right side to get middle
+        .split("")
+        .filter(letter =>
+            !one.split("")
+                .concat(upmost)
+                .concat(bottom)
+                .includes(letter))[0]
+
+    const leftUp = uniques.filter(str => str.length === 6)
+        //select the one that is 9, 6 segments and middle and includes 1's segments
+        .filter((unique: string) => unique.split("").includes(middle) &&
+            unique.split("").includes(one[0]) &&
+            unique.split("").includes(one[1])
+        )[0]
+        //remove 1 and all the horiz bars
+        .split("")
+        .filter(letter =>
+            !one.split("")
+                .concat(upmost, middle, bottom)
+                .includes(letter))[0]
+    const rightDown = uniques.filter(str => str.length === 5)
+        //select the one that is 5, 5 segments and has left-up
+        .filter((unique: string) => unique.split("").includes(leftUp)
+        )[0]
+        .split("")
+        .filter(letter => one.split("").includes(letter))[0]
+
+    const rightUp = one.split("").filter(letter => letter !== rightDown)[0]
+
+    const leftDown = uniques.filter(str => str.length === 7)[0]
+        .split("")
+        .filter(letter =>
+            ![middle]
+                .concat(upmost)
+                .concat(bottom)
+                .concat(leftUp)
+                .concat(rightDown)
+                .concat(rightUp)
+                .includes(letter))[0]
+
+    const resObj: any = {
+        "up": upmost,
+        "bottom": bottom,
+        "middle": middle,
+        "left-up": leftUp,
+        "left-down": leftDown,
+        "right-up": rightUp,
+        "right-down": rightDown
+    }
+    console.log(resObj)
+
+    return resObj
+}
+const calculateValueForSingleOutput = (output: string[], analyzedObject: any): number => {
+    const digits = output
+        .map((pattern: string) =>
+            pattern.length === 3 ? 7 :
+                pattern.length === 4 ? 4 :
+                    pattern.length === 7 ? 8 :
+                        pattern.length === 5 ? pattern.includes(analyzedObject["left-up"]) ? 5 :
+                            pattern.includes(analyzedObject["left-down"]) ? 2 : 3 :
+                            pattern.length === 6 ? !pattern.includes(analyzedObject["middle"]) ? 0 :
+                                pattern.includes(analyzedObject["right-up"]) ? 9 : 6
+                                : 1 //pattern length === 2 
+        )
+
+    return parseInt(digits.join(""))
+}
+
+
+
+const arrInUse = getInput();
 
 log("a:",
     parseInput(arrInUse)
@@ -35,7 +124,17 @@ log("a:",
         .length
 )
 
+log("b:",
+    parseInput(arrInUse)
+        .map(e => calculateValueForSingleOutput(e.output, analyzeSignalFromUniques(e.uniques)))
+        .reduce((acc, next) => acc + next, 0)
 
+)
+
+
+function getTinyTestInput(): string {
+    return `acedgfb cdfbe gcdfa fbcad dab cefabd cdfgeb eafb cagedb ab | cdfeb fcadb cdfeb cdbaf`
+}
 
 function getTESTInput(): string {
     return (
