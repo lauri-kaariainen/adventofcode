@@ -1,4 +1,4 @@
-// import { returnUniqueAmountsAsObj } from "../../../helpmodule.js";
+import { trampoline } from "../../../helpmodule.js";
 console.log(getInput().length);
 console.log(getTESTInput().length);
 
@@ -54,6 +54,38 @@ const findLows = (inputArr: number[][]) =>
         })
     )
 
+const floodFill = (inputArr: number[][], x: number, y: number, lastValue: number) => {
+    trampoline(fillRecursively(inputArr, x, y, lastValue))
+    return inputArr;
+}
+
+const fillRecursively = (inputArr: number[][], x: number, y: number, lastValue: number) => {
+    // console.log(x, y, lastValue)
+    if (y < 0)
+        return;
+    if (x < 0)
+        return;
+    if (y === inputArr.length)
+        return;
+    if (x === inputArr[0].length)
+        return;
+    if (inputArr[y][x] === 9)
+        return;
+    if (inputArr[y][x] === -1)
+        return;
+    // console.log("continuing")
+    if (inputArr[y][x] > lastValue)
+        inputArr[y][x] = -1;
+
+    return () => {
+
+        trampoline(fillRecursively(inputArr, x - 1, y, lastValue))
+        trampoline(fillRecursively(inputArr, x + 1, y, lastValue))
+        trampoline(fillRecursively(inputArr, x, y + 1, lastValue))
+        trampoline(fillRecursively(inputArr, x, y - 1, lastValue))
+    }
+}
+
 
 const parseInput = (input: string): any =>
     input
@@ -67,7 +99,7 @@ const arrInUse =
 
 const lowsArr: boolean[][] =
     findLows(parseInput(arrInUse))
-// .map(line => line)
+
 
 log("a:",
     parseInput(arrInUse)
@@ -78,10 +110,30 @@ log("a:",
         .reduce((acc: number, next: number) => acc + next, 0)
 
 )
+const sizesOfFills: number[] = []
+lowsArr.forEach((line, y) =>
+    line.forEach((value, x) => {
+
+        if (value) {
+            const mutatingInput = parseInput(arrInUse)
+            floodFill(mutatingInput, x, y, mutatingInput[y][x])
+            mutatingInput[y][x] = -1;
+            sizesOfFills.push(
+                mutatingInput
+                    .map((line: number[]) =>
+                        line.reduce((acc, next) => next === -1 ? acc + 1 : acc, 0))
+                    .reduce((acc: number, next: number) => acc + next, 0))
+
+        }
+    }
+    ))
+
 
 log("b:",
-
-
+    sizesOfFills
+        .sort((a, b) => b - a)
+        .slice(0, 3)
+        .reduce((acc: number, next: number) => acc * next, 1)
 )
 
 
