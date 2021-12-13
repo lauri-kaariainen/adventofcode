@@ -22,15 +22,13 @@ const parseInput = (input: string): string[] =>
 
 const solveForCorruptness = (input: string): string => {
 
-    // const openingChars: string[] = "<([{".split("")
     const chars: string[] = ">)]}".split("")
     const firstClosingChar =
         input[Math.min(
             ...chars
                 .map((chr: string): number => input.indexOf(chr))
                 .map(num => num === -1 ? Number.MAX_SAFE_INTEGER : num))]
-    // if (!firstClosingChar)
-    //     return false;
+
     const originalLength = input.length
     if (input.replace("()", "")
         .replace("[]", "")
@@ -42,29 +40,24 @@ const solveForCorruptness = (input: string): string => {
             .replace("<>", ""))
     else if (firstClosingChar)
         return firstClosingChar
-    else return "";
+
+    else
+        //a:
+        //  return "";
+
+        //b:
+        return input;
 
 }
-//closing chars less than opening
-const findIfIncomplete = (input: string): boolean => {
-    const closingChars: string[] = ">)]}".split("")
-    const openingChars: string[] = "<([{".split("")
-    const closingCharsLength =
-        closingChars
-            .map((chr: string) => {
-                // console.log(new RegExp("\\" + chr, "g"), input.match(new RegExp("\\" + chr, "g")))
-                return (input.match(new RegExp("\\" + chr, "g")) || []).length
-            })
-    const openingCharsLength =
-        openingChars
-            .map((chr: string) => {
-                // console.log(new RegExp("\\" + chr, "g"), input.match(new RegExp("\\" + chr, "g")))
-                return (input.match(new RegExp("\\" + chr, "g")) || []).length
-            })
-    console.log(openingCharsLength, closingCharsLength)
-    return openingCharsLength > closingCharsLength
 
-}
+const openToCloseChars = (chr: string) =>
+    chr === "[" ? "]" :
+        chr === "{" ? "}" :
+            chr === "<" ? ">" :
+                ")"
+
+const getMiddleOfArr = (arr: any[]): any =>
+    arr[Math.floor(arr.length / 2)]
 
 const arrInUse =
     getInput();
@@ -84,6 +77,36 @@ log("a:",
         .reduce(reduceSum)
 
 )
+
+log("b:",
+    getMiddleOfArr(
+
+        parseInput(arrInUse)
+            .map((line: string) =>
+                solveForCorruptness(line)
+            )
+            .filter((line: string) => solveForCorruptness(line).length !== 1)
+            .map((line: string) =>
+                line
+                    .split("")
+                    .reverse()
+                    .map((chr: string) => openToCloseChars(chr))
+                    .join(""))
+            .map((closingLine: string): number =>
+                closingLine
+                    .split("")
+                    // .map(chr => parseInt(chr))
+                    .reduce((acc: number, next: string) =>
+                        acc * 5 + (
+                            next === ")" ? 1 :
+                                next === "]" ? 2 :
+                                    next === "}" ? 3 :
+                                        next === ">" ? 4 : -1)
+                        , 0))
+            .sort((a, b) => a - b)
+    )
+)
+
 
 function getTESTInput(): string {
     return (
