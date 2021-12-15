@@ -222,6 +222,10 @@ function mostFrequentElems(array) {
 
 const transpose = m => m[0].map((x, i) => m.map(x => x[i]))
 
+const range = (start, stop, step = 1) =>
+  Array.from({length: (stop - start) / step + 1}, (_, i) => start + (i * step));
+
+
 
 export {
   find4,
@@ -251,5 +255,6 @@ export {
   lcm,
   gcd,
   mostFrequentElems,
-  transpose
+  transpose,
+  range
 }
