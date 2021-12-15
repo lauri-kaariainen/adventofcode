@@ -1,0 +1,20 @@
+{
+  "devDependencies": {
+    "npm-watch": "^0.11.0",
+    "typescript": "^4.1.2"
+  },
+  
+"watch": {
+    "build": {
+      "patterns": [
+        "src"
+      ],
+      "extensions": "ts"
+    }
+  },
+  "scripts": {
+    "tsc": "tsc",
+    "build": "tsc --noEmit && parcel build --public-url \".\" src/index.ts",
+    "watch":"npm-watch"
+  }
+}
