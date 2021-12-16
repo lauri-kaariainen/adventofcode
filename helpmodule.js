@@ -56,7 +56,27 @@ const get8 = (x, y, matrix) => {
   return returnable;
 }
 
+const get8Positions = (x, y, matrix) => {
+  const positions =
+    [
+      {y: y - 1, x: x - 1},
+      {y: y - 1, x: x},
+      {y: y - 1, x: x + 1},
+      {y: y, x: x + 1},
+      {y: y + 1, x: x + 1},
+      {y: y + 1, x: x},
+      {y: y + 1, x: x - 1},
+      {y: y, x: x - 1},
+    ]
+  const returnable = [];
+  positions.forEach(pos =>
+    matrix[pos.y] === undefined ? "" :
+      matrix[pos.y][pos.x] === undefined ? "" :
+        returnable
+          .push(pos));
+  return returnable
 
+}
 
 const num2letter = chr => String.fromCharCode(97 + chr);
 
@@ -230,6 +250,7 @@ const range = (start, stop, step = 1) =>
 export {
   find4,
   get8,
+  get8Positions,
   num2letter,
   hex2bin,
   num2hex,
