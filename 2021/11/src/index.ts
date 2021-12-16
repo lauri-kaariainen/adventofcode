@@ -19,7 +19,11 @@ const parseInput = (input: string): number[][] =>
         .map((line: string) => line.split("").map((chr: string): number => parseInt(chr)))
 
 
-const doSteps = (input: number[][], stepsLeft: number = 1, totalFlashes: number = 0): number => {
+const doSteps = (
+    input: number[][],
+    stepsLeft: number = 1,
+    stepsDone: number = 0,
+    totalFlashes: number = 0): number => {
     if (!stepsLeft)
         return totalFlashes;
     const alreadyFlashedArr: { x: number, y: number }[] = [];
@@ -30,8 +34,9 @@ const doSteps = (input: number[][], stepsLeft: number = 1, totalFlashes: number 
     doFlashing(
         newInput,
         alreadyFlashedArr)
-
-    return doSteps(newInput, stepsLeft - 1, totalFlashes + alreadyFlashedArr.length)
+    if (alreadyFlashedArr.length === input.length * input[0].length)
+        log("b:", stepsDone + 1)
+    return doSteps(newInput, stepsLeft - 1, stepsDone + 1, totalFlashes + alreadyFlashedArr.length)
 
 }
 
@@ -62,17 +67,14 @@ const arrInUse =
     getInput();
 
 log("a:",
-    log(
 
-        doSteps(parseInput(arrInUse), 100)
-        // .map(line => line.join("")).join("\n")
-    )
 
+    doSteps(parseInput(arrInUse), 500)
+    // .map(line => line.join("")).join("\n")
 )
 
-log("b:",
 
-)
+
 function getMiniTESTInput(): string {
     return (
         `11111
