@@ -1,7 +1,5 @@
-import { reduceSum } from "../../../helpmodule.js";
+import { reduceSum, range } from "../../../helpmodule.js";
 import { astar, Graph } from "./astar.js";
-console.log(getInput().length);
-console.log(getTESTInput().length);
 
 function log(...args: any[]): void {
     if (typeof (console) !== 'undefined' && typeof (document) !== 'undefined') {
@@ -23,6 +21,27 @@ const mirrorXY = (pointObj: any): { x: number, y: number } =>
     y: pointObj.x
 })
 
+const fillBiggerCave = (
+    bigCave: number[][],
+    onePosition: { x: number, y: number },
+    numToUse: number) => {
+    if (onePosition.y > (bigCave.length - 1) || onePosition.x > (bigCave[0].length - 1))
+        return;
+    bigCave[onePosition.y][onePosition.x] = numToUse > 9 ? 1 : numToUse
+    fillBiggerCave(
+        bigCave,
+        { x: onePosition.x + bigCave[0].length / 5, y: onePosition.y },
+        numToUse + 1 > 9 ? 1 : numToUse + 1
+    )
+    fillBiggerCave(
+        bigCave,
+        { y: onePosition.y + bigCave.length / 5, x: onePosition.x },
+        numToUse + 1 > 9 ? 1 : numToUse + 1
+    )
+}
+
+
+
 // A few notes about weight values:
 
 // A weight of 0 denotes a wall.
@@ -34,14 +53,36 @@ const mirrorXY = (pointObj: any): { x: number, y: number } =>
 const arrInUse =
     getInput();
 const parsedArr = parseInput(arrInUse)
-console.log(astar)
-//NOTE!! x and y are mirrored with astar!
 const graphWithWeight = new Graph(parsedArr);
 const startWithWeight = graphWithWeight.grid[0][0];
 const endWithWeight = graphWithWeight.grid[parsedArr.length - 1][parsedArr[0].length - 1];
 const routeWithWeight = astar.search(graphWithWeight, startWithWeight, endWithWeight);
+//NOTE!! x and y are mirrored with astar!
 const convertedRoute = routeWithWeight.map(mirrorXY)
 // resultWithWeight is an array containing the shortest path taking into account the weight of a node
+
+
+
+
+const biggerCave =
+    range(0, 5 * parsedArr.length - 1)
+        .map((_, y) =>
+            range(0, 5 * parsedArr[0].length - 1)
+                .map((_, x: number) => 0))
+parsedArr.forEach((line: number[], y: number) =>
+    line.forEach((num, x: number) =>
+        fillBiggerCave(
+            biggerCave, {
+            x: x, y: y
+        }, num)
+
+
+    ))
+const biggraphWithWeight = new Graph(biggerCave);
+const bigstartWithWeight = biggraphWithWeight.grid[0][0];
+const bigendWithWeight = biggraphWithWeight.grid[biggerCave.length - 1][biggerCave[0].length - 1];
+const bigrouteWithWeight = astar.search(biggraphWithWeight, bigstartWithWeight, bigendWithWeight);
+const bigconvertedRoute = bigrouteWithWeight.map(mirrorXY)
 
 
 log("a:",
@@ -53,7 +94,10 @@ log("a:",
 )
 
 log("b:",
-
+    // biggerCave,
+    bigconvertedRoute
+        .map(point => biggerCave[point.y][point.x])
+        .reduce(reduceSum)
 
 )
 
