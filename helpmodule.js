@@ -245,6 +245,7 @@ const transpose = m => m[0].map((x, i) => m.map(x => x[i]))
 const range = (start, stop, step = 1) =>
   Array.from({length: (stop - start) / step + 1}, (_, i) => start + (i * step));
 
+const intersection = (array1,array2)=>array1.filter(value => array2.includes(value));
 
 
 export {
@@ -277,5 +278,6 @@ export {
   gcd,
   mostFrequentElems,
   transpose,
-  range
+  range,
+  intersection
 }
