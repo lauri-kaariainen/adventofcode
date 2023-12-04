@@ -1,12 +1,17 @@
 // @ts-check
 "use strict";
 
-import {get8, reduceSum, trampoline} from "../../helpmodule.js";
+import {get8, get8Positions, reduceSum, trampoline, uniqueShallow} from "../../helpmodule.js";
 
 /**
  * @type {number[]}
  */
 const goodNumberListMutating = [];
+
+/**
+ * @type {Array<{number:number,coords:Array<{x:number,y:number}>}>}
+ */
+const numberCoordinateArray = [{number: 0, coords: []}];
 
 /**
  * 
@@ -18,6 +23,14 @@ const testForSymbol = (x, y, array) =>
         x, y, array
     ).filter(char => (!char.match(/\d/) && char !== ".")).length
 
+const findCogs = array => {
+    const cogCoords = []
+    array.forEach((line, y) => line.forEach((char, x) => {
+        if (char === "*")
+            cogCoords.push({x: x, y: y})
+    }))
+    return cogCoords
+}
 
 const recursivelyFindNumbers = (
     array,
@@ -32,45 +45,87 @@ const recursivelyFindNumbers = (
         if (numberBeingCollected) {
             if (nearASymbol) {
                 goodNumberListMutating.push(parseInt(numberBeingCollected))
-                console.log("found number", numberBeingCollected, nearASymbol)
+                //  console.log("found number", numberBeingCollected, nearASymbol)
+                numberCoordinateArray[numberCoordinateArray.length - 1].number = parseInt(numberBeingCollected)
+                numberCoordinateArray.push({number: 0, coords: []})
 
+            }
+            else {
+                numberCoordinateArray[numberCoordinateArray.length - 1].coords = []
             }
         }
         return () => recursivelyFindNumbers(array, 0, y + 1, coordinatesWithNumbers)
     }
     if (array[y][x].match(/\d/)) {
+        numberCoordinateArray[numberCoordinateArray.length - 1].coords.push({x: x, y: y})
         const isAcceptableNumber =
             testForSymbol(x, y, array) || nearASymbol;
         return () => recursivelyFindNumbers(array, x + 1, y, coordinatesWithNumbers, numberBeingCollected + array[y][x], isAcceptableNumber)
     }
     else {
         if (numberBeingCollected) {
-            console.log("found number", numberBeingCollected, nearASymbol)
-            if (nearASymbol)
+            //console.log("found number", numberBeingCollected, nearASymbol)
+            if (nearASymbol) {
+
                 goodNumberListMutating.push(parseInt(numberBeingCollected))
+                numberCoordinateArray[numberCoordinateArray.length - 1].number = parseInt(numberBeingCollected)
+                numberCoordinateArray.push({number: 0, coords: []})
+            }
+            else {
+                numberCoordinateArray[numberCoordinateArray.length - 1].coords = []
+            }
         }
     }
     return () => recursivelyFindNumbers(array, x + 1, y, coordinatesWithNumbers, "")
 }
 
-//const findNumbers = trampoline(recursivelyFindNumbers)
-
-console.log(trampoline(recursivelyFindNumbers(
+const array =
     getInput()
-        .split("\n").map(line => line.split("")))))
+        .split("\n").map(line => line.split(""))
+trampoline(recursivelyFindNumbers(
+    array))
 
+const numberCoordinateArrayNeat =
+    numberCoordinateArray
+        .map(item => ({...item, coords: item.coords.map(e => e.x + "x" + e.y)}))
+
+const matchedCogs =
+    findCogs(array)
+        .map(cog => get8Positions(cog.x, cog.y, array))
+        .map(e => e.map(pair => pair.x + "x" + pair.y))
+        .map(
+            /**
+             * 
+             * @param {string[]} cogNeighborCoordinates 
+             */
+            cogNeighborCoordinates => {
+
+                return cogNeighborCoordinates
+                    .flatMap(cogNeighbor =>
+                        numberCoordinateArrayNeat
+                            .filter(elem =>
+                                elem.coords.includes(cogNeighbor)))
+                    .map(
+                        /**
+                         * @param {{number:number,coords:string[]}} item
+                         */
+                        item => item.number)
+                    .filter(uniqueShallow)
+                //.filter(list=>list.length===2)
+
+            })
+        .filter(e => e.length === 2)
+console.log(matchedCogs)
 console.log("A:",
     goodNumberListMutating.reduce(reduceSum)
 )
 console.log("B:",
-
+    matchedCogs
+        .map(numbers =>
+            numbers.reduce((a, b) => a * b, 1))
+        .reduce(reduceSum)
 )
 
-
-/**
- * 
- * @returns {string}
- */
 
 /*
 4 6 7 . . 1 1 4 . .
@@ -84,6 +139,11 @@ console.log("B:",
 . . . $ . * . . . .
 . 6 6 4 . 5 9 8 . .
 */
+
+/**
+ * 
+ * @returns {string}
+ */
 
 function getTestInput() {
     return (
