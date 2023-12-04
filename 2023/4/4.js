@@ -38,7 +38,7 @@ const traverseArrayRecursively = (mutatingArray, position = mutatingArray.length
 }
 
 
-console.log("B: NOT READY:",
+console.log("B:",
     traverseArrayRecursively(
         array
             .split("\n")
