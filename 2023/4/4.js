@@ -15,7 +15,42 @@ console.log("A:",
         .map(arr => arr.length ? Math.pow(2, arr.length - 1) : 0)
         .reduce((a, b) => a + b)
 )
-console.log("B:",
+
+
+const array = getInput()
+
+/*
+[ 4,2,2,1,0,0]
+->
+[15,7,4,2,1,1]
+*/
+
+
+const traverseArrayRecursively = (mutatingArray, position = mutatingArray.length - 1) => {
+    if (position === -1)
+        return mutatingArray
+    if (mutatingArray[position] === 0) {
+        mutatingArray[position] = 1;
+        return traverseArrayRecursively(mutatingArray, position - 1);
+    }
+    mutatingArray[position] = 1 + mutatingArray.slice(position + 1, position + 1 + mutatingArray[position]).reduce((a, b) => a + b)
+    return traverseArrayRecursively(mutatingArray, position - 1)
+}
+
+
+console.log("B: NOT READY:",
+    traverseArrayRecursively(
+        array
+            .split("\n")
+            .map(line =>
+                line
+                    .slice(8)
+                    .split(" | ")
+                    .map(half => half.trim().split(/\s+/)))
+            .map(halfs => intersection(...halfs))
+            .map(arr => arr.length))
+        .reduce((a, b) => a + b)
+
 )
 
 
