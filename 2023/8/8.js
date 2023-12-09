@@ -1,6 +1,6 @@
 // @ts-check
 "use strict";
-import { trampoline } from "../../helpmodule.js";
+import { trampoline, lcm } from "../../helpmodule.js";
 
 /**
  * @typedef {{
@@ -40,10 +40,10 @@ const input =
 const traverseNetwork = ({ instructions, network }, route = []) => {
     if (route.length >= 90000)
         return route
-    if (route.slice(-1)[0] === "ZZZ")
-        return route
     if (route.length === 0)
         return () => traverseNetwork({ instructions, network }, ['AAA']);
+    if (route.slice(-1)[0].slice(-1) === "Z")
+        return route
     const nextDirection = instructions[(route.length - 1) % instructions.length]
     return () => traverseNetwork(
         { instructions, network },
@@ -56,9 +56,16 @@ console.log("A:",
     trampoline(traverseNetwork(input)).length - 1
 )
 
-
+const starters =
+    Object.keys(input.network)
+        .filter(str => str.slice(-1) === "A")
 
 console.log("B:",
+    //least common multiple    
+    lcm(
+        starters
+            .map(starter => trampoline(traverseNetwork(input, [starter])))
+            .map(arr => arr.length - 1))
 )
 
 
@@ -68,11 +75,16 @@ console.log("B:",
 
 function getTestInput() {
     return (
-        `LLR
+        `LR
 
-AAA = (BBB, BBB)
-BBB = (AAA, ZZZ)
-ZZZ = (ZZZ, ZZZ)`);
+11A = (11B, XXX)
+11B = (XXX, 11Z)
+11Z = (11B, XXX)
+22A = (22B, XXX)
+22B = (22C, 22C)
+22C = (22Z, 22Z)
+22Z = (22B, 22B)
+XXX = (XXX, XXX)`);
 }
 /**
  * 
