@@ -16,7 +16,22 @@ function findNewValues(arrayList) {
         .reduce((acc, next, i) =>
             i < 2 ?
                 acc.concat(next.slice(-1)[0]) :
-                acc.concat(acc.slice(-1)[0] + next.slice(-1)[0]),
+                acc.concat(next.slice(-1)[0] - acc.slice(-1)[0]),
+            [])
+}
+
+/**
+ * 
+ * @param {number[][]} arrayList 
+ * @returns {number[]}
+ */
+function findNewValuesForB(arrayList) {
+    return arrayList
+        .reverse()
+        .reduce((acc, next, i) =>
+            i < 2 ?
+                acc.concat(next.slice(-1)[0]) :
+                acc.concat(next.slice(-1)[0] + acc.slice(-1)[0]),
             [])
 }
 
@@ -36,6 +51,9 @@ function findZeroes(listOfNums) {
                     .slice(-1)[0]
                     .reduce((acc, next, i, arr) => !i ? acc : acc.concat(next - arr[i - 1]), [])]))
 }
+window.findNewValuesForB = findNewValuesForB
+window.findZeroes = findZeroes
+
 
 const input = getInput()
     .split(/\n/)
@@ -44,7 +62,6 @@ const input = getInput()
             .map(str => parseInt(str)))
 
 console.log("A:",
-    input,
     input
         .map(oneList =>
             findNewValues(findZeroes([oneList])))
@@ -53,6 +70,13 @@ console.log("A:",
 )
 
 console.log("B:",
+    input
+        .slice()
+        .map(singleArr => singleArr.slice().reverse())
+        .map(oneList =>
+            findNewValuesForB(findZeroes([oneList])))
+        .map(list => list.slice(-1)[0])
+        .reduce((acc, next) => acc + next)
 )
 
 
