@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--script type="module" src="10.js"></script-->
+</head>
+
+<body> 
+	<div class="app">
+	<h5>Copy this to the dev tools of <a href="https://adventofcode.com/2023/day/10/input">the input page of 10</a>.	
+<pre>
+</pre>
+<script>
+document.querySelector('pre').innerText=`$('pre').style.color="#097bcb81";
+const trampoline = fn => {
+  while (typeof fn === "function") {
+    fn = fn();
+  }
+  return fn;
+};
+function travel(array,x,y,direction,steps=0){
+    //console.log({x,y,array,direction,steps});
+    const currChar=array[y][x];
+    if(steps!==0 && currChar==="S"){console.log("steps:",steps," A:",steps/2,");return array};
+    array[y][x] = "<span style='color:#efa428;opacity:1;text-shadow: 0 0 5px #aaffaa; 0 0 10px #ffffff;'>"+array[y][x]+'</span>';
+    switch(currChar){
+       case("-"):return (direction==="L"?()=>travel(array,x-1,y,direction,steps+1):()=>travel(array,x+1,y,direction,steps+1));
+            case("L"):return (direction==="L"?()=>travel(array,x,y-1,"U",steps+1):()=>travel(array,x+1,y,"R",steps+1));
+            case("7"):return (direction==="U"?()=>travel(array,x-1,y,"L",steps+1):()=>travel(array,x,y+1,"D",steps+1));
+            case("F"):return (direction==="L"?()=>travel(array,x,y+1,"D",steps+1):()=>travel(array,x+1,y,"R",steps+1));
+            case("J"):return (direction==="D"?()=>travel(array,x-1,y,"L",steps+1):()=>travel(array,x,y-1,"U",steps+1));
+            case("|"):return (direction==="U"?()=>travel(array,x,y-1,"U",steps+1):()=>travel(array,x,y+1,"D",steps+1));
+       default: return array;    
+    }}
+    ;$('pre').innerHTML =trampoline(travel(input.split("\n").map(e=>e.split("")),110,41,"L",1)).map(line=>line.join("")).join("\n");"";`
+</script>
+	</div>
+</body>
