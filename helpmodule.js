@@ -193,6 +193,26 @@ const permutations = xs => {
   return ret;
 }
 
+const getCombinations = (arr, k) => {
+  const result = [];
+
+  const combine = (current, start) => {
+    if (current.length === k) {
+      result.push([...current]);
+      return;
+    }
+
+    for (let i = start; i < arr.length; i++) {
+      current.push(arr[i]);
+      combine(current, i + 1);
+      current.pop();
+    }
+  }
+
+  combine([], 0);
+  return result;
+}
+
 const returnUniqueAmountsAsObj = array =>
   array.reduce((acc, val) => {  //amounts as an object
     acc[val] = acc[val] === undefined ? 1 : acc[val] += 1;
@@ -245,7 +265,7 @@ const transpose = m => m[0].map((x, i) => m.map(x => x[i]))
 const range = (start, stop, step = 1) =>
   Array.from({length: (stop - start) / step + 1}, (_, i) => start + (i * step));
 
-const intersection = (array1,array2)=>array1.filter(value => array2.includes(value));
+const intersection = (array1, array2) => array1.filter(value => array2.includes(value));
 
 
 export {
@@ -272,6 +292,7 @@ export {
   reduceMultiply,
   reduceFlatten,
   permutations,
+  getCombinations,
   returnUniqueAmountsAsObj,
   betweenOrEqual,
   lcm,
