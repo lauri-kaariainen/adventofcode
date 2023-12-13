@@ -3,34 +3,34 @@ const find4 = (x, y, matrix, wantedChar) => {
   let returnable = [];
   if (x > 0 && x < matrix[y].length - 1) {
     matrix[y][x - 1] === wantedChar
-      ? returnable.push({x: x - 1, y: y})
+      ? returnable.push({ x: x - 1, y: y })
       : false;
     matrix[y][x + 1] === wantedChar
-      ? returnable.push({x: x + 1, y: y})
+      ? returnable.push({ x: x + 1, y: y })
       : false;
   } else if (x === 0) {
     matrix[y][x + 1] === wantedChar
-      ? returnable.push({x: x + 1, y: y})
+      ? returnable.push({ x: x + 1, y: y })
       : false;
   } else if (x === matrix[y].length - 1) {
     matrix[y][x - 1] === wantedChar
-      ? returnable.push({x: x - 1, y: y})
+      ? returnable.push({ x: x - 1, y: y })
       : false;
   }
   if (y > 0 && y < matrix.length - 1) {
     matrix[y + 1][x] === wantedChar
-      ? returnable.push({x: x, y: y + 1})
+      ? returnable.push({ x: x, y: y + 1 })
       : false;
     matrix[y - 1][x] === wantedChar
-      ? returnable.push({x: x, y: y - 1})
+      ? returnable.push({ x: x, y: y - 1 })
       : false;
   } else if (y === 0) {
     matrix[y + 1][x] === wantedChar
-      ? returnable.push({x: x, y: y + 1})
+      ? returnable.push({ x: x, y: y + 1 })
       : false;
   } else if (y === matrix.length - 1) {
     matrix[y - 1][x] === wantedChar
-      ? returnable.push({x: x, y: y - 1})
+      ? returnable.push({ x: x, y: y - 1 })
       : false;
   }
   return returnable;
@@ -38,14 +38,14 @@ const find4 = (x, y, matrix, wantedChar) => {
 
 const get8 = (x, y, matrix) => {
   const positions = [
-    {y: y - 1, x: x - 1},
-    {y: y - 1, x: x},
-    {y: y - 1, x: x + 1},
-    {y: y, x: x + 1},
-    {y: y + 1, x: x + 1},
-    {y: y + 1, x: x},
-    {y: y + 1, x: x - 1},
-    {y: y, x: x - 1},
+    { y: y - 1, x: x - 1 },
+    { y: y - 1, x: x },
+    { y: y - 1, x: x + 1 },
+    { y: y, x: x + 1 },
+    { y: y + 1, x: x + 1 },
+    { y: y + 1, x: x },
+    { y: y + 1, x: x - 1 },
+    { y: y, x: x - 1 },
   ]
   const returnable = [];
   positions.forEach(pos =>
@@ -59,14 +59,14 @@ const get8 = (x, y, matrix) => {
 const get8Positions = (x, y, matrix) => {
   const positions =
     [
-      {y: y - 1, x: x - 1},
-      {y: y - 1, x: x},
-      {y: y - 1, x: x + 1},
-      {y: y, x: x + 1},
-      {y: y + 1, x: x + 1},
-      {y: y + 1, x: x},
-      {y: y + 1, x: x - 1},
-      {y: y, x: x - 1},
+      { y: y - 1, x: x - 1 },
+      { y: y - 1, x: x },
+      { y: y - 1, x: x + 1 },
+      { y: y, x: x + 1 },
+      { y: y + 1, x: x + 1 },
+      { y: y + 1, x: x },
+      { y: y + 1, x: x - 1 },
+      { y: y, x: x - 1 },
     ]
   const returnable = [];
   positions.forEach(pos =>
@@ -263,9 +263,16 @@ function mostFrequentElems(array) {
 const transpose = m => m[0].map((x, i) => m.map(x => x[i]))
 
 const range = (start, stop, step = 1) =>
-  Array.from({length: (stop - start) / step + 1}, (_, i) => start + (i * step));
+  Array.from({ length: (stop - start) / step + 1 }, (_, i) => start + (i * step));
 
 const intersection = (array1, array2) => array1.filter(value => array2.includes(value));
+
+const log = (selector, ...rest) => {
+
+  document.querySelector(selector).innerText = rest.join("\n");
+  console.log.apply(this, [...rest])
+}
+
 
 
 export {
@@ -300,5 +307,6 @@ export {
   mostFrequentElems,
   transpose,
   range,
-  intersection
+  intersection,
+  log
 }
